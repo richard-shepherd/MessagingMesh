@@ -9,7 +9,8 @@ using namespace MessagingMesh;
 void onMessageLogged(Logger::LogLevel logLevel, const std::string& message)
 {
     auto time = Utils::getTimeString();
-    std::cout << time << ": " << Logger::toString(logLevel) << ": " << message << std::endl;
+    auto& strLogLevel = Logger::toString(logLevel);
+    std::cout << time << ": " << strLogLevel << ": " << message << std::endl;
 }
 
 // Main.
