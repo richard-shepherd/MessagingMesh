@@ -57,6 +57,9 @@
     <Text Include="Notes.txt" />
     <Text Include="Snippets.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="_PostBuild.cmd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -117,8 +120,7 @@
     </Lib>
     <PostBuildEvent>
       <Command>copy $(SolutionDir)libuv\Debug\libuv.pdb $(SolutionDir)build-output\MessagingMeshLib\lib\Debug
-mkdir $(SolutionDir)build-output\MessagingMeshLib\headers
-copy $(SolutionDir)MessagingMeshLib\MessagingMesh.h $(SolutionDir)build-output\MessagingMeshLib\headers\MessagingMesh.h</Command>
+_PostBuild.cmd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,6 +144,9 @@ copy $(SolutionDir)MessagingMeshLib\MessagingMesh.h $(SolutionDir)build-output\M
     <Lib>
       <AdditionalDependencies>$(SolutionDir)libuv\Release\libuv.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
+    <PostBuildEvent>
+      <Command>_PostBuild.cmd</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

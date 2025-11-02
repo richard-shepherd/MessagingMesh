@@ -139,4 +139,7 @@
     <Text Include="Notes.txt" />
     <Text Include="Snippets.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="_PostBuild.cmd" />
+  </ItemGroup>
 </Project>
