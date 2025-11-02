@@ -1,0 +1,12 @@
+try-catch
+---------
+    try
+    {
+    }
+    catch (const std::exception& ex)
+    {
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+    }
+
+
+

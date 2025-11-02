@@ -1,0 +1,25 @@
+TODO
+----
+- ConnectionImpl::m_subscriptions needs to be thread safe
+
+- Handle client connection failure, eg if gateway is not running
+
+- Think about use of std::string. We want to encode strings as UTF-8
+
+- Add getField() methods to Message
+
+- Replace enum with enum class
+
+- Handle fast producers and slow consumers
+
+- I'm not convinced that the ConnectionImpl and Subscription dtors are properly thread safe
+
+
+
+
+
+
+
+
+
+
