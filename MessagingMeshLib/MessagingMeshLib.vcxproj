@@ -22,6 +22,7 @@
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MessageImpl.h" />
+    <ClInclude Include="MessagingMesh.h" />
     <ClInclude Include="NetworkMessage.h" />
     <ClInclude Include="NetworkMessageHeader.h" />
     <ClInclude Include="OSSocketHolder.h" />
@@ -115,7 +116,9 @@
       <AdditionalDependencies>$(SolutionDir)libuv\Debug\libuv.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)libuv\Debug\libuv.pdb $(SolutionDir)build-output\MessagingMeshLib\lib\Debug</Command>
+      <Command>copy $(SolutionDir)libuv\Debug\libuv.pdb $(SolutionDir)build-output\MessagingMeshLib\lib\Debug
+mkdir $(SolutionDir)build-output\MessagingMeshLib\headers
+copy $(SolutionDir)MessagingMeshLib\MessagingMesh.h $(SolutionDir)build-output\MessagingMeshLib\headers\MessagingMesh.h</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
