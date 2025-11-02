@@ -15,7 +15,7 @@ void onMessageLogged(Logger::LogLevel logLevel, const std::string& message)
     std::cout << time << ": " << Logger::toString(logLevel) << ": " << message << std::endl;
 }
 
-// main.
+// Main.
 int main(int /*argc*/, char** /*argv*/)
 {
     // We set the thread name...

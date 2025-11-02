@@ -121,6 +121,7 @@
     <PostBuildEvent>
       <Command>copy $(SolutionDir)libuv\Debug\libuv.pdb $(SolutionDir)build-output\MessagingMeshLib\lib\Debug
 _PostBuild.cmd</Command>
+      <Message>Copying MessagingMesh client headers</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,6 +147,7 @@ _PostBuild.cmd</Command>
     </Lib>
     <PostBuildEvent>
       <Command>_PostBuild.cmd</Command>
+      <Message>Copying MessagingMesh client headers</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

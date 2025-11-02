@@ -15,6 +15,21 @@ TODO
 - I'm not convinced that the ConnectionImpl and Subscription dtors are properly thread safe
 
 
+Creating a messaging-mesh client
+--------------------------------
+- C++ -> General -> Additional Include Directories
+MessagingMeshLib\headers
+
+- Linker -> Input -> Additional Dependencies
+MessagingMeshLib\lib\($Configuration)\MessagingMeshLib.lib
+advapi32.lib
+iphlpapi.lib
+psapi.lib
+shell32.lib
+user32.lib
+userenv.lib
+ws2_32.lib
+dbghelp.lib
 
 
 
