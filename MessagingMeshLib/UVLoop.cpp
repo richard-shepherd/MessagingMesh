@@ -1,6 +1,6 @@
 #include "UVLoop.h"
 #include "Logger.h"
-#include "Utils.h"
+#include "MMUtils.h"
 #include "UVUtils.h"
 using namespace MessagingMesh;
 
@@ -71,7 +71,7 @@ void UVLoop::threadEntryPoint()
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -122,6 +122,6 @@ void UVLoop::processMarshalledEvents()
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
     }
 }

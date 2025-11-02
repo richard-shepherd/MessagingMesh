@@ -3,6 +3,7 @@
 #include "Socket.h"
 #include "Logger.h"
 #include "Utils.h"
+#include "MMUtils.h"
 #include "NetworkMessage.h"
 using namespace MessagingMesh;
 
@@ -40,7 +41,7 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
         auto action = header.getAction();
 
         // RSSTODO: REMOVE THIS!!!
-        Logger::info(Utils::format("ServiceManager::onDataReceived, action=%d", static_cast<int8_t>(action)));
+        Logger::info(MMUtils::format("ServiceManager::onDataReceived, action=%d", static_cast<int8_t>(action)));
 
         switch (action)
         {
@@ -51,7 +52,7 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -67,7 +68,7 @@ void ServiceManager::onDisconnected(Socket* pSocket)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -85,7 +86,7 @@ void ServiceManager::onMoveToLoopComplete(Socket* pSocket)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
     }
 }
 

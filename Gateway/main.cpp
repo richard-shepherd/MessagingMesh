@@ -1,17 +1,14 @@
 #include <iostream>
 #include "Logger.h"
 #include "Gateway.h"
-#include "Utils.h"
-#include "Tests.h"
-#include "Connection.h"
-#include "Message.h"
+#include "MMUtils.h"
 #include "UVUtils.h"
 using namespace MessagingMesh;
 
 // Logs messages to the screen.
 void onMessageLogged(Logger::LogLevel logLevel, const std::string& message)
 {
-    auto time = Utils::getTimeString();
+    auto time = MMUtils::getTimeString();
     std::cout << time << ": " << Logger::toString(logLevel) << ": " << message << std::endl;
 }
 

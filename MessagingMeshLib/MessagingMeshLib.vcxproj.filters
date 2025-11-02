@@ -84,6 +84,9 @@
     <ClInclude Include="MessagingMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MMUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Buffer.cpp">
@@ -132,6 +135,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UVUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MMUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

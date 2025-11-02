@@ -4,6 +4,7 @@
 #include "Socket.h"
 #include "Logger.h"
 #include "Utils.h"
+#include "MMUtils.h"
 #include "NetworkMessage.h"
 #include "Message.h"
 #include "Subscription.h"
@@ -17,7 +18,7 @@ ConnectionImpl::ConnectionImpl(const std::string& hostname, int port, const std:
     m_nextSubscriptionID(0)
 {
     // We create the UV loop for client messaging...
-    auto name = Utils::format("MM-%s", service.c_str());
+    auto name = MMUtils::format("MM-%s", service.c_str());
     m_pUVLoop = UVLoop::create(name);
 
     // We create the socket to connect to the gateway...
@@ -152,7 +153,7 @@ void ConnectionImpl::onDataReceived(Socket* /*pSocket*/, BufferPtr pBuffer)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -162,11 +163,11 @@ void ConnectionImpl::onDisconnected(Socket* pSocket)
     try
     {
         // RSSTODO: REMOVE THIS!!!
-        Logger::info(Utils::format("ConnectionImpl::onDisconnected, socket-name=%s", pSocket->getName().c_str()));
+        Logger::info(MMUtils::format("ConnectionImpl::onDisconnected, socket-name=%s", pSocket->getName().c_str()));
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -180,7 +181,7 @@ void ConnectionImpl::onAck()
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
     }
 }
 
