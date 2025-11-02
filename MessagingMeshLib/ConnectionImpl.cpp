@@ -3,8 +3,8 @@
 #include "Exception.h"
 #include "Socket.h"
 #include "Logger.h"
-#include "Utils.h"
 #include "MMUtils.h"
+#include "Utils.h"
 #include "NetworkMessage.h"
 #include "Message.h"
 #include "Subscription.h"
@@ -18,7 +18,7 @@ ConnectionImpl::ConnectionImpl(const std::string& hostname, int port, const std:
     m_nextSubscriptionID(0)
 {
     // We create the UV loop for client messaging...
-    auto name = MMUtils::format("MM-%s", service.c_str());
+    auto name = Utils::format("MM-%s", service.c_str());
     m_pUVLoop = UVLoop::create(name);
 
     // We create the socket to connect to the gateway...
@@ -38,7 +38,7 @@ ConnectionImpl::ConnectionImpl(const std::string& hostname, int port, const std:
     auto& header = networkMessage.getHeader();
     header.setAction(NetworkMessageHeader::Action::CONNECT);
     header.setSubject(m_service);
-    Utils::sendNetworkMessage(networkMessage, m_pSocket);
+    MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 
     // We wait for the ACK to confirm that we have connected.
     //
@@ -75,7 +75,7 @@ ConnectionImpl::~ConnectionImpl()
     NetworkMessage networkMessage;
     auto& header = networkMessage.getHeader();
     header.setAction(NetworkMessageHeader::Action::DISCONNECT);
-    Utils::sendNetworkMessage(networkMessage, m_pSocket);
+    MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 }
 
 // Sends a message to the specified subject.
@@ -89,7 +89,7 @@ void ConnectionImpl::sendMessage(const std::string& subject, const MessagePtr& p
     networkMessage.setMessage(pMessage);
 
     // We send the message...
-    Utils::sendNetworkMessage(networkMessage, m_pSocket);
+    MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 }
 
 // Subscribes to a subject.
@@ -110,7 +110,7 @@ SubscriptionPtr ConnectionImpl::subscribe(const std::string& subject, Subscripti
     header.setAction(NetworkMessageHeader::Action::SUBSCRIBE);
     header.setSubscriptionID(subscriptionID);
     header.setSubject(subject);
-    Utils::sendNetworkMessage(networkMessage, m_pSocket);
+    MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 
     return pSubscription;
 }
@@ -123,7 +123,7 @@ void ConnectionImpl::unsubscribe(uint32_t subscriptionID, bool removeFromCollect
     auto& header = networkMessage.getHeader();
     header.setAction(NetworkMessageHeader::Action::UNSUBSCRIBE);
     header.setSubscriptionID(subscriptionID);
-    Utils::sendNetworkMessage(networkMessage, m_pSocket);
+    MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 
     // We remove the subscription from the collection...
     if (removeFromCollection)
@@ -153,7 +153,7 @@ void ConnectionImpl::onDataReceived(Socket* /*pSocket*/, BufferPtr pBuffer)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -163,11 +163,11 @@ void ConnectionImpl::onDisconnected(Socket* pSocket)
     try
     {
         // RSSTODO: REMOVE THIS!!!
-        Logger::info(MMUtils::format("ConnectionImpl::onDisconnected, socket-name=%s", pSocket->getName().c_str()));
+        Logger::info(Utils::format("ConnectionImpl::onDisconnected, socket-name=%s", pSocket->getName().c_str()));
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -181,7 +181,7 @@ void ConnectionImpl::onAck()
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 

@@ -1,6 +1,6 @@
 #include "Gateway.h"
 #include "Socket.h"
-#include "MMUtils.h"
+#include "Utils.h"
 #include "Logger.h"
 #include "NetworkMessage.h"
 #include "Message.h"
@@ -33,7 +33,7 @@ void Gateway::createListeningSocket()
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -50,7 +50,7 @@ void Gateway::onNewConnection(SocketPtr pSocket)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -75,7 +75,7 @@ void Gateway::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -98,7 +98,7 @@ void Gateway::onDisconnected(Socket* pSocket)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -107,13 +107,13 @@ void Gateway::onConnect(const std::string& socketName, const NetworkMessageHeade
 {
     // We log the connect request...
     auto& service = header.getSubject();
-    Logger::info(MMUtils::format("Received CONNECT request from %s for service %s", socketName.c_str(), service.c_str()));
+    Logger::info(Utils::format("Received CONNECT request from %s for service %s", socketName.c_str(), service.c_str()));
 
     // We find the socket from the pending-collection...
     auto it_pendingConnections = m_pendingConnections.find(socketName);
     if (it_pendingConnections == m_pendingConnections.end())
     {
-        auto message = MMUtils::format("Socket %s not in pending-collection", socketName.c_str());
+        auto message = Utils::format("Socket %s not in pending-collection", socketName.c_str());
         throw Exception(message);
     }
     auto pSocket = it_pendingConnections->second;

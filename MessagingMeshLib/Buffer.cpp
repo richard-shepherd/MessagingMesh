@@ -3,7 +3,7 @@
 #include "Message.h"
 #include "Exception.h"
 #include "Logger.h"
-#include "Utils.h"
+#include "MMUtils.h"
 using namespace MessagingMesh;
 
 // Constructor.

@@ -2,8 +2,8 @@
 #include "UVLoop.h"
 #include "Socket.h"
 #include "Logger.h"
-#include "Utils.h"
 #include "MMUtils.h"
+#include "Utils.h"
 #include "NetworkMessage.h"
 using namespace MessagingMesh;
 
@@ -41,7 +41,7 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
         auto action = header.getAction();
 
         // RSSTODO: REMOVE THIS!!!
-        Logger::info(MMUtils::format("ServiceManager::onDataReceived, action=%d", static_cast<int8_t>(action)));
+        Logger::info(Utils::format("ServiceManager::onDataReceived, action=%d", static_cast<int8_t>(action)));
 
         switch (action)
         {
@@ -52,7 +52,7 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -68,7 +68,7 @@ void ServiceManager::onDisconnected(Socket* pSocket)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -82,11 +82,11 @@ void ServiceManager::onMoveToLoopComplete(Socket* pSocket)
         NetworkMessage connectMessage;
         auto& header = connectMessage.getHeader();
         header.setAction(NetworkMessageHeader::Action::ACK);
-        Utils::sendNetworkMessage(connectMessage, pSocket);
+        MMUtils::sendNetworkMessage(connectMessage, pSocket);
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 

@@ -1,6 +1,6 @@
 #include "Socket.h"
 #include "Logger.h"
-#include "MMUtils.h"
+#include "Utils.h"
 #include "UVUtils.h"
 #include "UVLoop.h"
 #include "Buffer.h"
@@ -91,7 +91,7 @@ void Socket::onSocketConnected()
 void Socket::listen(int port)
 {
     // We create a name for the socket from its connection info...
-    m_name = MMUtils::format("LISTENING-SOCKET:%d", port);
+    m_name = Utils::format("LISTENING-SOCKET:%d", port);
     Logger::info("Creating socket: " + m_name);
 
     // We create the UV socket...
@@ -117,7 +117,7 @@ void Socket::listen(int port)
     );
     if (listenResult)
     {
-        Logger::error(MMUtils::format("uv_listen error: %s", uv_strerror(listenResult)));
+        Logger::error(Utils::format("uv_listen error: %s", uv_strerror(listenResult)));
     }
 }
 
@@ -132,7 +132,7 @@ void Socket::accept(uv_stream_t* pServer)
     {
         // We find the name of the client...
         auto peerInfo = UVUtils::getPeerIPInfo(m_pSocket);
-        m_name = MMUtils::format("CLIENT-SOCKET:%s:%s", peerInfo.Hostname.c_str(), peerInfo.Service.c_str());
+        m_name = Utils::format("CLIENT-SOCKET:%s:%s", peerInfo.Hostname.c_str(), peerInfo.Service.c_str());
         Logger::info("Accepted socket: " + m_name);
 
         // We start reading and writing...
@@ -148,8 +148,8 @@ void Socket::accept(uv_stream_t* pServer)
 // Connects a client socket to the IP address and port specified.
 void Socket::connectIP(const std::string& ipAddress, int port)
 {
-    m_name = MMUtils::format("CLIENT-SOCKET:%s:%d", ipAddress.c_str(), port);
-    Logger::info(MMUtils::format("Connecting to %s:%d", ipAddress.c_str(), port));
+    m_name = Utils::format("CLIENT-SOCKET:%s:%d", ipAddress.c_str(), port);
+    Logger::info(Utils::format("Connecting to %s:%d", ipAddress.c_str(), port));
 
     // We create the UV socket...
     createSocket();
@@ -176,7 +176,7 @@ void Socket::connect(const std::string& hostname, int port)
 {
     try
     {
-        Logger::info(MMUtils::format("Connecting to: %s:%d", hostname.c_str(), port));
+        Logger::info(Utils::format("Connecting to: %s:%d", hostname.c_str(), port));
 
         // We create a context to use in callbacks...
         auto pContext = new connect_hostname_t;
@@ -207,14 +207,14 @@ void Socket::connect(const std::string& hostname, int port)
         {
             // An error has occurred...
             auto error = uv_strerror(status);
-            Logger::error(MMUtils::format("Hostname resolution error: %s", error));
+            Logger::error(Utils::format("Hostname resolution error: %s", error));
             delete pContext;
             delete pRequest;
         }
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -231,7 +231,7 @@ void Socket::onDNSResolution(uv_getaddrinfo_t* pRequest, int status, struct addr
         {
             // An error occurred...
             auto error = uv_strerror(status);
-            Logger::error(MMUtils::format("Hostname resolution error: %s", error));
+            Logger::error(Utils::format("Hostname resolution error: %s", error));
             delete pContext;
             delete pRequest;
             return;
@@ -245,7 +245,7 @@ void Socket::onDNSResolution(uv_getaddrinfo_t* pRequest, int status, struct addr
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -257,7 +257,7 @@ void Socket::onConnectCompleted(uv_connect_t* pRequest, int status)
         delete pRequest;
         if (status < 0)
         {
-            Logger::error(MMUtils::format("Connection error: %s", uv_strerror(status)));
+            Logger::error(Utils::format("Connection error: %s", uv_strerror(status)));
             return;
         }
 
@@ -266,7 +266,7 @@ void Socket::onConnectCompleted(uv_connect_t* pRequest, int status)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -332,7 +332,7 @@ void Socket::moveToLoop_onSocketClosed(move_socket_t* pMoveInfo)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -343,7 +343,7 @@ void Socket::moveToLoop_registerDuplicatedSocket(UVLoopPtr pUVLoop, OSSocketHold
     try
     {
         auto socket = pOSSocket->getSocket();
-        Logger::info(MMUtils::format("Connecting to duplicated socket %d", socket));
+        Logger::info(Utils::format("Connecting to duplicated socket %d", socket));
 
         // We switch to the new UV loop...
         m_pUVLoop = pUVLoop;
@@ -355,7 +355,7 @@ void Socket::moveToLoop_registerDuplicatedSocket(UVLoopPtr pUVLoop, OSSocketHold
         auto status = uv_tcp_open(m_pSocket, socket);
         if (status != 0)
         {
-            Logger::error(MMUtils::format("uv_tcp_open failed: %s", uv_strerror(status)));
+            Logger::error(Utils::format("uv_tcp_open failed: %s", uv_strerror(status)));
             return;
         }
 
@@ -367,7 +367,7 @@ void Socket::moveToLoop_registerDuplicatedSocket(UVLoopPtr pUVLoop, OSSocketHold
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -439,7 +439,7 @@ void Socket::processQueuedWrites()
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -451,7 +451,7 @@ void Socket::onWriteCompleted(uv_write_t* pRequest, int status)
         // We check the status...
         if (status < 0)
         {
-            Logger::error(MMUtils::format("Write error: %s", uv_strerror(status)));
+            Logger::error(Utils::format("Write error: %s", uv_strerror(status)));
         }
 
         // We release the write request (including the buffer)...
@@ -460,7 +460,7 @@ void Socket::onWriteCompleted(uv_write_t* pRequest, int status)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -474,7 +474,7 @@ void Socket::onNewConnection(uv_stream_t* pServer, int status)
         Logger::info("onNewConnection");
         if (status < 0)
         {
-            Logger::error(MMUtils::format("Connection error: %s", uv_strerror(status)));
+            Logger::error(Utils::format("Connection error: %s", uv_strerror(status)));
             return;
         }
 
@@ -487,7 +487,7 @@ void Socket::onNewConnection(uv_stream_t* pServer, int status)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 
@@ -500,7 +500,7 @@ void Socket::onDataReceived(uv_stream_t* /*pStream*/, ssize_t nread, const uv_bu
         if (nread < 1)
         {
             auto error = uv_strerror((int)nread);
-            Logger::info(MMUtils::format("onDataReceived: %s", error));
+            Logger::info(Utils::format("onDataReceived: %s", error));
             if (nread == UV_EOF)
             {
                 if (m_pCallback) m_pCallback->onDisconnected(this);
@@ -585,7 +585,7 @@ void Socket::onDataReceived(uv_stream_t* /*pStream*/, ssize_t nread, const uv_bu
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 }
 

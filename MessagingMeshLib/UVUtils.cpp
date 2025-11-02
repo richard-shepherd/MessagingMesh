@@ -1,5 +1,5 @@
 #include "UVUtils.h"
-#include "MMUtils.h"
+#include "Utils.h"
 #include "Logger.h"
 #include "Exception.h"
 #include "OSSocketHolder.h"
@@ -35,7 +35,7 @@ UVUtils::IPInfo UVUtils::getPeerIPInfo(uv_tcp_t* pTCPHandle)
     }
     else
     {
-        Logger::error(MMUtils::format("getPeerInfo: getnameinfo error: %d", status));
+        Logger::error(Utils::format("getPeerInfo: getnameinfo error: %d", status));
     }
     return ipInfo;
 }
@@ -91,7 +91,7 @@ uv_os_sock_t UVUtils::duplicateSocket_Windows(const uv_os_sock_t& socket)
     if (duplicateSocketStatus != 0)
     {
         auto error = WSAGetLastError();
-        throw Exception(MMUtils::format("WSADuplicateSocket failed: %d", error));
+        throw Exception(Utils::format("WSADuplicateSocket failed: %d", error));
     }
 
     // We duplicate the socket...
@@ -105,7 +105,7 @@ uv_os_sock_t UVUtils::duplicateSocket_Windows(const uv_os_sock_t& socket)
     if (newSocket == INVALID_SOCKET)
     {
         auto error = WSAGetLastError();
-        throw Exception(MMUtils::format("WSASocket (dup) failed: %d", error));
+        throw Exception(Utils::format("WSASocket (dup) failed: %d", error));
     }
 
     // We return the duplicated socket...

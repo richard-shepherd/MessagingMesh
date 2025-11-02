@@ -1,24 +1,21 @@
 #pragma once
-#include "SharedPointers.h"
+#include <string>
 
 namespace MessagingMesh
 {
-    // Forward declarations...
-    class NetworkMessage;
-    class Socket;
-
     /// <summary>
-    /// Static utility functions for messaging mesh.
+    /// Static utility functions that can be shared with clients.
     /// </summary>
     class Utils
     {
     // Public functions...
     public:
-        // Sends a network-message to the socket.
-        static void sendNetworkMessage(const NetworkMessage& networkMessage, SocketPtr pSocket);
+        // Returns a std::string created using the string format and variadic arguments.
+        static std::string format(const char* format, ...);
 
-        // Sends a network-message to the socket.
-        static void sendNetworkMessage(const NetworkMessage& networkMessage, Socket* pSocket);
+        // Returns a time string in the format HH:MM:SS.mmm
+        static std::string getTimeString();
+
     };
 } // namespace
 

@@ -72,7 +72,7 @@
     <ClInclude Include="ThreadsafeConsumableVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.h">
+    <ClInclude Include="MMUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UVLoop.h">
@@ -84,7 +84,7 @@
     <ClInclude Include="MessagingMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MMUtils.h">
+    <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -128,7 +128,7 @@
     <ClCompile Include="Tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utils.cpp">
+    <ClCompile Include="MMUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UVLoop.cpp">
@@ -137,7 +137,7 @@
     <ClCompile Include="UVUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MMUtils.cpp">
+    <ClCompile Include="Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
