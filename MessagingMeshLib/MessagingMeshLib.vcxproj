@@ -114,6 +114,9 @@
     <Lib>
       <AdditionalDependencies>$(SolutionDir)libuv\Debug\libuv.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy $(SolutionDir)libuv\Debug\libuv.pdb $(SolutionDir)build-output\MessagingMeshLib\lib\Debug</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
