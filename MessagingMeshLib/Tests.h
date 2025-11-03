@@ -10,6 +10,9 @@ namespace MessagingMesh
         // Tests message serialization and deserialization.
         static void messageSerialization();
 
+        // Tests tokenizing strings.
+        static void tokenize();
+
     // Private functions...
     private:
 

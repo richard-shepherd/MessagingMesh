@@ -3,6 +3,7 @@
 #include "Gateway.h"
 #include "Utils.h"
 #include "UVUtils.h"
+#include "Tests.h"
 using namespace MessagingMesh;
 
 // Logs messages to the screen.
@@ -16,16 +17,18 @@ void onMessageLogged(Logger::LogLevel logLevel, const std::string& message)
 // Main.
 int main(int /*argc*/, char** /*argv*/)
 {
-    // We set the thread name...
-    UVUtils::setThreadName("MAIN");
+    Tests::tokenize();
 
-    // We set up logging...
-    Logger::registerCallback(onMessageLogged);
+    //// We set the thread name...
+    //UVUtils::setThreadName("MAIN");
 
-    // We run the gateway...
-    Gateway gateway(5050);
+    //// We set up logging...
+    //Logger::registerCallback(onMessageLogged);
 
-    Logger::info("Press Enter to exit");
-    std::cin.get();
+    //// We run the gateway...
+    //Gateway gateway(5050);
+
+    //Logger::info("Press Enter to exit");
+    //std::cin.get();
 }
 

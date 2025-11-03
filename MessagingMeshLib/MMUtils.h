@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include <string>
 #include "SharedPointers.h"
 
 namespace MessagingMesh
@@ -19,6 +21,9 @@ namespace MessagingMesh
 
         // Sends a network-message to the socket.
         static void sendNetworkMessage(const NetworkMessage& networkMessage, Socket* pSocket);
+
+        // Splits the input string on the delimiter and returns a vector of tokens.
+        static std::vector<std::string> tokenize(const std::string& s, char delimiter);
     };
 } // namespace
 
