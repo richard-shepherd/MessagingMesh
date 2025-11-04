@@ -66,7 +66,7 @@
     <ClInclude Include="Subscription.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tests.h">
+    <ClInclude Include="Tests_MessagingMeshLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ThreadsafeConsumableVector.h">
@@ -85,6 +85,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -125,7 +128,7 @@
     <ClCompile Include="Subscription.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tests.cpp">
+    <ClCompile Include="Tests_MessagingMeshLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MMUtils.cpp">

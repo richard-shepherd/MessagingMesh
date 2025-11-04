@@ -3,20 +3,9 @@
 
 namespace MessagingMesh
 {
-    class Tests
+    namespace TestUtils
     {
-    // Public methods...
-    public:
-        // Tests message serialization and deserialization.
-        static void messageSerialization();
-
-        // Tests tokenizing strings.
-        static void tokenize();
-
-    // Private functions...
-    private:
-
-        // Compares values and outputs if they are different.
+        // Compares values, and outputs if they are the same or different.
         template <typename T>
         static void assertEqual(const T& actual, const T& expected)
         {
@@ -29,7 +18,7 @@ namespace MessagingMesh
                 std::cout << "FAIL: expected=" << expected << ", actual=" << actual << std::endl;
             }
         }
-    };
-} // namespace
+    }  // namespace TestUtils
+} // namespace MessagingMesh
 
 

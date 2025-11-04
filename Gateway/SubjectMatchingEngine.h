@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include <map>
 
 namespace MessagingMesh
 {
@@ -108,15 +109,22 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Adds a subscription.
-        void addSubscription(const std::string& subject, uint32_t subscriptionID, Socket* pClientSocket);
+        void addSubscription(const std::string& subject, uint32_t subscriptionID, const std::string& clientName, Socket* pClientSocket);
 
     // Private data...
     private:
         // A node in the interest graph.
         struct Node
         {
+            // Map of tokens to child nodes...
+            std::map<std::string, Node> Nodes;
 
+            // Map of client name to ClientInfo.
+            std::map<std::string, ClientInfo> ClientInfos;
         };
+
+        // The root node of the interest graph...
+        Node m_rootNode;
     };
 } // namespace
 

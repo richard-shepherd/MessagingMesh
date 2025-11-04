@@ -27,10 +27,11 @@
     <ClInclude Include="NetworkMessageHeader.h" />
     <ClInclude Include="OSSocketHolder.h" />
     <ClInclude Include="SharedPointers.h" />
+    <ClInclude Include="TestUtils.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Socket.h" />
     <ClInclude Include="Subscription.h" />
-    <ClInclude Include="Tests.h" />
+    <ClInclude Include="Tests_MessagingMeshLib.h" />
     <ClInclude Include="ThreadsafeConsumableVector.h" />
     <ClInclude Include="MMUtils.h" />
     <ClInclude Include="UVLoop.h" />
@@ -50,7 +51,7 @@
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Socket.cpp" />
     <ClCompile Include="Subscription.cpp" />
-    <ClCompile Include="Tests.cpp" />
+    <ClCompile Include="Tests_MessagingMeshLib.cpp" />
     <ClCompile Include="MMUtils.cpp" />
     <ClCompile Include="UVLoop.cpp" />
     <ClCompile Include="UVUtils.cpp" />

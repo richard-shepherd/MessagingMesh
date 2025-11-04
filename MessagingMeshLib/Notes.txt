@@ -1,5 +1,9 @@
 TODO
 ----
+- Connection must not make more than one subscription to the gateway for a
+  subject. It should check if the subsciption has already been made and map
+  the existing subscription ID to multiple callbacks if necessary.
+
 - ConnectionImpl::m_subscriptions needs to be thread safe
 
 - Think about use of std::string. We want to encode strings as UTF-8

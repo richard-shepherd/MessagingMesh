@@ -15,11 +15,13 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ServiceManager.cpp" />
     <ClCompile Include="SubjectMatchingEngine.cpp" />
+    <ClCompile Include="Tests_Gateway.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Gateway.h" />
     <ClInclude Include="ServiceManager.h" />
     <ClInclude Include="SubjectMatchingEngine.h" />
+    <ClInclude Include="Tests_Gateway.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

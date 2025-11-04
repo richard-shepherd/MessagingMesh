@@ -1,12 +1,14 @@
-#include "Tests.h"
+#include "Tests_MessagingMeshLib.h"
+#include "TestUtils.h"
 #include "Message.h"
 #include "Field.h"
 #include "Buffer.h"
 #include "MMUtils.h"
 using namespace MessagingMesh;
+using namespace MessagingMesh::TestUtils;
 
 // Tests message serialization and deserialization.
-void Tests::messageSerialization()
+void Tests_MessagingMeshLib::messageSerialization()
 {
     std::string name = "Charles";
     double age = 47.5;
@@ -46,7 +48,7 @@ void Tests::messageSerialization()
 
 
 // Tests tokenizing strings.
-void Tests::tokenize()
+void Tests_MessagingMeshLib::tokenize()
 {
     {
         std::string s1 = "A.B.C";

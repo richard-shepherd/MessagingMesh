@@ -3,7 +3,7 @@
 #include "Gateway.h"
 #include "Utils.h"
 #include "UVUtils.h"
-#include "Tests.h"
+#include "Tests_Gateway.h"
 using namespace MessagingMesh;
 
 // Logs messages to the screen.
@@ -17,7 +17,7 @@ void onMessageLogged(Logger::LogLevel logLevel, const std::string& message)
 // Main.
 int main(int /*argc*/, char** /*argv*/)
 {
-    Tests::tokenize();
+    Tests_Gateway::subjectMatchingEngine();
 
     //// We set the thread name...
     //UVUtils::setThreadName("MAIN");
