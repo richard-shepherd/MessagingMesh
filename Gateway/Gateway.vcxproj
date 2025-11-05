@@ -18,6 +18,8 @@
     <ClCompile Include="Tests_Gateway.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GatewaySharedPointers.h" />
+    <ClInclude Include="SubscriptionInfo.h" />
     <ClInclude Include="Gateway.h" />
     <ClInclude Include="ServiceManager.h" />
     <ClInclude Include="SubjectMatchingEngine.h" />

@@ -44,5 +44,11 @@
     <ClInclude Include="Tests_Gateway.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SubscriptionInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GatewaySharedPointers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

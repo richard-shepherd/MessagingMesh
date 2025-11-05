@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <string>
 #include <map>
+#include <vector>
+#include "GatewaySharedPointers.h"
 
 namespace MessagingMesh
 {
@@ -98,18 +100,13 @@ namespace MessagingMesh
     /// </summary>
     class SubjectMatchingEngine
     {
-    // Public types
-    public:
-        struct ClientInfo
-        {
-            Socket* pSocket;
-            uint32_t subscriptionID;
-        };
-
     // Public methods...
     public:
         // Adds a subscription.
         void addSubscription(const std::string& subject, uint32_t subscriptionID, const std::string& clientName, Socket* pClientSocket);
+
+        // Returns subscription-infos that match the subject provided.
+        std::vector<SubscriptionInfoPtr> getMatchingSubscriptionInfos(const std::string& subject);
 
     // Private data...
     private:
@@ -119,8 +116,8 @@ namespace MessagingMesh
             // Map of tokens to child nodes...
             std::map<std::string, Node> Nodes;
 
-            // Map of client name to ClientInfo.
-            std::map<std::string, ClientInfo> ClientInfos;
+            // Map of client socket name to SubscriptionInfo.
+            std::map<std::string, SubscriptionInfoPtr> SubscriptionInfos;
         };
 
         // The root node of the interest graph...
