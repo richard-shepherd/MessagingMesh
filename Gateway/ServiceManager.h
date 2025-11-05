@@ -3,6 +3,7 @@
 #include <string>
 #include "SharedPointers.h"
 #include "Socket.h"
+#include "SubjectMatchingEngine.h"
 
 namespace MessagingMesh
 {
@@ -55,7 +56,10 @@ namespace MessagingMesh
 
     // Private functions...
     private:
-        // Called when we receive a message.
+        // Called when we receive a SUBSCRIBE message.
+        void onSubscribe(Socket* pSocket, const NetworkMessageHeader& header);
+
+        // Called when we receive a SEND_MESSAGE message.
         void onMessage(const Socket* pSocket, const NetworkMessageHeader& header, BufferPtr pBuffer);
 
     // Private data...
@@ -68,6 +72,9 @@ namespace MessagingMesh
 
         // Client sockets, keyed by socket name...
         std::map<std::string, SocketPtr> m_clientSockets;
+
+        // Maps sent messages to clients who are subscribed to them...
+        SubjectMatchingEngine m_subjectMatchingEngine;
     };
 } // namespace
 

@@ -45,6 +45,10 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
 
         switch (action)
         {
+        case NetworkMessageHeader::Action::SUBSCRIBE:
+            onSubscribe(pSocket, header);
+            break;
+
         case NetworkMessageHeader::Action::SEND_MESSAGE:
             onMessage(pSocket, header, pBuffer);
             break;
@@ -90,7 +94,18 @@ void ServiceManager::onMoveToLoopComplete(Socket* pSocket)
     }
 }
 
-// Called when we receive a message.
+// Called when we receive a SUBSCRIBE message.
+void ServiceManager::onSubscribe(Socket* pSocket, const NetworkMessageHeader& header)
+{
+    // We register the subscription with the subject matching engine...
+    m_subjectMatchingEngine.addSubscription(
+        header.getSubject(),
+        header.getSubscriptionID(),
+        pSocket->getName(),
+        pSocket);
+}
+
+// Called when we receive a SEND_MESSAGE message.
 void ServiceManager::onMessage(const Socket* /*pSocket*/, const NetworkMessageHeader& /*header*/, BufferPtr /*pBuffer*/)
 {
 }
