@@ -132,7 +132,7 @@ void Socket::accept(uv_stream_t* pServer)
     {
         // We find the name of the client...
         auto peerInfo = UVUtils::getPeerIPInfo(m_pSocket);
-        m_name = Utils::format("CLIENT-SOCKET:%s:%s", peerInfo.Hostname.c_str(), peerInfo.Service.c_str());
+        m_name = Utils::format("%s:%s", peerInfo.Hostname.c_str(), peerInfo.Service.c_str());
         Logger::info("Accepted socket: " + m_name);
 
         // We start reading and writing...
@@ -148,7 +148,7 @@ void Socket::accept(uv_stream_t* pServer)
 // Connects a client socket to the IP address and port specified.
 void Socket::connectIP(const std::string& ipAddress, int port)
 {
-    m_name = Utils::format("CLIENT-SOCKET:%s:%d", ipAddress.c_str(), port);
+    m_name = Utils::format("%s:%d", ipAddress.c_str(), port);
     Logger::info(Utils::format("Connecting to %s:%d", ipAddress.c_str(), port));
 
     // We create the UV socket...
@@ -501,7 +501,7 @@ void Socket::onDataReceived(uv_stream_t* /*pStream*/, ssize_t nread, const uv_bu
         {
             auto error = uv_strerror((int)nread);
             Logger::info(Utils::format("onDataReceived: %s", error));
-            if (nread == UV_EOF)
+            if (nread == UV_EOF || nread == UV_ECONNRESET)
             {
                 if (m_pCallback) m_pCallback->onDisconnected(this);
             }

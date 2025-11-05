@@ -27,6 +27,23 @@ void SubjectMatchingEngine::removeSubscription(const std::string& subject, const
     pNode->SubscriptionInfos.erase(clientName);
 }
 
+// Removes all subscriptions for the client specified.
+void SubjectMatchingEngine::removeAllSubscriptions(const std::string& clientName)
+{
+    removeAllSubscriptions(m_pRootNode, clientName);
+}
+
+// Removes all subscriptions for the client specified from the node provided
+// and from all its child nodes recursively.
+void SubjectMatchingEngine::removeAllSubscriptions(Node* pNode, const std::string& clientName)
+{
+    pNode->SubscriptionInfos.erase(clientName);
+    for (const auto& pair : pNode->Nodes)
+    {
+        removeAllSubscriptions(pair.second, clientName);
+    }
+}
+
 // Returns subscription-infos that match the subject provided.
 std::vector<SubscriptionInfoPtr> SubjectMatchingEngine::getMatchingSubscriptionInfos(const std::string& subject)
 {
@@ -38,7 +55,7 @@ std::vector<SubscriptionInfoPtr> SubjectMatchingEngine::getMatchingSubscriptionI
     // We match each token in the interest graph. 
     // When all tokens have matched, we return the subscription-infos from the final node.
     auto gotMatch = true;
-    auto pNode = &m_rootNode;
+    auto pNode = m_pRootNode;
     for (auto& token : tokens)
     {
         // We check for a matching token...
@@ -51,7 +68,7 @@ std::vector<SubscriptionInfoPtr> SubjectMatchingEngine::getMatchingSubscriptionI
         }
 
         // We move to the next node...
-        pNode = &(it->second);
+        pNode = it->second;
     }
 
     // If we have a match, we return the collection of subscription-infos...
@@ -73,11 +90,22 @@ SubjectMatchingEngine::Node* SubjectMatchingEngine::getNode(const std::string& s
     auto tokens = MMUtils::tokenize(subject, '.');
 
     // We find the node for the subject by walking the graph for each token...
-    auto pNode = &m_rootNode;
+    auto pNode = m_pRootNode;
     for (auto& token : tokens)
     {
-        // Finds or creates the node for the token...
-        pNode = &(pNode->Nodes[token]);
+        // We finds or creates the node for the token...
+        auto& nodeMap = pNode->Nodes;
+        auto it = nodeMap.find(token);
+        if (it == nodeMap.end())
+        {
+            // There is no node for the token, so we create it...
+            pNode = new Node;
+            nodeMap.insert({ token, pNode });
+        }
+        else
+        {
+            pNode = it->second;
+        }
     }
 
     return pNode;

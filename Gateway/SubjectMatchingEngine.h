@@ -108,6 +108,9 @@ namespace MessagingMesh
         // Removes a subscription.
         void removeSubscription(const std::string& subject, const std::string& clientName);
 
+        // Removes all subscriptions for the client specified.
+        void removeAllSubscriptions(const std::string& clientName);
+
         // Returns subscription-infos that match the subject provided.
         std::vector<SubscriptionInfoPtr> getMatchingSubscriptionInfos(const std::string& subject);
 
@@ -117,7 +120,7 @@ namespace MessagingMesh
         struct Node
         {
             // Map of tokens to child nodes...
-            std::map<std::string, Node> Nodes;
+            std::map<std::string, Node*> Nodes;
 
             // Map of client socket name to SubscriptionInfo.
             std::map<std::string, SubscriptionInfoPtr> SubscriptionInfos;
@@ -128,10 +131,14 @@ namespace MessagingMesh
         // Gets the node in the interest graph for the subject specified.
         Node* getNode(const std::string& subject);
 
+        // Removes all subscriptions for the client specified from the node provided
+        // and from all its child nodes recursively.
+        void removeAllSubscriptions(Node* pNode, const std::string& clientName);
+
     // Private data...
     private:
         // The root node of the interest graph...
-        Node m_rootNode;
+        Node* m_pRootNode = new Node;
     };
 } // namespace
 

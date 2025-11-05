@@ -6,9 +6,13 @@ namespace MessagingMesh
     namespace TestUtils
     {
         // Logs a message.
-        void log(const std::string& message)
+        void log(const std::string& message, bool preceedingBlankLine = true)
         {
-            std::cout << message << std::endl;
+            if (preceedingBlankLine)
+            {
+                std::cout << std::endl;
+            }
+            std::cout  << message << std::endl;
         }
 
         // Compares values, and outputs if they are the same or different.

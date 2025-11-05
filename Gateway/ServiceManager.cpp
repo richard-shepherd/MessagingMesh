@@ -49,8 +49,16 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
             onSubscribe(pSocket, header);
             break;
 
+        case NetworkMessageHeader::Action::UNSUBSCRIBE:
+            onUnsubscribe(pSocket, header);
+            break;
+
         case NetworkMessageHeader::Action::SEND_MESSAGE:
             onMessage(pSocket, header, pBuffer);
+            break;
+
+        case NetworkMessageHeader::Action::DISCONNECT:
+            onDisconnected(pSocket);
             break;
         }
     }
@@ -66,8 +74,11 @@ void ServiceManager::onDisconnected(Socket* pSocket)
 {
     try
     {
-        // We remove the socket from the collection of client sockets...
+        // We remove any active subscriptions for the client...
         auto& socketName = pSocket->getName();
+        m_subjectMatchingEngine.removeAllSubscriptions(socketName);
+
+        // We remove the socket from the collection of client sockets...
         m_clientSockets.erase(socketName);
     }
     catch (const std::exception& ex)
