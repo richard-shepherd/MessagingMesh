@@ -5,9 +5,15 @@ namespace MessagingMesh
 {
     namespace TestUtils
     {
+        // Logs a message.
+        void log(const std::string& message)
+        {
+            std::cout << message << std::endl;
+        }
+
         // Compares values, and outputs if they are the same or different.
         template <typename T>
-        static void assertEqual(const T& actual, const T& expected)
+        void assertEqual(const T& actual, const T& expected)
         {
             if (actual == expected)
             {

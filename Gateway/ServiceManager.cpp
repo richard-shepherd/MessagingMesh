@@ -105,6 +105,15 @@ void ServiceManager::onSubscribe(Socket* pSocket, const NetworkMessageHeader& he
         pSocket);
 }
 
+// Called when we receive an UNSUBSCRIBE message.
+void ServiceManager::onUnsubscribe(Socket* pSocket, const NetworkMessageHeader& header)
+{
+    // We unregister the subscription from the subject matching engine...
+    m_subjectMatchingEngine.removeSubscription(
+        header.getSubject(),
+        pSocket->getName());
+}
+
 // Called when we receive a SEND_MESSAGE message.
 void ServiceManager::onMessage(const Socket* /*pSocket*/, const NetworkMessageHeader& /*header*/, BufferPtr /*pBuffer*/)
 {

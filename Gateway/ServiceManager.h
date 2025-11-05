@@ -59,6 +59,9 @@ namespace MessagingMesh
         // Called when we receive a SUBSCRIBE message.
         void onSubscribe(Socket* pSocket, const NetworkMessageHeader& header);
 
+        // Called when we receive an UNSUBSCRIBE message.
+        void onUnsubscribe(Socket* pSocket, const NetworkMessageHeader& header);
+
         // Called when we receive a SEND_MESSAGE message.
         void onMessage(const Socket* pSocket, const NetworkMessageHeader& header, BufferPtr pBuffer);
 

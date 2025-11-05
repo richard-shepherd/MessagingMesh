@@ -105,10 +105,13 @@ namespace MessagingMesh
         // Adds a subscription.
         void addSubscription(const std::string& subject, uint32_t subscriptionID, const std::string& clientName, Socket* pClientSocket);
 
+        // Removes a subscription.
+        void removeSubscription(const std::string& subject, const std::string& clientName);
+
         // Returns subscription-infos that match the subject provided.
         std::vector<SubscriptionInfoPtr> getMatchingSubscriptionInfos(const std::string& subject);
 
-    // Private data...
+    // Private types...
     private:
         // A node in the interest graph.
         struct Node
@@ -120,6 +123,13 @@ namespace MessagingMesh
             std::map<std::string, SubscriptionInfoPtr> SubscriptionInfos;
         };
 
+    // Private functions...
+    private:
+        // Gets the node in the interest graph for the subject specified.
+        Node* getNode(const std::string& subject);
+
+    // Private data...
+    private:
         // The root node of the interest graph...
         Node m_rootNode;
     };

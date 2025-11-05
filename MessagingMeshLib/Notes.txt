@@ -4,6 +4,8 @@ TODO
   subject. It should check if the subsciption has already been made and map
   the existing subscription ID to multiple callbacks if necessary.
 
+- Support a Tag ('closure') for subscriptions, returned with callbacks
+
 - ConnectionImpl::m_subscriptions needs to be thread safe
 
 - Think about use of std::string. We want to encode strings as UTF-8
