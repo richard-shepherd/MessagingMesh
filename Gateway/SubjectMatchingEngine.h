@@ -112,7 +112,7 @@ namespace MessagingMesh
         void removeAllSubscriptions(const std::string& clientName);
 
         // Returns subscription-infos that match the subject provided.
-        std::vector<SubscriptionInfoPtr> getMatchingSubscriptionInfos(const std::string& subject);
+        VecSubscriptionInfo getMatchingSubscriptionInfos(const std::string& subject);
 
     // Private types...
     private:
@@ -139,6 +139,12 @@ namespace MessagingMesh
     private:
         // The root node of the interest graph...
         Node* m_pRootNode = new Node;
+
+        // Controls whether caching of sent subjects to subscription-infos is enabled...
+        bool m_cachingEnabled = false;
+
+        // Cache of sent subjects to subscription-infos for them...
+        std::map<std::string, VecSubscriptionInfo> m_cache;
     };
 } // namespace
 

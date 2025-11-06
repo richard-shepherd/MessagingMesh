@@ -2,6 +2,7 @@
 #include "MMUtils.h"
 #include "Socket.h"
 #include "SubscriptionInfo.h"
+#include "Logger.h"
 using namespace MessagingMesh;
 
 // Adds a subscription.
@@ -15,6 +16,9 @@ void SubjectMatchingEngine::addSubscription(const std::string& subject, uint32_t
     //       for the same subject. This is managed in client libraries.
     auto pSubscriptionInfo = SubscriptionInfo::create(pClientSocket, subscriptionID);
     pNode->SubscriptionInfos.insert({clientName, pSubscriptionInfo});
+
+    // The change to subscriptions has invalidaed the cache...
+    m_cache.clear();
 }
 
 // Removes a subscription.
@@ -25,12 +29,18 @@ void SubjectMatchingEngine::removeSubscription(const std::string& subject, const
 
     // We remove info for this client...
     pNode->SubscriptionInfos.erase(clientName);
+
+    // The change to subscriptions has invalidaed the cache...
+    m_cache.clear();
 }
 
 // Removes all subscriptions for the client specified.
 void SubjectMatchingEngine::removeAllSubscriptions(const std::string& clientName)
 {
     removeAllSubscriptions(m_pRootNode, clientName);
+
+    // The change to subscriptions has invalidaed the cache...
+    m_cache.clear();
 }
 
 // Removes all subscriptions for the client specified from the node provided
@@ -45,8 +55,20 @@ void SubjectMatchingEngine::removeAllSubscriptions(Node* pNode, const std::strin
 }
 
 // Returns subscription-infos that match the subject provided.
-std::vector<SubscriptionInfoPtr> SubjectMatchingEngine::getMatchingSubscriptionInfos(const std::string& subject)
+VecSubscriptionInfo SubjectMatchingEngine::getMatchingSubscriptionInfos(const std::string& subject)
 {
+    // We check if we have the matches cached...
+    if (m_cachingEnabled)
+    {
+        auto it = m_cache.find(subject);
+        if (it != m_cache.end())
+        {
+            return it->second;
+        }
+    }
+
+    // Caching is not enabled, or we did not find a match in the cache. So we
+    // look for matching subscriptions...
     std::vector<SubscriptionInfoPtr> results;
 
     // We tokenize the subject...
@@ -78,6 +100,12 @@ std::vector<SubscriptionInfoPtr> SubjectMatchingEngine::getMatchingSubscriptionI
         {
             results.push_back(pair.second);
         }
+    }
+
+    // We add the results to the cache...
+    if (m_cachingEnabled)
+    {
+        m_cache.insert({ subject, results });
     }
 
     return results;
