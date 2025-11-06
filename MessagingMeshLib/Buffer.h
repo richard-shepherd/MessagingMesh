@@ -78,6 +78,11 @@ namespace MessagingMesh
     /// </summary>
     class Buffer
     {
+    // Public constants...
+    public:
+        // The size in bytes of the buffer size (int32) - which we store at the start of the buffer...
+        static const int SIZE_SIZE = 4;
+
     // Public methods...
     public:
         // Creates a Buffer instance.
@@ -199,10 +204,6 @@ namespace MessagingMesh
 
     // Private data...
     private:
-        // The size in bytes of the buffer size (int32) - which we store at the
-        // start of the buffer...
-        static const int SIZE_SIZE = 4;
-
         // The initial size we allocate for the buffer...
         const int32_t INITIAL_SIZE = 8192;
 

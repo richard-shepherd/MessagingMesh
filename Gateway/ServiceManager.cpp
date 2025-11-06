@@ -5,6 +5,7 @@
 #include "MMUtils.h"
 #include "Utils.h"
 #include "NetworkMessage.h"
+#include "SubscriptionInfo.h"
 using namespace MessagingMesh;
 
 // Constructor.
@@ -33,16 +34,13 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
 {
     try
     {
-        // The buffer holds a serialized NetworkMessage. We deserialize
-        // the header and check the action.
+        // The buffer holds a serialized NetworkMessage. We deserialize the header...
         NetworkMessage networkMessage;
         networkMessage.deserializeHeader(*pBuffer);
         auto& header = networkMessage.getHeader();
         auto action = header.getAction();
 
-        // RSSTODO: REMOVE THIS!!!
-        Logger::info(Utils::format("ServiceManager::onDataReceived, action=%d", static_cast<int8_t>(action)));
-
+        // We process the update depending on the action...
         switch (action)
         {
         case NetworkMessageHeader::Action::SUBSCRIBE:
@@ -54,7 +52,7 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
             break;
 
         case NetworkMessageHeader::Action::SEND_MESSAGE:
-            onMessage(pSocket, header, pBuffer);
+            onMessage(header, pBuffer);
             break;
 
         case NetworkMessageHeader::Action::DISCONNECT:
@@ -126,8 +124,16 @@ void ServiceManager::onUnsubscribe(Socket* pSocket, const NetworkMessageHeader& 
 }
 
 // Called when we receive a SEND_MESSAGE message.
-void ServiceManager::onMessage(const Socket* /*pSocket*/, const NetworkMessageHeader& /*header*/, BufferPtr /*pBuffer*/)
+void ServiceManager::onMessage(const NetworkMessageHeader& header, BufferPtr pBuffer)
 {
+    // We find the clients which have subscriptions to the message subject...
+    auto subscriptionInfos = m_subjectMatchingEngine.getMatchingSubscriptionInfos(header.getSubject());
+
+    // We send the update to each client...
+    for (const auto& pSubscriptionInfo : subscriptionInfos)
+    {
+        pSubscriptionInfo->getSocket()->write(pBuffer, pSubscriptionInfo->getSubscriptionID());
+    }
 }
 
 

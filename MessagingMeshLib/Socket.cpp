@@ -375,10 +375,11 @@ void Socket::moveToLoop_registerDuplicatedSocket(UVLoopPtr pUVLoop, OSSocketHold
 // Can be called from any thread, not just from the uv loop thread.
 // Queued writes will be coalesced into one network update.
 // RSSTODO: We need some way to slow down the client if it publishes too much too fast.
-void Socket::write(BufferPtr pBuffer)
+void Socket::write(BufferPtr pBuffer, uint32_t subscriptionIDOverride)
 {
     // We queue the data to write...
-    m_queuedWrites.add(pBuffer);
+    BufferInfo bufferInfo(pBuffer, subscriptionIDOverride);
+    m_queuedWrites.add(bufferInfo);
 
     // We marshall an event to write the data. As this does not take place straight 
     // away, this allows us to coalesce multiple queued writes...
@@ -405,9 +406,9 @@ void Socket::processQueuedWrites()
         // We find the combined size of the queued writes...
         auto queuedWrites = m_queuedWrites.getItems();
         size_t totalSize = 0;
-        for (auto queuedWrite : *queuedWrites)
+        for (const auto& bufferInfo : *queuedWrites)
         {
-            totalSize += queuedWrite->getBufferSize();
+            totalSize += bufferInfo.pBuffer->getBufferSize();
         }
 
         // We create a write-request with a buffer to hold all the queued items...
@@ -416,11 +417,20 @@ void Socket::processQueuedWrites()
 
         // We copy the data into the buffer...
         size_t bufferPosition = 0;
-        for (auto queuedWrite : *queuedWrites)
+        for (const auto& bufferInfo : *queuedWrites)
         {
-            auto itemSize = queuedWrite->getBufferSize();
-            auto itemData = queuedWrite->getBuffer();
+            auto& pBuffer = bufferInfo.pBuffer;
+            auto itemSize = pBuffer->getBufferSize();
+            auto itemData = pBuffer->getBuffer();
             std::memcpy(pWriteRequest->buffer.base + bufferPosition, itemData, itemSize);
+
+            // If the buffer-info specifies a subcription ID override, we write it to the buffer...
+            if (bufferInfo.subscriptionIDOverride != 0 && itemSize >= Buffer::SIZE_SIZE + sizeof(uint32_t))
+            {
+                char* pSubscriptionID = pWriteRequest->buffer.base + bufferPosition + Buffer::SIZE_SIZE;
+                std::memcpy(pSubscriptionID, &bufferInfo.subscriptionIDOverride, sizeof(uint32_t));
+            }
+
             bufferPosition += itemSize;
         }
 

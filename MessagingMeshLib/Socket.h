@@ -67,7 +67,7 @@ namespace MessagingMesh
         // Queues data to be written to the socket.
         // Can be called from any thread, not just from the uv loop thread.
         // Queued writes will be coalesced into one network update.
-        void write(BufferPtr pBuffer);
+        void write(BufferPtr pBuffer, uint32_t subscriptionIDOverride = 0);
 
         // Moves the socket to be managed by the UV loop specified.
         void moveToLoop(UVLoopPtr pLoop);
@@ -156,7 +156,13 @@ namespace MessagingMesh
         BufferPtr m_pCurrentMessage;
 
         // Data queued for writing.
-        ThreadsafeConsumableVector<BufferPtr> m_queuedWrites;
+        struct BufferInfo
+        {
+            BufferInfo(BufferPtr b, uint32_t s) : pBuffer(b), subscriptionIDOverride(s) {}
+            BufferPtr pBuffer = nullptr;
+            uint32_t subscriptionIDOverride = 0;
+        };
+        ThreadsafeConsumableVector<BufferInfo> m_queuedWrites;
 
     // Constants...
     private:

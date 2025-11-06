@@ -11,6 +11,7 @@ namespace MessagingMesh
 {
     // Forward declarations...
     class NetworkMessage;
+    class NetworkMessageHeader;
 
     /// <summary>
     /// Implementation of the Connection class, ie a client connection
@@ -57,6 +58,9 @@ namespace MessagingMesh
         // Called when we see the ACK message from the Gateway.
         void onAck();
 
+        // Called when we see the SEND_MESSAGE message from the Gateway.
+        void onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer);
+
     // Private data...
     private:
         // Construction params...
@@ -73,8 +77,9 @@ namespace MessagingMesh
         // Waits for the ACK signal...
         AutoResetEvent m_ackSignal;
 
-        // Threadsafe subscription ID...
-        std::atomic<uint32_t> m_nextSubscriptionID;
+        // Threadsafe subscription ID.
+        // Note: This starts at 1, which means we can use 0 to indicate an invalid subscription ID.
+        std::atomic<uint32_t> m_nextSubscriptionID = 1;
 
         // Active subscriptions, keyed by subscription ID.
         // Note: This holds non-shared pointers as the lifetime of Subscriptions objects

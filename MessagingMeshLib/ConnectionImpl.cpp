@@ -8,14 +8,14 @@
 #include "NetworkMessage.h"
 #include "Message.h"
 #include "Subscription.h"
+#include "Buffer.h"
 using namespace MessagingMesh;
 
 // Constructor.
 ConnectionImpl::ConnectionImpl(const std::string& hostname, int port, const std::string& service) :
     m_hostname(hostname),
     m_port(port),
-    m_service(service),
-    m_nextSubscriptionID(0)
+    m_service(service)
 {
     // We create the UV loop for client messaging...
     auto name = Utils::format("MM-%s", service.c_str());
@@ -149,6 +149,10 @@ void ConnectionImpl::onDataReceived(Socket* /*pSocket*/, BufferPtr pBuffer)
         case NetworkMessageHeader::Action::ACK:
             onAck();
             break;
+
+        case NetworkMessageHeader::Action::SEND_MESSAGE:
+            onSendMessage(header, pBuffer);
+            break;
         }
     }
     catch (const std::exception& ex)
@@ -185,3 +189,22 @@ void ConnectionImpl::onAck()
     }
 }
 
+// Called when we see the SEND_MESSAGE message from the Gateway.
+void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer)
+{
+    // We check if we have a subscription for this update...
+    auto it = m_subscriptions.find(header.getSubscriptionID());
+    if (it == m_subscriptions.end())
+    {
+        Logger::warn("NO SUBSCRIPTION FOR UPDATE! RSSTODO: REMOVE THIS");
+        // We do not have a subscription for this update.
+        return;
+    }
+    auto pSubscription = it->second;
+
+    // We deserialize the message. The buffer should already have its position
+    // at the right point for this as the header was deserialized previously...
+    auto pMessage = Message::create();
+    pMessage->deserialize(*pBuffer);
+    pSubscription->callback(header.getSubject(), header.getReplySubject(), pMessage);
+}

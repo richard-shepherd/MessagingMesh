@@ -63,7 +63,7 @@ namespace MessagingMesh
         void onUnsubscribe(Socket* pSocket, const NetworkMessageHeader& header);
 
         // Called when we receive a SEND_MESSAGE message.
-        void onMessage(const Socket* pSocket, const NetworkMessageHeader& header, BufferPtr pBuffer);
+        void onMessage(const NetworkMessageHeader& header, BufferPtr pBuffer);
 
     // Private data...
     private:

@@ -25,6 +25,9 @@ namespace MessagingMesh
         // Destructor.
         ~Subscription();
 
+        // Calls the callback with the data provided.
+        void callback(const std::string& subject, const std::string& replySubject, MessagePtr pMessage);
+
         // Sets m_pConnection to nullptr when the Connection is closed, to avoid calling
         // into it if the lifetime of this object is longer than that of the Connection.
         void resetConnection();
