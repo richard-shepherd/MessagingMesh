@@ -20,14 +20,17 @@ std::string Utils::format(const char* format, ...)
     int size = vsnprintf(&result[0], BUFFER_SIZE + 1, format, args);
     va_end(args);
 
+    // We set the size of the string...
+    result.resize(size);
+
     // If the formatted string has fit into the result, we return it...
     if (size <= BUFFER_SIZE)
     {
         return result;
     }
 
-    // The formatted string did not fit, so we resize it and format it into the new size...
-    result.resize(size);
+    // The formatted string did not fit into the original string size, so we re-format 
+    // it as the string has now been set to the discovered size above...
     va_start(args, format);
     vsnprintf(&result[0], size + 1, format, args);
     va_end(args);

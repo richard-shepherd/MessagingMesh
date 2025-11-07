@@ -19,23 +19,40 @@ void publish()
 
     // We send updates...
     MM::Logger::info("Sending data");
-    for (int32_t i = 1; i <= 50000000; ++i)
+    for (int32_t i = 1; i <= 20000000; ++i)
     {
         {
             auto pMessage = MM::Message::create();
-            pMessage->addField("VALUE", i);
+            pMessage->addField("#", i);
             connection.sendMessage("A.B", pMessage);
         }
 
         //{
         //    auto pMessage = MM::Message::create();
-        //    pMessage->addField("VALUE", i + 10);
+        //    pMessage->addField("#", i + 10);
         //    connection.sendMessage("C.D", pMessage);
         //}
     }
 
     MM::Logger::info("Press Enter to exit");
     std::cin.get();
+}
+
+// Called when we receive a message.
+void onMessage(const std::string& subject, const std::string& /*replySubject*/, MM::MessagePtr pMessage)
+{
+    try
+    {
+        auto value = pMessage->getField("#")->getSignedInt32();
+        if (value % 1000000 == 0)
+        {
+            MM::Logger::info(MM::Utils::format("Update to %s: %d", subject.c_str(), value));
+        }
+    }
+    catch (const std::exception& ex)
+    {
+        MM::Logger::error(MM::Utils::format("%s: %s", __func__, ex.what()));
+    }
 }
 
 // Subscribes to data...
@@ -45,25 +62,8 @@ void subscribe()
     MM::Connection connection("localhost", 5050, "VULCAN");
 
     // We make subscriptions...
-    auto s1 = connection.subscribe(
-        "A.B",
-        [](const std::string& /*subject*/, const std::string& /*replySubject*/, MM::MessagePtr pMessage)
-        {
-            auto value = pMessage->getField("VALUE")->getSignedInt32();
-            if (value % 1000000 == 0)
-            {
-                MM::Logger::info(MM::Utils::format("Update to A.B: %d", value));
-            }
-        }
-    );
-    auto s2 = connection.subscribe(
-        "C.D",
-        [](const std::string& /*subject*/, const std::string& /*replySubject*/, MM::MessagePtr pMessage)
-        {
-            auto value = pMessage->getField("VALUE")->getSignedInt32();
-            MM::Logger::info(MM::Utils::format("Update to C.D: %d", value));
-        }
-    );
+    auto s1 = connection.subscribe("A.B", onMessage);
+    auto s2 = connection.subscribe("C.D", onMessage);
 
     MM::Logger::info("Press Enter to exit");
     std::cin.get();

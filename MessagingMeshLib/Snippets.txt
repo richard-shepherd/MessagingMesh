@@ -5,7 +5,7 @@ try-catch
     }
     catch (const std::exception& ex)
     {
-        Logger::error(MMUtils::format("%s: %s", __func__, ex.what()));
+        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
     }
 
 
