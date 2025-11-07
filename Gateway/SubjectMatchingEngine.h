@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include <string_view>
 #include <map>
 #include <vector>
 #include "GatewaySharedPointers.h"
@@ -122,6 +123,12 @@ namespace MessagingMesh
             // Map of tokens to child nodes...
             std::map<std::string, Node*> Nodes;
 
+            // Child node for the * wildcard...
+            Node* pNode_Wildcard_Star = nullptr;
+
+            // Child node for the > wildcard...
+            Node* pNode_Wildcard_GreaterThan = nullptr;
+
             // Map of client socket name to SubscriptionInfo.
             std::map<std::string, SubscriptionInfoPtr> SubscriptionInfos;
         };
@@ -145,6 +152,11 @@ namespace MessagingMesh
 
         // Cache of sent subjects to subscription-infos for them...
         std::map<std::string, VecSubscriptionInfo> m_cache;
+
+    // Constants...
+    private:
+        static constexpr std::string_view WILDCARD_STAR = "*";
+        static constexpr std::string_view WILDCARD_GREATER_THAN = ">";
     };
 } // namespace
 

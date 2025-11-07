@@ -119,20 +119,42 @@ SubjectMatchingEngine::Node* SubjectMatchingEngine::getNode(const std::string& s
 
     // We find the node for the subject by walking the graph for each token...
     auto pNode = m_pRootNode;
-    for (auto& token : tokens)
+    for (const auto& token : tokens)
     {
-        // We finds or creates the node for the token...
-        auto& nodeMap = pNode->Nodes;
-        auto it = nodeMap.find(token);
-        if (it == nodeMap.end())
+        if (token == WILDCARD_STAR)
         {
-            // There is no node for the token, so we create it...
-            pNode = new Node;
-            nodeMap.insert({ token, pNode });
+            // The token is is "*" wildcard...
+            if (!pNode->pNode_Wildcard_Star)
+            {
+                pNode->pNode_Wildcard_Star = new Node;
+            }
+            pNode = pNode->pNode_Wildcard_Star;
+        }
+        else if (token == WILDCARD_GREATER_THAN)
+        {
+            // The token is is ">" wildcard...
+            if (!pNode->pNode_Wildcard_GreaterThan)
+            {
+                pNode->pNode_Wildcard_GreaterThan = new Node;
+            }
+            pNode = pNode->pNode_Wildcard_GreaterThan;
         }
         else
         {
-            pNode = it->second;
+            // We have a non-wildcard token.
+            // We find or create the node for the token.
+            auto& nodeMap = pNode->Nodes;
+            auto it = nodeMap.find(token);
+            if (it == nodeMap.end())
+            {
+                // There is no node for the token, so we create it...
+                pNode = new Node;
+                nodeMap.insert({ token, pNode });
+            }
+            else
+            {
+                pNode = it->second;
+            }
         }
     }
 

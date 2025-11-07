@@ -101,4 +101,43 @@ void Tests_Gateway::subjectMatchingEngine()
         assertEqual(matchesABCD.size(), (size_t)1);
         assertEqual(matchesABCD[0]->getSubscriptionID(), (uint32_t)567);
     }
+
+    TestUtils::log("> Wildcard...");
+    {
+        SubjectMatchingEngine sme;
+
+        // We add subscriptions...
+        sme.addSubscription("A.B.C", 123, "ClientA", nullptr);
+        sme.addSubscription("A.B.C", 234, "ClientB", nullptr);
+        sme.addSubscription("A.B.>", 345, "ClientC", nullptr);
+        sme.addSubscription("A.>", 456, "ClientC", nullptr);
+        sme.addSubscription(">", 567, "ClientC", nullptr);
+        sme.addSubscription("A.B.D.>", 678, "ClientC", nullptr);
+
+        // We check for matches...
+        auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");
+        assertEqual(matchesABC.size(), (size_t)5);
+        assertEqual(matchesABC[0]->getSubscriptionID(), (uint32_t)123);
+        assertEqual(matchesABC[1]->getSubscriptionID(), (uint32_t)234);
+        assertEqual(matchesABC[2]->getSubscriptionID(), (uint32_t)345);
+        assertEqual(matchesABC[3]->getSubscriptionID(), (uint32_t)456);
+        assertEqual(matchesABC[4]->getSubscriptionID(), (uint32_t)567);
+
+        auto matchesABD = sme.getMatchingSubscriptionInfos("A.B.D");
+        assertEqual(matchesABD.size(), (size_t)3);
+        assertEqual(matchesABD[0]->getSubscriptionID(), (uint32_t)345);
+        assertEqual(matchesABD[1]->getSubscriptionID(), (uint32_t)456);
+        assertEqual(matchesABD[2]->getSubscriptionID(), (uint32_t)567);
+
+        auto matchesXYZ = sme.getMatchingSubscriptionInfos("X.Y.Z");
+        assertEqual(matchesXYZ.size(), (size_t)1);
+        assertEqual(matchesXYZ[0]->getSubscriptionID(), (uint32_t)567);
+
+        auto matchesABDXYZ = sme.getMatchingSubscriptionInfos("A.B.D.X.Y.Z");
+        assertEqual(matchesABDXYZ.size(), (size_t)4);
+        assertEqual(matchesABDXYZ[0]->getSubscriptionID(), (uint32_t)345);
+        assertEqual(matchesABDXYZ[1]->getSubscriptionID(), (uint32_t)456);
+        assertEqual(matchesABDXYZ[2]->getSubscriptionID(), (uint32_t)567);
+        assertEqual(matchesABDXYZ[3]->getSubscriptionID(), (uint32_t)678);
+    }
 }
