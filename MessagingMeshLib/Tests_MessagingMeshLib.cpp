@@ -54,18 +54,18 @@ void Tests_MessagingMeshLib::tokenize()
         std::string s1 = "A.B.C";
         auto tokens = MMUtils::tokenize(s1, '.');
         assertEqual(tokens.size(), (size_t)3);
-        assertEqual(tokens[0], std::string("A"));
-        assertEqual(tokens[1], std::string("B"));
-        assertEqual(tokens[2], std::string("C"));
+        assertEqual(tokens[0], Token("A"));
+        assertEqual(tokens[1], Token("B"));
+        assertEqual(tokens[2], Token("C"));
     }
 
     {
         std::string s1 = "Hello.World.123";
         auto tokens = MMUtils::tokenize(s1, '.');
         assertEqual(tokens.size(), (size_t)3);
-        assertEqual(tokens[0], std::string("Hello"));
-        assertEqual(tokens[1], std::string("World"));
-        assertEqual(tokens[2], std::string("123"));
+        assertEqual(tokens[0], Token("Hello"));
+        assertEqual(tokens[1], Token("World"));
+        assertEqual(tokens[2], Token("123"));
     }
 
     {
@@ -78,17 +78,17 @@ void Tests_MessagingMeshLib::tokenize()
         std::string s1 = "A..B";
         auto tokens = MMUtils::tokenize(s1, '.');
         assertEqual(tokens.size(), (size_t)3);
-        assertEqual(tokens[0], std::string("A"));
-        assertEqual(tokens[1], std::string(""));
-        assertEqual(tokens[2], std::string("B"));
+        assertEqual(tokens[0], Token("A"));
+        assertEqual(tokens[1], Token(""));
+        assertEqual(tokens[2], Token("B"));
     }
 
     {
         std::string s1 = "...";
         auto tokens = MMUtils::tokenize(s1, '.');
         assertEqual(tokens.size(), (size_t)3);
-        assertEqual(tokens[0], std::string(""));
-        assertEqual(tokens[1], std::string(""));
-        assertEqual(tokens[2], std::string(""));
+        assertEqual(tokens[0], Token(""));
+        assertEqual(tokens[1], Token(""));
+        assertEqual(tokens[2], Token(""));
     }
 }

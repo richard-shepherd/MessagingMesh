@@ -75,35 +75,12 @@ VecSubscriptionInfo SubjectMatchingEngine::getMatchingSubscriptionInfos(const st
 
     // We tokenize the subject...
     auto tokens = MMUtils::tokenize(subject, '.');
-
-    // We match tokens against the interest graph...
-
-
-    // When all tokens have matched, we return the subscription-infos from the final node.
-    auto gotMatch = true;
-    auto pNode = m_pRootNode;
-    for (auto& token : tokens)
+    auto tokenCount = tokens.size();
+    if (tokenCount != 0)
     {
-        // We check for a matching token...
-        auto it = pNode->Nodes.find(token);
-        if (it == pNode->Nodes.end())
-        {
-            // We did not find a match...
-            gotMatch = false;
-            break;
-        }
-
-        // We move to the next node...
-        pNode = it->second;
-    }
-
-    // If we have a match, we return the collection of subscription-infos...
-    if (gotMatch)
-    {
-        for (const auto& pair : pNode->SubscriptionInfos)
-        {
-            results.push_back(pair.second);
-        }
+        // We match tokens against the interest graph...
+        auto lastTokenIndex = tokenCount - 1;
+        getMatchingSubscriptionInfos(m_pRootNode, tokens, 0, lastTokenIndex, results);
     }
 
     // We add the results to the cache...
@@ -113,6 +90,76 @@ VecSubscriptionInfo SubjectMatchingEngine::getMatchingSubscriptionInfos(const st
     }
 
     return results;
+
+    //// When all tokens have matched, we return the subscription-infos from the final node.
+    //auto gotMatch = true;
+    //auto pNode = m_pRootNode;
+    //for (auto& token : tokens)
+    //{
+    //    // We check for a matching token...
+    //    auto it = pNode->Nodes.find(token);
+    //    if (it == pNode->Nodes.end())
+    //    {
+    //        // We did not find a match...
+    //        gotMatch = false;
+    //        break;
+    //    }
+
+    //    // We move to the next node...
+    //    pNode = it->second;
+    //}
+
+    //// If we have a match, we return the collection of subscription-infos...
+    //if (gotMatch)
+    //{
+    //    for (const auto& pair : pNode->SubscriptionInfos)
+    //    {
+    //        results.push_back(pair.second);
+    //    }
+    //}
+
+
+    //return results;
+}
+
+// Checks the current node for matching subscriptions.
+void SubjectMatchingEngine::getMatchingSubscriptionInfos(Node* pNode, const VecToken& tokens, size_t tokenIndex, size_t lastTokenIndex, VecSubscriptionInfo& subscriptionInfos)
+{
+    // We find the current token and check if this node contains it...
+    const auto& token = tokens[tokenIndex];
+    auto it = pNode->Nodes.find(token);
+    if (it != pNode->Nodes.end())
+    {
+        // The token is in the node. 
+        auto pChildNode = it->second;
+        if (tokenIndex == lastTokenIndex)
+        {
+            // This is the last token, so we add the subscription-infos to the results...
+            addSubscriptionInfos(pChildNode, subscriptionInfos);
+        }
+        else
+        {
+            // This is not the last token, so we continue walking the graph...
+            getMatchingSubscriptionInfos(pChildNode, tokens, tokenIndex + 1, lastTokenIndex, subscriptionInfos);
+        }
+    }
+
+    // We check if the node has the '>' wildcard...
+    if (pNode->pNode_Wildcard_GreaterThan)
+    {
+        // We have a '>' subscription. In this case we add the subscription infos
+        // from the node without needing the walk the graph further...
+        addSubscriptionInfos(pNode->pNode_Wildcard_GreaterThan, subscriptionInfos);
+    }
+}
+
+// Adds all subscription infos from the node to the vector.
+void SubjectMatchingEngine::addSubscriptionInfos(Node* pNode, VecSubscriptionInfo& subscriptionInfos)
+{
+    for (const auto& pair : pNode->SubscriptionInfos)
+    {
+        subscriptionInfos.push_back(pair.second);
+    }
 }
 
 // Gets the node in the interest graph for the subject specified.
@@ -154,7 +201,8 @@ SubjectMatchingEngine::Node* SubjectMatchingEngine::getOrCreateNode(const std::s
             {
                 // There is no node for the token, so we create it...
                 pNode = new Node;
-                nodeMap.insert({ token, pNode });
+                //nodeMap.insert({ token, pNode });
+                nodeMap.insert({ std::string(token), pNode });
             }
             else
             {

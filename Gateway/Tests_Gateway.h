@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdint>
+#include "GatewaySharedPointers.h"
 
 namespace MessagingMesh
 {
@@ -11,6 +13,11 @@ namespace MessagingMesh
     public:
         // Test for the subject-matching engine.
         static void subjectMatchingEngine();
+
+    // Private functions...
+    private:
+        // Returns true of the subscription-infos include one for the subscriptionID specified, false if not.
+        static bool containsSubscriptionID(const VecSubscriptionInfo& subscriptionInfos, uint32_t subscriptionID);
     };
 }  // namespace
 

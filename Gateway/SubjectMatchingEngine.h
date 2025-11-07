@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include "GatewaySharedPointers.h"
+#include "MMUtils.h"
 
 namespace MessagingMesh
 {
@@ -121,7 +122,7 @@ namespace MessagingMesh
         struct Node
         {
             // Map of tokens to child nodes...
-            std::map<std::string, Node*> Nodes;
+            std::map<std::string, Node*, std::less<>> Nodes;
 
             // Child node for the * wildcard...
             Node* pNode_Wildcard_Star = nullptr;
@@ -142,6 +143,12 @@ namespace MessagingMesh
         // Removes all subscriptions for the client specified from the node provided
         // and from all its child nodes recursively.
         void removeAllSubscriptions(Node* pNode, const std::string& clientName);
+
+        // Checks the current node for matching subscriptions.
+        void getMatchingSubscriptionInfos(Node* pNode, const VecToken& tokens, size_t tokenIndex, size_t lastTokenIndex, VecSubscriptionInfo& subscriptionInfos);
+
+        // Adds all subscription infos from the node to the vector.
+        void addSubscriptionInfos(Node* pNode, VecSubscriptionInfo& subscriptionInfos);
 
     // Private data...
     private:

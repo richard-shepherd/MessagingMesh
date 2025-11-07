@@ -1,7 +1,7 @@
 #include "Tests_Gateway.h"
-#include "TestUtils.h"
 #include "SubjectMatchingEngine.h"
 #include "SubscriptionInfo.h"
+#include "TestUtils.h"
 using namespace MessagingMesh;
 using namespace MessagingMesh::TestUtils;
 
@@ -102,7 +102,7 @@ void Tests_Gateway::subjectMatchingEngine()
         assertEqual(matchesABCD[0]->getSubscriptionID(), (uint32_t)567);
     }
 
-    TestUtils::log("> Wildcard...");
+    TestUtils::log("Wildcard '>'...");
     {
         SubjectMatchingEngine sme;
 
@@ -110,9 +110,9 @@ void Tests_Gateway::subjectMatchingEngine()
         sme.addSubscription("A.B.C", 123, "ClientA", nullptr);
         sme.addSubscription("A.B.C", 234, "ClientB", nullptr);
         sme.addSubscription("A.B.>", 345, "ClientC", nullptr);
-        sme.addSubscription("A.>", 456, "ClientC", nullptr);
+        sme.addSubscription("A.>", 456, "ClientD", nullptr);
         sme.addSubscription(">", 567, "ClientC", nullptr);
-        sme.addSubscription("A.B.D.>", 678, "ClientC", nullptr);
+        sme.addSubscription("A.B.D.>", 678, "ClientF", nullptr);
 
         // We check for matches...
         auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");
@@ -135,9 +135,22 @@ void Tests_Gateway::subjectMatchingEngine()
 
         auto matchesABDXYZ = sme.getMatchingSubscriptionInfos("A.B.D.X.Y.Z");
         assertEqual(matchesABDXYZ.size(), (size_t)4);
-        assertEqual(matchesABDXYZ[0]->getSubscriptionID(), (uint32_t)345);
-        assertEqual(matchesABDXYZ[1]->getSubscriptionID(), (uint32_t)456);
-        assertEqual(matchesABDXYZ[2]->getSubscriptionID(), (uint32_t)567);
-        assertEqual(matchesABDXYZ[3]->getSubscriptionID(), (uint32_t)678);
+        assertEqual(containsSubscriptionID(matchesABDXYZ, 345), true);
+        assertEqual(containsSubscriptionID(matchesABDXYZ,456), true);
+        assertEqual(containsSubscriptionID(matchesABDXYZ, 567), true);
+        assertEqual(containsSubscriptionID(matchesABDXYZ, 678), true);
     }
+}
+
+// Returns true of the subscription-infos include one for the subscriptionID specified, false if not.
+bool Tests_Gateway::containsSubscriptionID(const VecSubscriptionInfo& subscriptionInfos, uint32_t subscriptionID)
+{
+    for (const auto& pSubscriptionInfo : subscriptionInfos)
+    {
+        if (pSubscriptionInfo->getSubscriptionID() == subscriptionID)
+        {
+            return true;
+        }
+    }
+    return false;
 }
