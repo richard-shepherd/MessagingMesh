@@ -1,6 +1,6 @@
 #pragma once
 #include "NetworkMessageHeader.h"
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 
 namespace MessagingMesh
 {

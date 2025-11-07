@@ -1,7 +1,7 @@
 #pragma once
 #include <functional>
 #include <string>
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 
 namespace MessagingMesh
 {

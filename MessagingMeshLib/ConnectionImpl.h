@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 #include <atomic>
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 #include "Socket.h"
 #include "AutoResetEvent.h"
 #include "Callbacks.h"

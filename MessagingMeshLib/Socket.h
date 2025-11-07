@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include "uv.h"
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 #include "ThreadsafeConsumableVector.h"
 
 namespace MessagingMesh

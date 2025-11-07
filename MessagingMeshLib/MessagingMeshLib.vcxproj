@@ -26,7 +26,7 @@
     <ClInclude Include="NetworkMessage.h" />
     <ClInclude Include="NetworkMessageHeader.h" />
     <ClInclude Include="OSSocketHolder.h" />
-    <ClInclude Include="SharedPointers.h" />
+    <ClInclude Include="SharedAliases.h" />
     <ClInclude Include="TestUtils.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Socket.h" />

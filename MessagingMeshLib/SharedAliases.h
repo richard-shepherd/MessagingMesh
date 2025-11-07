@@ -13,33 +13,35 @@ namespace MessagingMesh
     class Subscription;
 
     // Shared pointer to a Field.
-    typedef std::shared_ptr<Field> FieldPtr;
+    using FieldPtr = std::shared_ptr<Field>;
 
     // Shared pointer to a const Field.
-    typedef std::shared_ptr<const Field> ConstFieldPtr;
+    using ConstFieldPtr = std::shared_ptr<const Field>;
 
     // Shared pointer to a Message.
-    typedef std::shared_ptr<Message> MessagePtr;
+    using MessagePtr = std::shared_ptr<Message>;
 
     // Shared pointer to a const Message.
-    typedef std::shared_ptr<const Message> ConstMessagePtr;
+    using ConstMessagePtr = std::shared_ptr<const Message>;
 
     // Shared pointer to a Buffer.
-    typedef std::shared_ptr<Buffer> BufferPtr;
+    using BufferPtr = std::shared_ptr<Buffer>;
 
     // Shared pointer to a const Buffer.
-    typedef std::shared_ptr<const Buffer> ConstBufferPtr;
+    using ConstBufferPtr = std::shared_ptr<const Buffer>;
 
     // Shared pointer to a Socket.
-    typedef std::shared_ptr<Socket> SocketPtr;
+    using SocketPtr = std::shared_ptr<Socket>;
 
     // Shared pointer to an OSSocketHolder.
-    typedef std::shared_ptr<OSSocketHolder> OSSocketHolderPtr;
+    using OSSocketHolderPtr = std::shared_ptr<OSSocketHolder>;
 
     // Shared pointer to a UVLoop.
-    typedef std::shared_ptr<UVLoop> UVLoopPtr;
+    using UVLoopPtr = std::shared_ptr<UVLoop>;
 
     // Shared pointer to a Subscription.
-    typedef std::shared_ptr<Subscription> SubscriptionPtr;
+    using SubscriptionPtr = std::shared_ptr<Subscription>;
+
+    using VecToken = std::vector<std::string>
 
 } // namespace

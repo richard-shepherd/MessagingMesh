@@ -20,7 +20,7 @@ void MMUtils::sendNetworkMessage(const NetworkMessage& networkMessage, Socket* p
 }
 
 // Splits the input string on the delimiter and returns a vector of tokens.
-std::vector<std::string> MMUtils::tokenize(const std::string& s, char delimiter)
+MMUtils::VecToken MMUtils::tokenize(const std::string& s, char delimiter)
 {
     std::vector<std::string> tokens;
     if (s.length() == 0)

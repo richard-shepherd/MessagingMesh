@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 
 namespace MessagingMesh
 {
@@ -14,6 +14,10 @@ namespace MessagingMesh
     /// </summary>
     class MMUtils
     {
+    public:
+        // Vector of tokens.
+        using VecToken = std::vector<std::string>;
+
     // Public functions...
     public:
         // Sends a network-message to the socket.
@@ -23,7 +27,7 @@ namespace MessagingMesh
         static void sendNetworkMessage(const NetworkMessage& networkMessage, Socket* pSocket);
 
         // Splits the input string on the delimiter and returns a vector of tokens.
-        static std::vector<std::string> tokenize(const std::string& s, char delimiter);
+        static VecToken tokenize(const std::string& s, char delimiter);
     };
 } // namespace
 

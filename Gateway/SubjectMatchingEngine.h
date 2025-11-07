@@ -136,7 +136,8 @@ namespace MessagingMesh
     // Private functions...
     private:
         // Gets the node in the interest graph for the subject specified.
-        Node* getNode(const std::string& subject);
+        // Creates nodes in the graph if necessary.
+        Node* getOrCreateNode(const std::string& subject);
 
         // Removes all subscriptions for the client specified from the node provided
         // and from all its child nodes recursively.

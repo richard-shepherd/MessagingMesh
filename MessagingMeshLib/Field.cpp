@@ -1,6 +1,6 @@
 #include "Field.h"
 #include "FieldImpl.h"
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 using namespace MessagingMesh;
 
 Field::Field()

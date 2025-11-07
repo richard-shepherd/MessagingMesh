@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include "Field.h"
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 
 namespace MessagingMesh
 {

@@ -3,7 +3,7 @@
 #include <map>
 #include "UVLoop.h"
 #include "Socket.h"
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 #include "ServiceManager.h"
 
 namespace MessagingMesh

@@ -2,7 +2,7 @@
 #include <memory>
 #include <string>
 #include <functional>
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 #include "Callbacks.h"
 
 namespace MessagingMesh

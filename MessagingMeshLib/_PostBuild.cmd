@@ -7,6 +7,6 @@ copy Connection.h %header_folder%
 copy Field.h %header_folder%
 copy Logger.h %header_folder%
 copy Message.h %header_folder%
-copy SharedPointers.h %header_folder%
+copy SharedAliases.h %header_folder%
 copy Utils.h %header_folder%
 

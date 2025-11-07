@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
 #include <string>
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 #include "Socket.h"
 #include "SubjectMatchingEngine.h"
 

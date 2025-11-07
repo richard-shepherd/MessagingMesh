@@ -9,15 +9,15 @@ using namespace MessagingMesh;
 void SubjectMatchingEngine::addSubscription(const std::string& subject, uint32_t subscriptionID, const std::string& clientName, Socket* pClientSocket)
 {
     // We get the node for the subject...
-    auto pNode = getNode(subject);
+    auto pNode = getOrCreateNode(subject);
 
     // We add subscription-info.
     // Note: We are not expecting more than one subscription from a client
     //       for the same subject. This is managed in client libraries.
     auto pSubscriptionInfo = SubscriptionInfo::create(pClientSocket, subscriptionID);
-    pNode->SubscriptionInfos.insert({clientName, pSubscriptionInfo});
+    pNode->SubscriptionInfos.insert({ clientName, pSubscriptionInfo });
 
-    // The change to subscriptions has invalidaed the cache...
+    // The change to subscriptions has invalidated the cache...
     m_cache.clear();
 }
 
@@ -25,12 +25,14 @@ void SubjectMatchingEngine::addSubscription(const std::string& subject, uint32_t
 void SubjectMatchingEngine::removeSubscription(const std::string& subject, const std::string& clientName)
 {
     // We get the node for the subject...
-    auto pNode = getNode(subject);
+    auto pNode = getOrCreateNode(subject);
 
     // We remove info for this client...
     pNode->SubscriptionInfos.erase(clientName);
 
-    // The change to subscriptions has invalidaed the cache...
+    // RSSTODO: Clean up nodes which are no longer used by any subscriptions.
+
+    // The change to subscriptions has invalidated the cache...
     m_cache.clear();
 }
 
@@ -39,7 +41,7 @@ void SubjectMatchingEngine::removeAllSubscriptions(const std::string& clientName
 {
     removeAllSubscriptions(m_pRootNode, clientName);
 
-    // The change to subscriptions has invalidaed the cache...
+    // The change to subscriptions has invalidated the cache...
     m_cache.clear();
 }
 
@@ -69,12 +71,14 @@ VecSubscriptionInfo SubjectMatchingEngine::getMatchingSubscriptionInfos(const st
 
     // Caching is not enabled, or we did not find a match in the cache. So we
     // look for matching subscriptions...
-    std::vector<SubscriptionInfoPtr> results;
+    VecSubscriptionInfo results;
 
     // We tokenize the subject...
     auto tokens = MMUtils::tokenize(subject, '.');
 
-    // We match each token in the interest graph. 
+    // We match tokens against the interest graph...
+
+
     // When all tokens have matched, we return the subscription-infos from the final node.
     auto gotMatch = true;
     auto pNode = m_pRootNode;
@@ -112,7 +116,8 @@ VecSubscriptionInfo SubjectMatchingEngine::getMatchingSubscriptionInfos(const st
 }
 
 // Gets the node in the interest graph for the subject specified.
-SubjectMatchingEngine::Node* SubjectMatchingEngine::getNode(const std::string& subject)
+// Creates nodes in the graph if necessary.
+SubjectMatchingEngine::Node* SubjectMatchingEngine::getOrCreateNode(const std::string& subject)
 {
     // We tokenize the subject...
     auto tokens = MMUtils::tokenize(subject, '.');

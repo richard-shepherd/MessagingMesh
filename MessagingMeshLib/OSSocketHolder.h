@@ -2,7 +2,7 @@
 #include <memory>
 #include <mutex>
 #include "uv.h"
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 
 namespace MessagingMesh
 {

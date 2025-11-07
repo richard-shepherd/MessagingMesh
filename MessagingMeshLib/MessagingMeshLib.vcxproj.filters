@@ -57,7 +57,7 @@
     <ClInclude Include="OSSocketHolder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SharedPointers.h">
+    <ClInclude Include="SharedAliases.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Socket.h">

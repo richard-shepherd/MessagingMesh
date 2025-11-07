@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 
 namespace MessagingMesh
 {

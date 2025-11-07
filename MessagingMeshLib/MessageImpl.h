@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 #include <functional>
-#include "SharedPointers.h"
+#include "SharedAliases.h"
 
 namespace MessagingMesh
 {
