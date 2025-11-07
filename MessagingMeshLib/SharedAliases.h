@@ -42,6 +42,4 @@ namespace MessagingMesh
     // Shared pointer to a Subscription.
     using SubscriptionPtr = std::shared_ptr<Subscription>;
 
-    using VecToken = std::vector<std::string>
-
 } // namespace
