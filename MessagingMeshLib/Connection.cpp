@@ -17,6 +17,13 @@ void Connection::sendMessage(const std::string& subject, const MessagePtr& pMess
     m_pImpl->sendMessage(subject, pMessage);
 }
 
+// Sends a blocking request to the subject specified. Returns the reply or 
+// nullptr if the request times out.
+MessagePtr Connection::sendRequest(const std::string& subject, const MessagePtr& pMessage, double timeoutSeconds)
+{
+    return m_pImpl->sendRequest(subject, pMessage, timeoutSeconds);
+}
+
 // Subscribes to a subject.
 // The lifetime of the subscription is the lifetime of the object returned.
 SubscriptionPtr Connection::subscribe(const std::string& subject, SubscriptionCallback callback)

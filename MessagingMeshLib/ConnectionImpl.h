@@ -30,6 +30,10 @@ namespace MessagingMesh
         // Sends a message to the specified subject.
         void sendMessage(const std::string& subject, const MessagePtr& pMessage) const;
 
+        // Sends a blocking request to the subject specified. Returns the reply or 
+        // nullptr if the request times out.
+        MessagePtr sendRequest(const std::string& subject, const MessagePtr& pMessage, double timeoutSeconds);
+
         // Subscribes to a subject.
         // The lifetime of the subscription is the lifetime of the object returned.
         SubscriptionPtr subscribe(const std::string& subject, SubscriptionCallback callback);
@@ -60,6 +64,9 @@ namespace MessagingMesh
 
         // Called when we see the SEND_MESSAGE message from the Gateway.
         void onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer);
+
+        // Returns a unique inbox name.
+        std::string createInbox();
 
     // Private data...
     private:

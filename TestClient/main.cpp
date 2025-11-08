@@ -19,7 +19,7 @@ void publish()
 
     // We send updates...
     MM::Logger::info("Sending data");
-    for (int32_t i = 1; i <= 20000000; ++i)
+    for (int32_t i = 1; i <= 10000000; ++i)
     {
         {
             auto pMessage = MM::Message::create();

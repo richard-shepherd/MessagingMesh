@@ -1,4 +1,5 @@
 #include "ConnectionImpl.h"
+#include <format>
 #include "UVLoop.h"
 #include "Exception.h"
 #include "Socket.h"
@@ -90,6 +91,14 @@ void ConnectionImpl::sendMessage(const std::string& subject, const MessagePtr& p
 
     // We send the message...
     MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
+}
+
+// Sends a blocking request to the subject specified. Returns the reply or 
+// nullptr if the request times out.
+MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const MessagePtr& pMessage, double timeoutSeconds)
+{
+    // We create a unique inbox for the reply and subscribe to it...
+
 }
 
 // Subscribes to a subject.
@@ -207,4 +216,11 @@ void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr
     auto pMessage = Message::create();
     pMessage->deserialize(*pBuffer);
     pSubscription->callback(header.getSubject(), header.getReplySubject(), pMessage);
+}
+
+// Returns a unique inbox name.
+std::string ConnectionImpl::createInbox()
+{
+    auto guid = "???"; throw Exception("NOT IMPLEMENTED");
+    return std::format("_INBOX.{}", guid);
 }

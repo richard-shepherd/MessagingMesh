@@ -6,7 +6,7 @@ TODO
 
 - Support a Tag ('closure') for subscriptions, returned with callbacks
 
-- MMUtils::tokenize() - return a vector of string_view?
+- Implement blocking sendRequest()
 
 - ConnectionImpl::m_subscriptions needs to be thread safe
 

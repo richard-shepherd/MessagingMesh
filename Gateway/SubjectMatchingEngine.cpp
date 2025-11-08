@@ -90,36 +90,6 @@ VecSubscriptionInfo SubjectMatchingEngine::getMatchingSubscriptionInfos(const st
     }
 
     return results;
-
-    //// When all tokens have matched, we return the subscription-infos from the final node.
-    //auto gotMatch = true;
-    //auto pNode = m_pRootNode;
-    //for (auto& token : tokens)
-    //{
-    //    // We check for a matching token...
-    //    auto it = pNode->Nodes.find(token);
-    //    if (it == pNode->Nodes.end())
-    //    {
-    //        // We did not find a match...
-    //        gotMatch = false;
-    //        break;
-    //    }
-
-    //    // We move to the next node...
-    //    pNode = it->second;
-    //}
-
-    //// If we have a match, we return the collection of subscription-infos...
-    //if (gotMatch)
-    //{
-    //    for (const auto& pair : pNode->SubscriptionInfos)
-    //    {
-    //        results.push_back(pair.second);
-    //    }
-    //}
-
-
-    //return results;
 }
 
 // Checks the current node for matching subscriptions.
@@ -150,6 +120,23 @@ void SubjectMatchingEngine::getMatchingSubscriptionInfos(Node* pNode, const VecT
         // We have a '>' subscription. In this case we add the subscription infos
         // from the node without needing the walk the graph further...
         addSubscriptionInfos(pNode->pNode_Wildcard_GreaterThan, subscriptionInfos);
+    }
+
+    // We check if the node has the '*' wildcard...
+    if (pNode->pNode_Wildcard_Star)
+    {
+        // There is a '*' wildcard
+        auto pChildNode = pNode->pNode_Wildcard_Star;
+        if (tokenIndex == lastTokenIndex)
+        {
+            // This is the last token, so we add the subscription-infos to the results...
+            addSubscriptionInfos(pChildNode, subscriptionInfos);
+        }
+        else
+        {
+            // This is not the last token, so we continue walking the graph...
+            getMatchingSubscriptionInfos(pChildNode, tokens, tokenIndex + 1, lastTokenIndex, subscriptionInfos);
+        }
     }
 }
 

@@ -48,6 +48,7 @@
     <ClCompile Include="MessageImpl.cpp" />
     <ClCompile Include="NetworkMessage.cpp" />
     <ClCompile Include="NetworkMessageHeader.cpp" />
+    <ClCompile Include="TestUtils.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Socket.cpp" />
     <ClCompile Include="Subscription.cpp" />

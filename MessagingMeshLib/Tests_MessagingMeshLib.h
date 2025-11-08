@@ -1,4 +1,5 @@
 #pragma once
+#include "TestUtils.h"
 
 namespace MessagingMesh
 {
@@ -9,11 +10,14 @@ namespace MessagingMesh
     {
     // Public methods...
     public:
+        // Runs all tests.
+        static void runAll(TestUtils::TestRun& testRun);
+
         // Tests message serialization and deserialization.
-        static void messageSerialization();
+        static void messageSerialization(TestUtils::TestRun& testRun);
 
         // Tests tokenizing strings.
-        static void tokenize();
+        static void tokenize(TestUtils::TestRun& testRun);
     };
 } // namespace
 
