@@ -117,40 +117,40 @@ void Tests_Gateway::subjectMatchingEngine()
         // We check for matches...
         auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");
         assertEqual(matchesABC.size(), (size_t)5);
-        assertEqual(matchesABC[0]->getSubscriptionID(), (uint32_t)123);
-        assertEqual(matchesABC[1]->getSubscriptionID(), (uint32_t)234);
-        assertEqual(matchesABC[2]->getSubscriptionID(), (uint32_t)345);
-        assertEqual(matchesABC[3]->getSubscriptionID(), (uint32_t)456);
-        assertEqual(matchesABC[4]->getSubscriptionID(), (uint32_t)567);
+        assertEqual(containsID(matchesABC, 123), 123);
+        assertEqual(containsID(matchesABC, 234), 234);
+        assertEqual(containsID(matchesABC, 345), 345);
+        assertEqual(containsID(matchesABC, 456), 456);
+        assertEqual(containsID(matchesABC, 567), 567);
 
         auto matchesABD = sme.getMatchingSubscriptionInfos("A.B.D");
         assertEqual(matchesABD.size(), (size_t)3);
-        assertEqual(matchesABD[0]->getSubscriptionID(), (uint32_t)345);
-        assertEqual(matchesABD[1]->getSubscriptionID(), (uint32_t)456);
-        assertEqual(matchesABD[2]->getSubscriptionID(), (uint32_t)567);
+        assertEqual(containsID(matchesABD, 345), 345);
+        assertEqual(containsID(matchesABD, 456), 456);
+        assertEqual(containsID(matchesABD, 567), 567);
 
         auto matchesXYZ = sme.getMatchingSubscriptionInfos("X.Y.Z");
         assertEqual(matchesXYZ.size(), (size_t)1);
-        assertEqual(matchesXYZ[0]->getSubscriptionID(), (uint32_t)567);
+        assertEqual(containsID(matchesXYZ, 567), 567);
 
         auto matchesABDXYZ = sme.getMatchingSubscriptionInfos("A.B.D.X.Y.Z");
         assertEqual(matchesABDXYZ.size(), (size_t)4);
-        assertEqual(containsSubscriptionID(matchesABDXYZ, 345), true);
-        assertEqual(containsSubscriptionID(matchesABDXYZ,456), true);
-        assertEqual(containsSubscriptionID(matchesABDXYZ, 567), true);
-        assertEqual(containsSubscriptionID(matchesABDXYZ, 678), true);
+        assertEqual(containsID(matchesABDXYZ, 345), 345);
+        assertEqual(containsID(matchesABDXYZ,456), 456);
+        assertEqual(containsID(matchesABDXYZ, 567), 567);
+        assertEqual(containsID(matchesABDXYZ, 678), 678);
     }
 }
 
-// Returns true of the subscription-infos include one for the subscriptionID specified, false if not.
-bool Tests_Gateway::containsSubscriptionID(const VecSubscriptionInfo& subscriptionInfos, uint32_t subscriptionID)
+// Returns the subscription ID (as an int) is the collection conatins it, -1 if not.
+int Tests_Gateway::containsID(const VecSubscriptionInfo& subscriptionInfos, uint32_t subscriptionID)
 {
     for (const auto& pSubscriptionInfo : subscriptionInfos)
     {
         if (pSubscriptionInfo->getSubscriptionID() == subscriptionID)
         {
-            return true;
+            return subscriptionID;
         }
     }
-    return false;
+    return -1;
 }

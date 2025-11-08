@@ -16,8 +16,8 @@ namespace MessagingMesh
 
     // Private functions...
     private:
-        // Returns true of the subscription-infos include one for the subscriptionID specified, false if not.
-        static bool containsSubscriptionID(const VecSubscriptionInfo& subscriptionInfos, uint32_t subscriptionID);
+        // Returns the subscription ID (as an int) is the collection conatins it, -1 if not.
+        static int containsID(const VecSubscriptionInfo& subscriptionInfos, uint32_t subscriptionID);
     };
 }  // namespace
 
