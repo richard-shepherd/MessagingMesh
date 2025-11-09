@@ -27,6 +27,9 @@ namespace MessagingMesh
         // Destructor.
         ~ConnectionImpl();
 
+        // Returns a unique inbox name.
+        std::string createInbox();
+
         // Sends a message to the specified subject.
         void sendMessage(const std::string& subject, const MessagePtr& pMessage) const;
 
@@ -64,9 +67,6 @@ namespace MessagingMesh
 
         // Called when we see the SEND_MESSAGE message from the Gateway.
         void onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer);
-
-        // Returns a unique inbox name.
-        std::string createInbox();
 
     // Private data...
     private:

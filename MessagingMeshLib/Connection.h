@@ -23,6 +23,9 @@ namespace MessagingMesh
         // Destructor.
         ~Connection();
 
+        // Returns a unique inbox name.
+        std::string createInbox();
+
         // Sends a message to the specified subject.
         void sendMessage(const std::string& subject, const MessagePtr& pMessage);
 

@@ -11,6 +11,12 @@ Connection::Connection(const std::string& hostname, int port, const std::string&
 // Destructor.
 Connection::~Connection() = default;
 
+// Returns a unique inbox name.
+std::string Connection::createInbox()
+{
+    return m_pImpl->createInbox();
+}
+
 // Sends a message to the specified subject.
 void Connection::sendMessage(const std::string& subject, const MessagePtr& pMessage)
 {
