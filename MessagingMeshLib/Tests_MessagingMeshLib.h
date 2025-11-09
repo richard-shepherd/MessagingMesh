@@ -18,6 +18,9 @@ namespace MessagingMesh
 
         // Tests tokenizing strings.
         static void tokenize(TestUtils::TestRun& testRun);
+
+        // Tests for generating GUIDs.
+        static void guids(TestUtils::TestRun& testRun);
     };
 } // namespace
 

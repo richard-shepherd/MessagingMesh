@@ -12,6 +12,7 @@ void Tests_MessagingMeshLib::runAll(TestUtils::TestRun& testRun)
 {
     messageSerialization(testRun);
     tokenize(testRun);
+    guids(testRun);
 }
 
 // Tests message serialization and deserialization.
@@ -59,7 +60,7 @@ void Tests_MessagingMeshLib::messageSerialization(TestRun& testRun)
 // Tests tokenizing strings.
 void Tests_MessagingMeshLib::tokenize(TestRun& testRun)
 {
-    TestUtils::log("Tokenize...");
+    TestUtils::log("Tokenize 'A.B.C'");
     {
         std::string s1 = "A.B.C";
         auto tokens = MMUtils::tokenize(s1, '.');
@@ -69,6 +70,7 @@ void Tests_MessagingMeshLib::tokenize(TestRun& testRun)
         assertEqual(testRun, tokens[2], Token("C"));
     }
 
+    TestUtils::log("Tokenize 'Hello.World.123'");
     {
         std::string s1 = "Hello.World.123";
         auto tokens = MMUtils::tokenize(s1, '.');
@@ -78,12 +80,14 @@ void Tests_MessagingMeshLib::tokenize(TestRun& testRun)
         assertEqual(testRun, tokens[2], Token("123"));
     }
 
+    TestUtils::log("Tokenize ''");
     {
         std::string s1 = "";
         auto tokens = MMUtils::tokenize(s1, '.');
         assertEqual(testRun, tokens.size(), (size_t)0);
     }
 
+    TestUtils::log("Tokenize 'A..B'");
     {
         std::string s1 = "A..B";
         auto tokens = MMUtils::tokenize(s1, '.');
@@ -93,6 +97,7 @@ void Tests_MessagingMeshLib::tokenize(TestRun& testRun)
         assertEqual(testRun, tokens[2], Token("B"));
     }
 
+    TestUtils::log("Tokenize '...'");
     {
         std::string s1 = "...";
         auto tokens = MMUtils::tokenize(s1, '.');
@@ -101,4 +106,17 @@ void Tests_MessagingMeshLib::tokenize(TestRun& testRun)
         assertEqual(testRun, tokens[1], Token(""));
         assertEqual(testRun, tokens[2], Token(""));
     }
+}
+
+// Tests for generating GUIDs.
+void Tests_MessagingMeshLib::guids(TestUtils::TestRun& testRun)
+{
+    TestUtils::log("GUIDs...");
+    auto guid1 = MMUtils::createGUID();
+    assertEqual(testRun, guid1.size(), (size_t)24);
+
+    auto guid2 = MMUtils::createGUID();
+    assertEqual(testRun, guid2.size(), (size_t)24);
+
+    assertEqual(testRun, guid1 == guid2, false);
 }

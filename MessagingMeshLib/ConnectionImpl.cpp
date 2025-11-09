@@ -95,10 +95,10 @@ void ConnectionImpl::sendMessage(const std::string& subject, const MessagePtr& p
 
 // Sends a blocking request to the subject specified. Returns the reply or 
 // nullptr if the request times out.
-MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const MessagePtr& pMessage, double timeoutSeconds)
+MessagePtr ConnectionImpl::sendRequest(const std::string& /*subject*/, const MessagePtr& /*pMessage*/, double /*timeoutSeconds*/)
 {
     // We create a unique inbox for the reply and subscribe to it...
-
+    throw Exception("NOT IMPLEMENTED!!!");
 }
 
 // Subscribes to a subject.
@@ -221,6 +221,6 @@ void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr
 // Returns a unique inbox name.
 std::string ConnectionImpl::createInbox()
 {
-    auto guid = "???"; throw Exception("NOT IMPLEMENTED");
+    auto guid = MMUtils::createGUID();
     return std::format("_INBOX.{}", guid);
 }

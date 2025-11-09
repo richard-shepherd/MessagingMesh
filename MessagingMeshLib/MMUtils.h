@@ -31,6 +31,9 @@ namespace MessagingMesh
 
         // Splits the input string on the delimiter and returns a vector of tokens.
         static VecToken tokenize(std::string_view, char delimiter);
+
+        // Creates a GUID and returns it in its base64 string format.
+        static std::string createGUID();
     };
 } // namespace
 

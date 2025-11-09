@@ -32,6 +32,7 @@ MessagingMeshLib\headers
 - Linker -> Input -> Additional Dependencies
 MessagingMeshLib\lib\($Configuration)\MessagingMeshLib.lib
 advapi32.lib
+crypt32.lib
 iphlpapi.lib
 psapi.lib
 shell32.lib
