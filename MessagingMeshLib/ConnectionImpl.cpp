@@ -95,10 +95,49 @@ void ConnectionImpl::sendMessage(const std::string& subject, const MessagePtr& p
 
 // Sends a blocking request to the subject specified. Returns the reply or 
 // nullptr if the request times out.
-MessagePtr ConnectionImpl::sendRequest(const std::string& /*subject*/, const MessagePtr& /*pMessage*/, double /*timeoutSeconds*/)
+MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const MessagePtr& pMessage, double timeoutSeconds)
 {
-    // We create a unique inbox for the reply and subscribe to it...
-    throw Exception("NOT IMPLEMENTED!!!");
+    MessagePtr pResultMessage = nullptr;
+
+    // We create a unique inbox for the reply...
+    auto inbox = createInbox();
+
+    // We create an auto reset event to block while waiting for the reply...
+    auto pAutoResetEvent = std::make_shared<AutoResetEvent>();
+
+    // We subscribe to the inbox...
+    auto pSubscription = subscribe(
+        inbox,
+        [&pResultMessage, &pAutoResetEvent](const std::string& /*subject*/, const std::string& /*replySubject*/, MessagePtr pMessage)
+        {
+            // Called when we receive a reply.
+            // We note the result and signal that we have received it.
+            pResultMessage = pMessage;
+            pAutoResetEvent->set();
+        }
+    );
+
+    // We create an auto reset event to block while waiting for the reply, and we store
+    // it associated with the subsciption ID...
+    m_requestEvents.insert(pSubscription->getSubscriptionID(), pAutoResetEvent);
+
+    // We create a NetworkMessage to send the request...
+    NetworkMessage networkMessage;
+    auto& header = networkMessage.getHeader();
+    header.setAction(NetworkMessageHeader::Action::SEND_MESSAGE);
+    header.setSubject(subject);
+    header.setReplySubject(inbox);
+    networkMessage.setMessage(pMessage);
+
+    // We send the message...
+    MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
+
+    // We block on the auto reset event, waiting for the result...
+    pAutoResetEvent->waitOne(timeoutSeconds);
+
+    // We return the result message. This will be nullptr if the request timed out
+    // or the request's result if it did not...
+    return pResultMessage;
 }
 
 // Subscribes to a subject.

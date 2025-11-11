@@ -28,6 +28,7 @@
     <ClInclude Include="OSSocketHolder.h" />
     <ClInclude Include="SharedAliases.h" />
     <ClInclude Include="TestUtils.h" />
+    <ClInclude Include="ThreadsafeMap.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Socket.h" />
     <ClInclude Include="Subscription.h" />

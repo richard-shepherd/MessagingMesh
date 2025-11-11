@@ -11,6 +11,7 @@ namespace MessagingMesh
     class OSSocketHolder;
     class UVLoop;
     class Subscription;
+    class AutoResetEvent;
 
     // Shared pointer to a Field.
     using FieldPtr = std::shared_ptr<Field>;
@@ -41,5 +42,8 @@ namespace MessagingMesh
 
     // Shared pointer to a Subscription.
     using SubscriptionPtr = std::shared_ptr<Subscription>;
+
+    // Shared pointer to an auot reset event.
+    using AutoResetEventPtr = std::shared_ptr<AutoResetEvent>;
 
 } // namespace

@@ -32,6 +32,9 @@ namespace MessagingMesh
         // into it if the lifetime of this object is longer than that of the Connection.
         void resetConnection();
 
+        // Gets the subscription ID.
+        uint32_t getSubscriptionID() const { return m_subscriptionID; }
+
     // Private functions...
     private:
         // Constructor.
