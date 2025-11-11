@@ -1,4 +1,5 @@
 #include <iostream>
+#include <format>
 #include "MessagingMesh.h"
 namespace MM = MessagingMesh;
 
@@ -69,6 +70,57 @@ void subscribe()
     std::cin.get();
 }
 
+// Makes a blocking request to the server...
+void client()
+{
+    // We connect to the gateway...
+    MM::Connection connection("localhost", 5050, "VULCAN");
+
+    // We make requests to add two numbers...
+    MM::Logger::info("Sending Service.Add requests");
+    auto total = 0.0;
+    for (auto i = 1; i <= 1000; ++i)
+    {
+        auto pMessage = MM::Message::create();
+        pMessage->addField("A", i * 0.5);
+        pMessage->addField("B", i * 0.5);
+        auto pResult = connection.sendRequest("Service.Add", pMessage, 30.0);
+        auto sum = pResult->getField("SUM")->getDouble();
+        total += sum;
+    }
+    MM::Logger::info(std::format("Total={}", total));
+
+    MM::Logger::info("Press Enter to exit");
+    std::cin.get();
+}
+
+// Responds to Service.Add requests...
+void server()
+{
+    // We connect to the gateway...
+    MM::Connection connection("localhost", 5050, "VULCAN");
+
+    // We subscribe to requests...
+    auto s1 = connection.subscribe(
+        "Service.Add",
+        [&connection](const std::string& /*subject*/, const std::string& replySubject, MM::MessagePtr pMessage)
+        {
+            // We get the values from the request and add them...
+            auto a = pMessage->getField("A")->getDouble();
+            auto b = pMessage->getField("B")->getDouble();
+            auto sum = a + b;
+
+            // We reply with a message holding the sum...
+            auto pReply = MM::Message::create();
+            pReply->addField("SUM", sum);
+            connection.sendMessage(replySubject, pReply);
+        }
+    );
+
+    MM::Logger::info("Press Enter to exit");
+    std::cin.get();
+}
+
 // Main.
 int main(int argc, char** argv)
 {
@@ -81,6 +133,14 @@ int main(int argc, char** argv)
     else if (argc >= 2 && strcmp("-sub", argv[1]) == 0)
     {
         subscribe();
+    }
+    else if (argc >= 2 && strcmp("-client", argv[1]) == 0)
+    {
+        client();
+    }
+    else if (argc >= 2 && strcmp("-server", argv[1]) == 0)
+    {
+        server();
     }
     else
     {

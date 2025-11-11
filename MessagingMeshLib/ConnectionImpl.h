@@ -6,7 +6,6 @@
 #include "Socket.h"
 #include "AutoResetEvent.h"
 #include "Callbacks.h"
-#include "ThreadsafeMap.h"
 
 namespace MessagingMesh
 {
@@ -94,9 +93,6 @@ namespace MessagingMesh
         //       is managed by the shared-pointers passed to client code.
         // RSSTODO: THIS NEEDS TO BE THREAD SAFE!!!
         std::map<uint32_t, Subscription*> m_subscriptions;
-
-        // Events used to signal for blocking sendRequests, keyed by subscription ID...
-        ThreadsafeMap<uint32_t, AutoResetEventPtr> m_requestEvents;
     };
 } // namespace
 

@@ -110,16 +110,12 @@ MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const Message
         inbox,
         [&pResultMessage, &pAutoResetEvent](const std::string& /*subject*/, const std::string& /*replySubject*/, MessagePtr pMessage)
         {
-            // Called when we receive a reply.
+            // Called on the UV thread when we receive a reply.
             // We note the result and signal that we have received it.
             pResultMessage = pMessage;
             pAutoResetEvent->set();
         }
     );
-
-    // We create an auto reset event to block while waiting for the reply, and we store
-    // it associated with the subsciption ID...
-    m_requestEvents.insert(pSubscription->getSubscriptionID(), pAutoResetEvent);
 
     // We create a NetworkMessage to send the request...
     NetworkMessage networkMessage;
