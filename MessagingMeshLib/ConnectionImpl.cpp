@@ -93,8 +93,8 @@ void ConnectionImpl::sendMessage(const std::string& subject, const MessagePtr& p
     MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 }
 
-// Sends a blocking request to the subject specified. Returns the reply or 
-// nullptr if the request times out.
+// Sends a blocking request to the subject specified. 
+// Returns the reply or nullptr if the request times out.
 MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const MessagePtr& pMessage, double timeoutSeconds)
 {
     MessagePtr pResultMessage = nullptr;
@@ -103,17 +103,17 @@ MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const Message
     auto inbox = createInbox();
 
     // We create an auto reset event to block while waiting for the reply...
-    auto pAutoResetEvent = std::make_shared<AutoResetEvent>();
+    AutoResetEvent autoResetEvent;
 
     // We subscribe to the inbox...
     auto pSubscription = subscribe(
         inbox,
-        [&pResultMessage, &pAutoResetEvent](const std::string& /*subject*/, const std::string& /*replySubject*/, MessagePtr pMessage)
+        [&pResultMessage, &autoResetEvent](const std::string& /*subject*/, const std::string& /*replySubject*/, MessagePtr pMessage)
         {
             // Called on the UV thread when we receive a reply.
             // We note the result and signal that we have received it.
             pResultMessage = pMessage;
-            pAutoResetEvent->set();
+            autoResetEvent.set();
         }
     );
 
@@ -129,7 +129,7 @@ MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const Message
     MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 
     // We block on the auto reset event, waiting for the result...
-    pAutoResetEvent->waitOne(timeoutSeconds);
+    autoResetEvent.waitOne(timeoutSeconds);
 
     // We return the result message. This will be nullptr if the request timed out
     // or the request's result if it did not...
