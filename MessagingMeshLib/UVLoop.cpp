@@ -1,4 +1,5 @@
 #include "UVLoop.h"
+#include <format>
 #include "Logger.h"
 #include "Utils.h"
 #include "UVUtils.h"
@@ -71,7 +72,7 @@ void UVLoop::threadEntryPoint()
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(std::format("{}: {}", __func__, ex.what()));
     }
 }
 
@@ -122,6 +123,6 @@ void UVLoop::processMarshalledEvents()
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(std::format("{}: {}", __func__, ex.what()));
     }
 }

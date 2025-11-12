@@ -1,4 +1,5 @@
 #include "ServiceManager.h"
+#include <format>
 #include "UVLoop.h"
 #include "Socket.h"
 #include "Logger.h"
@@ -62,7 +63,7 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(std::format("{}: {}", __func__, ex.what()));
     }
 }
 
@@ -81,7 +82,7 @@ void ServiceManager::onDisconnected(Socket* pSocket)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(std::format("{}: {}", __func__, ex.what()));
     }
 }
 
@@ -99,7 +100,7 @@ void ServiceManager::onMoveToLoopComplete(Socket* pSocket)
     }
     catch (const std::exception& ex)
     {
-        Logger::error(Utils::format("%s: %s", __func__, ex.what()));
+        Logger::error(std::format("{}: {}", __func__, ex.what()));
     }
 }
 

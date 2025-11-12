@@ -6,8 +6,6 @@ TODO
 
 - Support a Tag ('closure') for subscriptions, returned with callbacks
 
-- Implement blocking sendRequest()
-
 - ConnectionImpl::m_subscriptions needs to be thread safe
 
 - Think about use of std::string. We want to encode strings as UTF-8

@@ -1,5 +1,6 @@
 #include "Logger.h"
 #include <memory>
+#include <format>
 #include "uv.h"
 #include "Utils.h"
 #include "UVUtils.h"
@@ -32,7 +33,7 @@ void Logger::log(LogLevel logLevel, const std::string& message)
 
     // We add info the the message...
     auto threadName = UVUtils::getThreadName();
-    auto messageToLog = Utils::format("MessagingMesh (%s): %s", threadName.c_str(), message.c_str());
+    auto messageToLog = std::format("MessagingMesh ({}): {}", threadName, message);
 
     // We notify the registered callbacks...
     for (auto& callback : m_callbacks)

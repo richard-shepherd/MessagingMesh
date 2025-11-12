@@ -1,4 +1,5 @@
 #include "UVUtils.h"
+#include <format>
 #include "Utils.h"
 #include "Logger.h"
 #include "Exception.h"
@@ -35,7 +36,7 @@ UVUtils::IPInfo UVUtils::getPeerIPInfo(uv_tcp_t* pTCPHandle)
     }
     else
     {
-        Logger::error(Utils::format("getPeerInfo: getnameinfo error: %d", status));
+        Logger::error(std::format("getPeerInfo: getnameinfo error: {}", status));
     }
     return ipInfo;
 }
@@ -91,7 +92,7 @@ uv_os_sock_t UVUtils::duplicateSocket_Windows(const uv_os_sock_t& socket)
     if (duplicateSocketStatus != 0)
     {
         auto error = WSAGetLastError();
-        throw Exception(Utils::format("WSADuplicateSocket failed: %d", error));
+        throw Exception(std::format("WSADuplicateSocket failed: {}", error));
     }
 
     // We duplicate the socket...
@@ -105,7 +106,7 @@ uv_os_sock_t UVUtils::duplicateSocket_Windows(const uv_os_sock_t& socket)
     if (newSocket == INVALID_SOCKET)
     {
         auto error = WSAGetLastError();
-        throw Exception(Utils::format("WSASocket (dup) failed: %d", error));
+        throw Exception(std::format("WSASocket (dup) failed: {}", error));
     }
 
     // We return the duplicated socket...

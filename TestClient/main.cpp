@@ -47,12 +47,12 @@ void onMessage(const std::string& subject, const std::string& /*replySubject*/, 
         auto value = pMessage->getField("#")->getSignedInt32();
         if (value % 1000000 == 0)
         {
-            MM::Logger::info(MM::Utils::format("Update to %s: %d", subject.c_str(), value));
+            MM::Logger::info(std::format("Update to {}: {}", subject, value));
         }
     }
     catch (const std::exception& ex)
     {
-        MM::Logger::error(MM::Utils::format("%s: %s", __func__, ex.what()));
+        MM::Logger::error(std::format("{}: {}", __func__, ex.what()));
     }
 }
 
