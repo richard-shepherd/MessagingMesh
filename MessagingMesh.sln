@@ -15,24 +15,30 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestClient", "TestClient\Te
 		{06C7F280-8FCD-451D-8569-A9C1CBE46CB9} = {06C7F280-8FCD-451D-8569-A9C1CBE46CB9}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingMeshLib.NET", "MessagingMeshLib.NET\MessagingMeshLib.NET.csproj", "{52094B07-70AA-468C-A36B-F974832BADFD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Release|x64 = Release|x64
+		Debug|MessagingMesh = Debug|MessagingMesh
+		Release|MessagingMesh = Release|MessagingMesh
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{06C7F280-8FCD-451D-8569-A9C1CBE46CB9}.Debug|x64.ActiveCfg = Debug|x64
-		{06C7F280-8FCD-451D-8569-A9C1CBE46CB9}.Debug|x64.Build.0 = Debug|x64
-		{06C7F280-8FCD-451D-8569-A9C1CBE46CB9}.Release|x64.ActiveCfg = Release|x64
-		{06C7F280-8FCD-451D-8569-A9C1CBE46CB9}.Release|x64.Build.0 = Release|x64
-		{D898EF66-7125-4331-B1C0-6EADDB3AB5B3}.Debug|x64.ActiveCfg = Debug|x64
-		{D898EF66-7125-4331-B1C0-6EADDB3AB5B3}.Debug|x64.Build.0 = Debug|x64
-		{D898EF66-7125-4331-B1C0-6EADDB3AB5B3}.Release|x64.ActiveCfg = Release|x64
-		{D898EF66-7125-4331-B1C0-6EADDB3AB5B3}.Release|x64.Build.0 = Release|x64
-		{F75F0CE2-1450-4E72-A771-8323A2712513}.Debug|x64.ActiveCfg = Debug|x64
-		{F75F0CE2-1450-4E72-A771-8323A2712513}.Debug|x64.Build.0 = Debug|x64
-		{F75F0CE2-1450-4E72-A771-8323A2712513}.Release|x64.ActiveCfg = Release|x64
-		{F75F0CE2-1450-4E72-A771-8323A2712513}.Release|x64.Build.0 = Release|x64
+		{06C7F280-8FCD-451D-8569-A9C1CBE46CB9}.Debug|MessagingMesh.ActiveCfg = Debug|x64
+		{06C7F280-8FCD-451D-8569-A9C1CBE46CB9}.Debug|MessagingMesh.Build.0 = Debug|x64
+		{06C7F280-8FCD-451D-8569-A9C1CBE46CB9}.Release|MessagingMesh.ActiveCfg = Release|x64
+		{06C7F280-8FCD-451D-8569-A9C1CBE46CB9}.Release|MessagingMesh.Build.0 = Release|x64
+		{D898EF66-7125-4331-B1C0-6EADDB3AB5B3}.Debug|MessagingMesh.ActiveCfg = Debug|x64
+		{D898EF66-7125-4331-B1C0-6EADDB3AB5B3}.Debug|MessagingMesh.Build.0 = Debug|x64
+		{D898EF66-7125-4331-B1C0-6EADDB3AB5B3}.Release|MessagingMesh.ActiveCfg = Release|x64
+		{D898EF66-7125-4331-B1C0-6EADDB3AB5B3}.Release|MessagingMesh.Build.0 = Release|x64
+		{F75F0CE2-1450-4E72-A771-8323A2712513}.Debug|MessagingMesh.ActiveCfg = Debug|x64
+		{F75F0CE2-1450-4E72-A771-8323A2712513}.Debug|MessagingMesh.Build.0 = Debug|x64
+		{F75F0CE2-1450-4E72-A771-8323A2712513}.Release|MessagingMesh.ActiveCfg = Release|x64
+		{F75F0CE2-1450-4E72-A771-8323A2712513}.Release|MessagingMesh.Build.0 = Release|x64
+		{52094B07-70AA-468C-A36B-F974832BADFD}.Debug|MessagingMesh.ActiveCfg = Debug|Any CPU
+		{52094B07-70AA-468C-A36B-F974832BADFD}.Debug|MessagingMesh.Build.0 = Debug|Any CPU
+		{52094B07-70AA-468C-A36B-F974832BADFD}.Release|MessagingMesh.ActiveCfg = Release|Any CPU
+		{52094B07-70AA-468C-A36B-F974832BADFD}.Release|MessagingMesh.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,6 +12,7 @@ namespace MessagingMesh
     {
     // Public types...
     public:
+        // Types of data which can be held in a field.
         enum DataType
         {
             NOT_SET,
@@ -38,7 +39,7 @@ namespace MessagingMesh
         // Serializes the field to the current position of the buffer.
         void serialize(Buffer& buffer) const;
 
-        // Serializes the field to the current position of the buffer.
+        // Deserializes the field from the current position in the buffer.
         void deserialize(Buffer& buffer);
 
     // Getters and setters for field types...

@@ -25,7 +25,7 @@ namespace MessagingMesh
         // Serializes the field to the current position of the buffer.
         void serialize(Buffer& buffer) const;
 
-        // Deserialized the field from the current position in the buffer.
+        // Deserializes the field from the current position in the buffer.
         void deserialize(Buffer& buffer);
 
     // Getters and setters for field types...
@@ -52,7 +52,7 @@ namespace MessagingMesh
         void setDouble(double value);
 
         // Gets the message held by the field.
-        // Throws a MessagingMesh::Exception  if the field does not hold this type.
+        // Throws a MessagingMesh::Exception if the field does not hold this type.
         const ConstMessagePtr& getMessage() const;
 
         // Sets the field to hold a message.
