@@ -16,7 +16,7 @@ namespace MessagingMeshLib.NET
         {
             NOT_SET,
             STRING,
-            SIGNED_INT32,
+            SIGNED_INT,
             DOUBLE,
             MESSAGE
         };
@@ -37,6 +37,13 @@ namespace MessagingMeshLib.NET
         #endregion
 
         #region Public methods
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public Field()
+        {
+        }
 
         /// <summary>
         /// Serializes the field to the current position of the buffer.
@@ -67,38 +74,77 @@ namespace MessagingMeshLib.NET
         public string getString()
         {
             checkDataType(DataType.STRING);
-            return m_data as string;
+            return (string)m_data;
         }
 
         /// <summary>
         /// Sets the field to hold a string.
         /// </summary>
-        void setString(string value)
+        public void setString(string value)
         {
             m_dataType = DataType.STRING;
             m_data = value;
         }
 
-        //// Gets the signed int32 held by the field.
-        //// Throws a MessagingMesh::Exception if the field does not hold this type.
-        //int32_t getSignedInt32() const;
+        /// <summary>
+        /// Gets the signed int held by the field.
+        /// Throws a MessagingMeshException if the field does not hold this type.
+        /// </summary>
+        public int getSignedInt()
+        {
+            checkDataType(DataType.SIGNED_INT);
+            return (int)m_data;
+        }
 
-        //// Sets the field to hold a signed int32.
-        //void setSignedInt32(int32_t value);
+        /// <summary>
+        /// Sets the field to hold a signed int.
+        /// </summary>
+        public void setSignedInt(int value)
+        {
+            m_dataType = DataType.SIGNED_INT;
+            m_data = value;
+        }
 
         //// Gets the double held by the field.
         //// Throws a MessagingMesh::Exception  if the field does not hold this type.
-        //double getDouble() const;
 
-        //// Sets the field to hold a double.
-        //void setDouble(double value);
+        /// <summary>
+        /// Gets the double held by the field.
+        /// Throws a MessagingMeshException if the field does not hold this type.
+        /// </summary>
+        public double getDouble()
+        {
+            checkDataType(DataType.DOUBLE);
+            return (double)m_data;
+        }
 
-        //// Gets the message held by the field.
-        //// Throws a MessagingMesh::Exception if the field does not hold this type.
-        //const ConstMessagePtr& getMessage() const;
+        /// <summary>
+        /// Sets the field to hold a double.
+        /// </summary>
+        public void setDouble(double value)
+        {
+            m_dataType = DataType.DOUBLE;
+            m_data = value;
+        }
 
-        //// Sets the field to hold a message.
-        //void setMessage(const ConstMessagePtr& value);
+        /// <summary>
+        /// Gets the Message held by the field.
+        /// Throws a MessagingMeshException if the field does not hold this type.
+        /// </summary>
+        public Message getMessage()
+        {
+            checkDataType(DataType.MESSAGE);
+            return (Message)m_data;
+        }
+
+        /// <summary>
+        /// Sets the field to hold a message.
+        /// </summary>
+        public void setMessage(Message value)
+        {
+            m_dataType = DataType.MESSAGE;
+            m_data = value;
+        }
 
         #endregion
 
