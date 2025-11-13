@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Buffer.cs" />
     <Compile Include="Field.cs" />
+    <Compile Include="MessagingMeshException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
