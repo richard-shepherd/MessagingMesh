@@ -1,5 +1,9 @@
 TODO
 ----
+- Do the C# language version thing, eg for =new()
+
+- Change cpp Message addField() methods to addFieldString() etc
+
 - Connection must not make more than one subscription to the gateway for a
   subject. It should check if the subsciption has already been made and map
   the existing subscription ID to multiple callbacks if necessary.

@@ -45,24 +45,6 @@ namespace MessagingMeshLib.NET
         {
         }
 
-        /// <summary>
-        /// Serializes the field to the current position of the buffer.
-        /// </summary>
-        void serialize(Buffer buffer)
-        {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Deserializes the field from the current position in the buffer.
-        /// </summary>
-        void deserialize(Buffer buffer)
-        {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
-        }
-
         #endregion
 
         #region Getters and setters for field types
@@ -144,6 +126,28 @@ namespace MessagingMeshLib.NET
         {
             m_dataType = DataType.MESSAGE;
             m_data = value;
+        }
+
+        #endregion
+
+        #region Serialization and deserialization
+
+        /// <summary>
+        /// Serializes the field to the current position of the buffer.
+        /// </summary>
+        internal void serialize(Buffer buffer)
+        {
+            // RSSTODO: WRITE THIS!!!
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Deserializes the field from the current position in the buffer.
+        /// </summary>
+        internal void deserialize(Buffer buffer)
+        {
+            // RSSTODO: WRITE THIS!!!
+            throw new NotImplementedException();
         }
 
         #endregion
