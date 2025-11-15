@@ -72,7 +72,7 @@ namespace MessagingMeshLib.NET
     /// 
     /// The size is added to the buffer when the getBuffer() method is called.
     /// </summary>
-    internal class Buffer
+    public class Buffer   // RSSTODO: MAKE THIS INTERNAL!!!
     {
         #region Public constants
 
@@ -88,7 +88,7 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Constructor.
         /// </summary>
-        Buffer()
+        public Buffer()
         {
         }
 
