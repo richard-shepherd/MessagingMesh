@@ -64,6 +64,32 @@ void Tests_MessagingMeshLib::buffer(TestUtils::TestRun& testRun)
         assertEqual(testRun, buffer[10], 0x09);
         assertEqual(testRun, buffer[11], 0x40);
     }
+
+    TestUtils::log("Buffer string...");
+    {
+        auto pBuffer = Buffer::create();
+        pBuffer->write_string("hello");
+        auto buffer = pBuffer->getBuffer();
+
+        // Size...
+        assertEqual(testRun, buffer[0], 0x0d);
+        assertEqual(testRun, buffer[1], 0x00);
+        assertEqual(testRun, buffer[2], 0x00);
+        assertEqual(testRun, buffer[3], 0x00);
+
+        // String size...
+        assertEqual(testRun, buffer[4], 0x05);
+        assertEqual(testRun, buffer[5], 0x00);
+        assertEqual(testRun, buffer[6], 0x00);
+        assertEqual(testRun, buffer[7], 0x00);
+
+        // String data...
+        assertEqual(testRun, buffer[8], 'h');
+        assertEqual(testRun, buffer[9], 'e');
+        assertEqual(testRun, buffer[10], 'l');
+        assertEqual(testRun, buffer[11], 'l');
+        assertEqual(testRun, buffer[12], 'o');
+    }
 }
 
 // Tests message serialization and deserialization.
