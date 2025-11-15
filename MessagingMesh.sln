@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingMeshLib.NET", "Mes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient.NET", "TestClient.NET\TestClient.NET.csproj", "{8B7AF230-D368-43F2-9317-2B804F00E774}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingMeshLib.NET.Tests", "MessagingMeshLib.NET.Tests\MessagingMeshLib.NET.Tests.csproj", "{54667E8F-6391-44CC-98A1-E04FC319549E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MessagingMesh = Debug|MessagingMesh
@@ -45,6 +47,10 @@ Global
 		{8B7AF230-D368-43F2-9317-2B804F00E774}.Debug|MessagingMesh.Build.0 = Debug|x64
 		{8B7AF230-D368-43F2-9317-2B804F00E774}.Release|MessagingMesh.ActiveCfg = Release|x64
 		{8B7AF230-D368-43F2-9317-2B804F00E774}.Release|MessagingMesh.Build.0 = Release|x64
+		{54667E8F-6391-44CC-98A1-E04FC319549E}.Debug|MessagingMesh.ActiveCfg = Debug|Any CPU
+		{54667E8F-6391-44CC-98A1-E04FC319549E}.Debug|MessagingMesh.Build.0 = Debug|Any CPU
+		{54667E8F-6391-44CC-98A1-E04FC319549E}.Release|MessagingMesh.ActiveCfg = Release|Any CPU
+		{54667E8F-6391-44CC-98A1-E04FC319549E}.Release|MessagingMesh.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -72,7 +72,7 @@ namespace MessagingMeshLib.NET
     /// 
     /// The size is added to the buffer when the getBuffer() method is called.
     /// </summary>
-    public class Buffer   // RSSTODO: MAKE THIS INTERNAL!!!
+    internal class Buffer
     {
         #region Public constants
 
@@ -90,6 +90,62 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public Buffer()
         {
+        }
+
+        /// <summary>
+        /// Gets the buffer.
+        /// </summary>
+        public byte[] getBuffer()
+        {
+            // If the buffer has not yet been allocated we allocate a buffer to hold the
+            // size, as client code is always expecting a buffer with at least a size at
+            // the start of the buffer...
+            if (m_buffer == null)
+            {
+                m_buffer = new byte[SIZE_SIZE];
+                m_bufferSize = SIZE_SIZE;
+            }
+
+            // We update the data size, stored in the first four bytes of the buffer...
+            var bytes = BitConverter.GetBytes(m_dataSize);
+            System.Buffer.BlockCopy(bytes, 0, m_buffer, 0, SIZE_SIZE);
+
+            // We return the buffer...
+            return m_buffer;
+        }
+
+        /// <summary>
+        /// Gets the size of the data stored in the buffer.
+        /// This includes the four bytes for the size plus the data.
+        /// </summary>
+        public int getBufferSize()
+        { 
+            return m_dataSize; 
+        }
+
+        /// <summary>
+        /// Resets the position to the initial position for reading data.
+        /// Note: This is the position after the size.
+        /// </summary>
+        public void resetPosition() 
+        { 
+            m_position = SIZE_SIZE; 
+        }
+
+        /// <summary>
+        /// Gets the position in the buffer where data will be written.
+        /// </summary>
+        public int getPosition() 
+        {
+            return m_position;
+        }
+
+        /// <summary>
+        /// Sets the position in the buffer where data will be written.
+        /// </summary>
+        public void setPosition(int position)
+        {
+            m_position = position;
         }
 
         #endregion
