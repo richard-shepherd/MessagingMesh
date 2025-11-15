@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <format>
 
 namespace MessagingMesh
 {
@@ -34,20 +35,25 @@ namespace MessagingMesh
         void log(const std::string& message, bool preceedingBlankLine = true);
 
         // Compares values, and outputs if they are the same or different.
+        void assertEqual(TestRun& testRun, unsigned char actual, unsigned char expected);
+
+        // Compares values, and outputs if they are the same or different.
         template <typename T>
         void assertEqual(TestRun& testRun, const T& actual, const T& expected)
         {
+            std::string result = "PASS";
             if (actual == expected)
             {
-                std::cout << "PASS: expected=" << expected << ", actual=" << actual << std::endl;
                 testRun.SuccessCount++;
             }
             else
             {
-                std::cout << "FAIL: expected=" << expected << ", actual=" << actual << std::endl;
+                result = "FAIL";
                 testRun.FailureCount++;
             }
+            std::cout << std::format("{}: expected={}, actual={}", result, expected, actual) << std::endl;
         }
+
     }  // namespace TestUtils
 } // namespace MessagingMesh
 

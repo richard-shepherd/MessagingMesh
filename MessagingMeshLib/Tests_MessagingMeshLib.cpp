@@ -10,9 +10,60 @@ using namespace MessagingMesh::TestUtils;
 // Runs all tests.
 void Tests_MessagingMeshLib::runAll(TestUtils::TestRun& testRun)
 {
+    buffer(testRun);
     messageSerialization(testRun);
     tokenize(testRun);
     guids(testRun);
+}
+
+// Tests writing to a reading from a buffer.
+void Tests_MessagingMeshLib::buffer(TestUtils::TestRun& testRun)
+{
+    TestUtils::log("Buffer int8...");
+    {
+        auto pBuffer = Buffer::create();
+        pBuffer->write_int8(0x2e);
+        auto buffer = pBuffer->getBuffer();
+        assertEqual(testRun, buffer[0], 0x05);
+        assertEqual(testRun, buffer[1], 0x00);
+        assertEqual(testRun, buffer[2], 0x00);
+        assertEqual(testRun, buffer[3], 0x00);
+        assertEqual(testRun, buffer[4], 0x2e);
+    }
+
+    TestUtils::log("Buffer int32...");
+    {
+        auto pBuffer = Buffer::create();
+        pBuffer->write_int32(0x12345678);
+        auto buffer = pBuffer->getBuffer();
+        assertEqual(testRun, buffer[0], 0x08);
+        assertEqual(testRun, buffer[1], 0x00);
+        assertEqual(testRun, buffer[2], 0x00);
+        assertEqual(testRun, buffer[3], 0x00);
+        assertEqual(testRun, buffer[4], 0x78);
+        assertEqual(testRun, buffer[5], 0x56);
+        assertEqual(testRun, buffer[6], 0x34);
+        assertEqual(testRun, buffer[7], 0x12);
+    }
+
+    TestUtils::log("Buffer double...");
+    {
+        auto pBuffer = Buffer::create();
+        pBuffer->write_double(3.14);
+        auto buffer = pBuffer->getBuffer();
+        assertEqual(testRun, buffer[0], 0x0c);
+        assertEqual(testRun, buffer[1], 0x00);
+        assertEqual(testRun, buffer[2], 0x00);
+        assertEqual(testRun, buffer[3], 0x00);
+        assertEqual(testRun, buffer[4], 0x1f);
+        assertEqual(testRun, buffer[5], 0x85);
+        assertEqual(testRun, buffer[6], 0xeb);
+        assertEqual(testRun, buffer[7], 0x51);
+        assertEqual(testRun, buffer[8], 0xb8);
+        assertEqual(testRun, buffer[9], 0x1e);
+        assertEqual(testRun, buffer[10], 0x09);
+        assertEqual(testRun, buffer[11], 0x40);
+    }
 }
 
 // Tests message serialization and deserialization.

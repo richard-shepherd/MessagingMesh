@@ -13,6 +13,9 @@ namespace MessagingMesh
         // Runs all tests.
         static void runAll(TestUtils::TestRun& testRun);
 
+        // Tests writing to a reading from a buffer.
+        static void buffer(TestUtils::TestRun& testRun);
+
         // Tests message serialization and deserialization.
         static void messageSerialization(TestUtils::TestRun& testRun);
 
