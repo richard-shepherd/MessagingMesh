@@ -113,7 +113,7 @@ namespace MessagingMeshLib.NET
 
         #endregion
 
-        #region Serialization and deserialization
+        #region Serialization
 
         /// <summary>
         /// Serializes the message to the current position in the buffer.
@@ -143,7 +143,7 @@ namespace MessagingMeshLib.NET
         {
             // We create a field and set its name...
             var field = new Field();
-            field.Name = name;
+            field.setName(name);
 
             // We call the function (lambda) to set the value...
             valueSetter(field);
@@ -152,7 +152,10 @@ namespace MessagingMeshLib.NET
             m_fields.Add(field);
 
             // We add the field to the map of name->first-field-for-name...
-            m_mapNameToField.Add(name, field);
+            if (!m_mapNameToField.ContainsKey(name))
+            {
+                m_mapNameToField.Add(name, field);
+            }
         }
 
         #endregion
@@ -160,10 +163,10 @@ namespace MessagingMeshLib.NET
         #region Private data
 
         // List of fields in the message, in the order they were added...
-        private readonly List<Field> m_fields = new List<Field>();
+        private readonly List<Field> m_fields = new();
 
         // Map of field name to the first field with that name...
-        private readonly Dictionary<string, Field> m_mapNameToField = new Dictionary<string, Field>();
+        private readonly Dictionary<string, Field> m_mapNameToField = new();
 
         #endregion
     }

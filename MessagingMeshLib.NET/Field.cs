@@ -23,19 +23,6 @@ namespace MessagingMeshLib.NET
 
         #endregion
 
-        #region Properties
-
-        /// <summary>
-        /// Gets or sets the field's name.
-        /// </summary>
-        public string Name
-        {
-            get { return m_name; } 
-            set { m_name = value; }
-        }
-
-        #endregion
-
         #region Public methods
 
         /// <summary>
@@ -43,6 +30,22 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public Field()
         {
+        }
+
+        /// <summary>
+        /// Gets the field's name.
+        /// </summary>
+        public string getName()
+        {
+            return m_name;
+        }
+
+        /// <summary>
+        /// Sets the field's name.
+        /// </summary>
+        public void setName(string name)
+        {
+            m_name = name;
         }
 
         #endregion
@@ -130,7 +133,7 @@ namespace MessagingMeshLib.NET
 
         #endregion
 
-        #region Serialization and deserialization
+        #region Serialization
 
         /// <summary>
         /// Serializes the field to the current position of the buffer.

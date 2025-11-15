@@ -23,7 +23,7 @@ void NetworkMessageHeader::serialize(Buffer& buffer) const
     buffer.write_int8(static_cast<int8_t>(m_action));
 }
 
-// Deserialized the network message header from the current position in the buffer.
+// Deserializes the network message header from the current position in the buffer.
 void NetworkMessageHeader::deserialize(Buffer& buffer)
 {
     // Subscription ID...

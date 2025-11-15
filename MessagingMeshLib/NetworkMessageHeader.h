@@ -34,7 +34,7 @@ namespace MessagingMesh
         // Serializes the network message header to the current position of the buffer.
         void serialize(Buffer& buffer) const;
 
-        // Deserialized the network message header from the current position in the buffer.
+        // Deserializes the network message header from the current position in the buffer.
         void deserialize(Buffer& buffer);
 
         // Sets the subscription ID.
