@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 
 namespace MessagingMeshLib.NET
 {
@@ -197,6 +199,59 @@ namespace MessagingMeshLib.NET
             var bytes = BitConverter.GetBytes(item);
             System.Buffer.BlockCopy(bytes, 0, m_buffer, m_position, size);
             updatePosition_Write(size);
+        }
+
+        /// <summary>
+        /// Writes a string to the buffer.
+        /// </summary>
+        public void write_string(string item)
+        {
+            // String are serialized as [length][chars].
+
+            // We convert the string to UTF-8...
+            var utf8Bytes = Encoding.UTF8.GetBytes(item);
+
+            // We write the length...
+            write_int(utf8Bytes.Length);
+
+            // We write the characters...
+            write_bytes(utf8Bytes);
+        }
+
+        /// <summary>
+        /// Writes bytes to the buffer from the array passed in.
+        /// </summary>
+        public void write_bytes(byte[] bytes)
+        {
+            // We make sure that the buffer can hold the new data...
+            var size = bytes.Length;
+            checkBufferSize_Write(size);
+
+            // We write the data to the buffer...
+            System.Buffer.BlockCopy(bytes, 0, m_buffer, m_position, size);
+
+            // We update the position and data size... 
+            updatePosition_Write(size);
+        }
+
+        /// <summary>
+        /// Writes a field to the buffer.
+        /// </summary>
+        public void write_field(Field item)
+        {
+            // We call the field's serialize() method. This calls back into the buffer
+            // to write the data for the field and the specific type it is managing...
+            item.serialize(this);
+        }
+
+        /// <summary>
+        /// Writes a message to the buffer.
+        /// </summary>
+        public void write_message(Message item)
+        {
+            // We call the message's serialize() method. This calls back into the buffer
+            // to write the data for the message and the fields it is managing...
+            item.serialize(this);
         }
 
         #endregion
