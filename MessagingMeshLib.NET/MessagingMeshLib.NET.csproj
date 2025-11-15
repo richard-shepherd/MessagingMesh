@@ -50,6 +50,7 @@
     <Compile Include="Field.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessagingMeshException.cs" />
+    <Compile Include="NetworkMessage.cs" />
     <Compile Include="NetworkMessageHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
