@@ -76,5 +76,24 @@ namespace MessagingMeshLib.NET.Tests
             Assert.AreEqual((byte)'l', data[11]);
             Assert.AreEqual((byte)'o', data[12]);
         }
+
+        /// <summary>
+        /// Tests serializing and deserializing a string.
+        /// </summary>
+        [TestMethod]
+        public void serialize_and_deserialize_string()
+        {
+            // We serialize a string...
+            var s1 = "hello";
+            var buffer = new Buffer();
+            buffer.write_string(s1);
+
+            // We read the string from the buffer...
+            buffer.resetPosition();
+            var s2 = buffer.read_string();
+
+            // We check we got back what we started with...
+            Assert.AreEqual(s1, s2);
+        }
     }
 }
