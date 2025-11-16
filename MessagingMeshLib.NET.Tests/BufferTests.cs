@@ -3,7 +3,7 @@
 namespace MessagingMeshLib.NET.Tests
 {
     /// <summary>
-    /// Tests of the Buffer.
+    /// Tests of the Buffer class.
     /// </summary>
     [TestClass]
     public class BufferTests

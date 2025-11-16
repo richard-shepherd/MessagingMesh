@@ -140,8 +140,34 @@ namespace MessagingMeshLib.NET
         /// </summary>
         internal void serialize(Buffer buffer)
         {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
+            // We serialize the field name...
+            buffer.write_string(m_name);
+
+            // We serialize the data type...
+            buffer.write_byte((byte)m_dataType);
+
+            // We serialize the data, depending on the type...
+            switch (m_dataType)
+            {
+                case DataType.STRING:
+                    buffer.write_string((string)m_data);
+                    break;
+
+                case DataType.SIGNED_INT:
+                    buffer.write_int((int)m_data);
+                    break;
+
+                case DataType.DOUBLE:
+                    buffer.write_double((double)m_data);
+                    break;
+
+                case DataType.MESSAGE:
+                    buffer.write_message((Message)m_data);
+                    break;
+
+                default:
+                    throw new MessagingMeshException($"Field.serialize data-type {m_dataType} not handled");
+            }
         }
 
         /// <summary>
@@ -149,8 +175,34 @@ namespace MessagingMeshLib.NET
         /// </summary>
         internal void deserialize(Buffer buffer)
         {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
+            // We deserialize the name...
+            m_name = buffer.read_string();
+
+            // We deserialize the data type...
+            m_dataType = (DataType)buffer.read_byte();
+
+            // We deserialize the data, depending on the type...
+            switch (m_dataType)
+            {
+                case DataType.STRING:
+                    m_data = buffer.read_string();
+                    break;
+
+                case DataType.SIGNED_INT:
+                    m_data = buffer.read_int();
+                    break;
+
+                case DataType.DOUBLE:
+                    m_data = buffer.read_double();
+                    break;
+
+                case DataType.MESSAGE:
+                    m_data = buffer.read_message();
+                    break;
+
+                default:
+                    throw new MessagingMeshException($"Field.deserialize data-type {m_dataType} not handled");
+            }
         }
 
         #endregion
@@ -163,7 +215,7 @@ namespace MessagingMeshLib.NET
         /// </summary>
         private void checkDataType(DataType dataType)
         {
-            if (m_dataType != DataType.STRING)
+            if (m_dataType != dataType)
             {
                 throw new MessagingMeshException($"Field {m_name} is not a {dataType}");
             }

@@ -120,15 +120,34 @@ namespace MessagingMeshLib.NET
         /// </summary>
         internal void serialize(Buffer buffer)
         {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
+            // We write the number of fields...
+            var fieldCount = m_fields.Count;
+            buffer.write_int(fieldCount);
+
+            // We write each field...
+            foreach (var field in m_fields)
+            {
+                buffer.write_field(field);
+            }
         }
 
         // Deserializes the message from the current position in the buffer.
         internal void deserialize(Buffer buffer)
         {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
+            // We find the number of fields...
+            var fieldCount = buffer.read_int();
+
+            // We read each field and add them to the message...
+            for (var i = 0; i < fieldCount; ++i)
+            {
+                var field = buffer.read_field();
+                m_fields.Add(field);
+                var name = field.getName();
+                if (!m_mapNameToField.ContainsKey(name))
+                {
+                    m_mapNameToField.Add(name, field);
+                }
+            }
         }
 
         #endregion

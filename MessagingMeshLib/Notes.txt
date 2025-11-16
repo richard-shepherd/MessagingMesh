@@ -1,8 +1,11 @@
 TODO
 ----
-- Support field types: 
+- Support field types (and add tests): 
   - BLOB (C++, C#): Change read_bytes, write_bytes to encode the size as well?
   - UNSIGNED_INT32 (C++, C#)
+
+- ConnectionParams class (C++, C#)
+  - Include whether to call back on the connection's thread or to need manual dispatch (PMQ)
 
 - Message::getFields() to get all fields (C++, C#)
 
