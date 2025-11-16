@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Remoting.Messaging;
 
 namespace MessagingMeshLib.NET
 {
@@ -41,8 +42,11 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public void serialize(Buffer buffer)
         {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
+            // Header...
+            Header.serialize(buffer);
+
+            // Message.
+            Message.serialize(buffer);
         }
 
         /// <summary>
@@ -50,8 +54,8 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public void deserialize(Buffer buffer)
         {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
+            deserializeHeader(buffer);
+            deserializeMessage(buffer);
         }
 
         /// <summary>
@@ -59,8 +63,7 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public void deserializeHeader(Buffer buffer)
         {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
+            Header.deserialize(buffer);
         }
 
         /// <summary>
@@ -68,8 +71,7 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public void deserializeMessage(Buffer buffer)
         {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
+            Message.deserialize(buffer);
         }
 
         #endregion

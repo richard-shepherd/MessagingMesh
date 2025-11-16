@@ -57,8 +57,17 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public void serialize(Buffer buffer)
         {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
+            // Subscription ID...
+            buffer.write_uint(SubscriptionID);
+
+            // Subject...
+            buffer.write_string(Subject);
+
+            // Reply subject...
+            buffer.write_string(ReplySubject);
+
+            // Action...
+            buffer.write_byte((byte)Action);
         }
 
         /// <summary>
@@ -66,8 +75,17 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public void deserialize(Buffer buffer)
         {
-            // RSSTODO: WRITE THIS!!!
-            throw new NotImplementedException();
+            // Subscription ID...
+            SubscriptionID = buffer.read_uint();
+
+            // Subject...
+            Subject = buffer.read_string();
+
+            // Reply subject...
+            ReplySubject = buffer.read_string();
+
+            // Action...
+            Action = (ActionEnum)buffer.read_byte();
         }
 
         #endregion
