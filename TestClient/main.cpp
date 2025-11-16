@@ -24,7 +24,7 @@ void publish()
     {
         {
             auto pMessage = MM::Message::create();
-            pMessage->addField("#", i);
+            pMessage->addSignedInt32("#", i);
             connection.sendMessage("A.B", pMessage);
         }
 
@@ -44,7 +44,7 @@ void onMessage(const std::string& subject, const std::string& /*replySubject*/, 
 {
     try
     {
-        auto value = pMessage->getField("#")->getSignedInt32();
+        auto value = pMessage->getSignedInt32("#");
         if (value % 1000000 == 0)
         {
             MM::Logger::info(std::format("Update to {}: {}", subject, value));
@@ -82,10 +82,10 @@ void client()
     for (auto i = 1; i <= 1000; ++i)
     {
         auto pMessage = MM::Message::create();
-        pMessage->addField("A", i * 0.5);
-        pMessage->addField("B", i * 0.5);
+        pMessage->addDouble("A", i * 0.5);
+        pMessage->addDouble("B", i * 0.5);
         auto pResult = connection.sendRequest("Service.Add", pMessage, 30.0);
-        auto sum = pResult->getField("SUM")->getDouble();
+        auto sum = pResult->getDouble("SUM");
         total += sum;
     }
     MM::Logger::info(std::format("Total={}", total));
@@ -106,13 +106,13 @@ void server()
         [&connection](const std::string& /*subject*/, const std::string& replySubject, MM::MessagePtr pMessage)
         {
             // We get the values from the request and add them...
-            auto a = pMessage->getField("A")->getDouble();
-            auto b = pMessage->getField("B")->getDouble();
+            auto a = pMessage->getDouble("A");
+            auto b = pMessage->getDouble("B");
             auto sum = a + b;
 
             // We reply with a message holding the sum...
             auto pReply = MM::Message::create();
-            pReply->addField("SUM", sum);
+            pReply->addDouble("SUM", sum);
             connection.sendMessage(replySubject, pReply);
         }
     );

@@ -37,7 +37,7 @@ namespace MessagingMeshLib.NET
 
         #endregion
 
-        #region add[type]() and get[type]() methods
+        #region Field add and get methods
 
         /// <summary>
         /// Adds a string field to the message.

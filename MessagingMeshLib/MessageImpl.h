@@ -18,29 +18,29 @@ namespace MessagingMesh
         // Destructor.
         ~MessageImpl() = default;
 
-        // Gets a field by name.
-        // Throws a MessagingMesh::Exception if the field is not in the message.
-        const ConstFieldPtr& getField(const std::string& name) const;
-
         // Serializes the message to the current position in the buffer.
         void serialize(Buffer& buffer) const;
 
         // Deserializes the message from the current position in the buffer.
         void deserialize(Buffer& buffer);
 
-    // Helper methods to add fields of various types...
+    // Field add and get methods...
     public:
+        // Gets a field by name.
+        // Throws a MessagingMesh::Exception if the field is not in the message.
+        const ConstFieldPtr& getField(const std::string& name) const;
+
         // Adds a string field to the message. 
-        void addField(const std::string& name, const std::string& value);
+        void addString(const std::string& name, const std::string& value);
 
         // Adds a signed int32 field to the message. 
-        void addField(const std::string& name, int32_t value);
+        void addSignedInt32(const std::string& name, int32_t value);
 
         // Adds a double field to the message. 
-        void addField(const std::string& name, double value);
+        void addDouble(const std::string& name, double value);
 
         // Adds a message field to the message. 
-        void addField(const std::string& name, const ConstMessagePtr& value);
+        void addMessage(const std::string& name, const ConstMessagePtr& value);
     
     // Private functions...
     private:

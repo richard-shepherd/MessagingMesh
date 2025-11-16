@@ -1,8 +1,10 @@
 TODO
 ----
-- Do the C# language version thing, eg for =new()
+- Support field types: 
+  - BLOB (C++, C#)
+  - UNSIGNED_INT32 (C++, C#)
 
-- Change cpp Message addField() methods to addFieldString() etc
+- Message::getFields() to get all fields (C++, C#)
 
 - Connection must not make more than one subscription to the gateway for a
   subject. It should check if the subsciption has already been made and map
@@ -11,10 +13,6 @@ TODO
 - Support a Tag ('closure') for subscriptions, returned with callbacks
 
 - ConnectionImpl::m_subscriptions needs to be thread safe
-
-- Think about use of std::string. We want to encode strings as UTF-8
-
-- Add getField() helper methods to Message
 
 - Replace enum with enum class
 

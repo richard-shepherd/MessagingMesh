@@ -22,30 +22,46 @@ namespace MessagingMesh
         // Destructor.
         ~Message();
 
-        // Gets a field by name.
-        // Throws a MessagingMesh::Exception if the field is not in the message.
-        const ConstFieldPtr& getField(const std::string& name) const;
-
         // Serializes the message to the current position in the buffer.
         void serialize(Buffer& buffer) const;
 
         // Deserializes the message from the current position in the buffer.
         void deserialize(Buffer& buffer);
 
-    // Helper methods to add fields of various types...
+    // Field add and get methods...
     public:
+        // Gets a field by name.
+        // Throws a MessagingMesh::Exception if the field is not in the message.
+        const ConstFieldPtr& getField(const std::string& name) const;
+
         // Adds a string field to the message. 
-        void addField(const std::string& name, const std::string& value);
+        void addString(const std::string& name, const std::string& value);
+
+        // Gets the string value for the field specified.
+        // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
+        const std::string& getString(const std::string& name) const;
 
         // Adds a signed int32 field to the message. 
-        void addField(const std::string& name, int32_t value);
+        void addSignedInt32(const std::string& name, int32_t value);
+
+        // Gets the signed int32 value for the field specified.
+        // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
+        int32_t getSignedInt32(const std::string& name) const;
 
         // Adds a double field to the message. 
-        void addField(const std::string& name, double value);
+        void addDouble(const std::string& name, double value);
+
+        // Gets the double value for the field specified.
+        // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
+        double getDouble(const std::string& name) const;
 
         // Adds a message field to the message. 
-        void addField(const std::string& name, const ConstMessagePtr& value);
-    
+        void addMessage(const std::string& name, const ConstMessagePtr& value);
+
+        // Gets the sub-message for the field specified.
+        // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
+        const ConstMessagePtr& getMessage(const std::string& name) const;
+
     // Private functions...
     private:
         // Constructor.

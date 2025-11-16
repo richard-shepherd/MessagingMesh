@@ -4,10 +4,13 @@
 #include "Exception.h"
 using namespace MessagingMesh;
 
+// Constructor.
 MessageImpl::MessageImpl()
 {
 }
 
+// Gets a field by name.
+// Throws a MessagingMesh::Exception if the field is not in the message.
 const ConstFieldPtr& MessageImpl::getField(const std::string& name) const
 {
     auto it = m_mapNameToField.find(name);
@@ -18,22 +21,26 @@ const ConstFieldPtr& MessageImpl::getField(const std::string& name) const
     return it->second;
 }
 
-void MessageImpl::addField(const std::string& name, const std::string& value)
+// Adds a string field to the message. 
+void MessageImpl::addString(const std::string& name, const std::string& value)
 {
     addField(name, [&value](const FieldPtr& field) {field->setString(value);});
 }
 
-void MessageImpl::addField(const std::string& name, int32_t value)
+// Adds a signed int32 field to the message. 
+void MessageImpl::addSignedInt32(const std::string& name, int32_t value)
 {
     addField(name, [&value](const FieldPtr& field) {field->setSignedInt32(value);});
 }
 
-void MessageImpl::addField(const std::string& name, double value)
+// Adds a double field to the message. 
+void MessageImpl::addDouble(const std::string& name, double value)
 {
     addField(name, [&value](const FieldPtr& field) {field->setDouble(value);});
 }
 
-void MessageImpl::addField(const std::string& name, const ConstMessagePtr& value)
+// Adds a message field to the message. 
+void MessageImpl::addMessage(const std::string& name, const ConstMessagePtr& value)
 {
     addField(name, [&value](const FieldPtr& field) {field->setMessage(value);});
 }
@@ -58,6 +65,7 @@ void MessageImpl::addField(const std::string& name, std::function<void(const Fie
     m_mapNameToField.insert({ name, field });
 }
 
+// Serializes the message to the current position in the buffer.
 void MessageImpl::serialize(Buffer& buffer) const
 {
     // We write the number of fields...
@@ -71,6 +79,7 @@ void MessageImpl::serialize(Buffer& buffer) const
     }
 }
 
+// Deserializes the message from the current position in the buffer.
 void MessageImpl::deserialize(Buffer& buffer)
 {
     // We find the number of fields...

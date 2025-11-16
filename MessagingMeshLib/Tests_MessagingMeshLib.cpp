@@ -105,15 +105,15 @@ void Tests_MessagingMeshLib::messageSerialization(TestRun& testRun)
 
     // We create a message...
     auto pPerson = Message::create();
-    pPerson->addField("NAME", name);
-    pPerson->addField("AGE", age);
+    pPerson->addString("NAME", name);
+    pPerson->addDouble("AGE", age);
 
     // We add a sub-message...
     auto pAddress = Message::create();
-    pAddress->addField("HOUSE-NUMBER", houseNumber);
-    pAddress->addField("STREET", street);
-    pAddress->addField("CITY", city);
-    pPerson->addField("ADDRESS", pAddress);
+    pAddress->addSignedInt32("HOUSE-NUMBER", houseNumber);
+    pAddress->addString("STREET", street);
+    pAddress->addString("CITY", city);
+    pPerson->addMessage("ADDRESS", pAddress);
 
     // We serialize the message...
     auto pBuffer = Buffer::create();
@@ -124,13 +124,13 @@ void Tests_MessagingMeshLib::messageSerialization(TestRun& testRun)
     auto pResult = Message::create();
     pResult->deserialize(*pBuffer);
 
-    assertEqual(testRun, pResult->getField("NAME")->getString(), name);
-    assertEqual(testRun, pResult->getField("AGE")->getDouble(), age);
+    assertEqual(testRun, pResult->getString("NAME"), name);
+    assertEqual(testRun, pResult->getDouble("AGE"), age);
 
-    auto pAddressResult = pResult->getField("ADDRESS")->getMessage();
-    assertEqual(testRun, pAddressResult->getField("HOUSE-NUMBER")->getSignedInt32(), houseNumber);
-    assertEqual(testRun, pAddressResult->getField("STREET")->getString(), street);
-    assertEqual(testRun, pAddressResult->getField("CITY")->getString(), city);
+    auto pAddressResult = pResult->getMessage("ADDRESS");
+    assertEqual(testRun, pAddressResult->getSignedInt32("HOUSE-NUMBER"), houseNumber);
+    assertEqual(testRun, pAddressResult->getString("STREET"), street);
+    assertEqual(testRun, pAddressResult->getString("CITY"), city);
 }
 
 
