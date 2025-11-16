@@ -4,6 +4,8 @@ TODO
   - BLOB (C++, C#): Change read_bytes, write_bytes to encode the size as well?
   - UNSIGNED_INT32 (C++, C#)
 
+- Logger (C#)
+
 - ConnectionParams class (C++, C#)
   - Include whether to call back on the connection's thread or to need manual dispatch (PMQ)
 

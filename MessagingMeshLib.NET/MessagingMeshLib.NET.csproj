@@ -48,7 +48,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Buffer.cs" />
+    <Compile Include="ClientSocket.cs" />
+    <Compile Include="Connection.cs" />
+    <Compile Include="ConnectionParams.cs" />
     <Compile Include="Field.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessagingMeshException.cs" />
     <Compile Include="NetworkMessage.cs" />
