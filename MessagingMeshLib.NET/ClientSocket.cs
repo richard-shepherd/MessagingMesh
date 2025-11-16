@@ -120,10 +120,11 @@ namespace MessagingMeshLib.NET
                 while (!m_stopThreads)
                 {
                     // We wait for data to write to the socket...
-                    var buffers = m_writeQueue.waitAndGetItems(millisecondsTimeout: 1000);
-                    Logger.info($"Processing TX: {buffers.Count} buffers");
+                    var buffers = m_writeQueue.waitAndGetItems(millisecondsTimeout: 100);
+                    //Logger.info($"Processing TX: {buffers.Count} buffers");  // RSSTODO: REMOVE THIS!!!
 
-                    // RSSTODO: DO THIS MORE EFFICIENTLY!!!
+                    // RSSTODO: DO THIS MORE EFFICIENTLY!!! 
+                    // RSSTODO: CHECK bytesSent AND SEND AGAIN IF NECESSARY
                     foreach (var buffer in buffers)
                     {
                         var data = buffer.getBuffer();
@@ -148,9 +149,13 @@ namespace MessagingMeshLib.NET
             try
             {
                 Logger.info("Starting RX");
+                var receiveBuffer = new byte[8192];
                 while (!m_stopThreads)
                 {
-                    Thread.Sleep(1000);
+                    var buffer = new Buffer();
+                    int bytesReceived = m_socket.Receive(receiveBuffer);
+                    Logger.info($"Received {bytesReceived} bytes");
+                    //buffer.
                 }
             }
             catch (Exception ex)

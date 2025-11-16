@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MessagingMeshLib.NET;
+using System;
 using System.Linq;
 using System.Text;
 
@@ -85,6 +86,15 @@ namespace MessagingMeshLib.NET
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Gets whether we hold all data from a network message update.
+        /// </summary>
+        public bool HasAllData => m_hasAllData;
+
+        #endregion
+
         #region Public methods
 
         /// <summary>
@@ -148,6 +158,60 @@ namespace MessagingMeshLib.NET
         public void setPosition(int position)
         {
             m_position = position;
+        }
+
+        /// <summary>
+        /// Reads data from a network data buffer until we have all the data for
+        /// the buffer as specified by the size in the network message.
+        /// Returns the number of bytes read from the buffer.
+        /// </summary>
+        int readNetworkMessage(byte[] buffer, int bufferSize, int bufferPosition)
+        {
+            // See also the comments in Socket::onDataReceived (in the C++ library)
+            // about how data for a message can be received across multiple updates.
+
+            // If we already have all the data we need, there is nothing to do...
+            if (m_hasAllData)
+            {
+                return 0;
+            }
+
+            // We make sure that we have the message size.
+            // (This is a no-op if we already know the size.)
+            int bytesRead = readNetworkMessageSize(buffer, bufferSize, bufferPosition);
+            if (m_bufferSize == 0)
+            {
+                // We do not (yet) have the size...
+                return bytesRead;
+            }
+            bufferPosition += bytesRead;
+
+            // We find the number of bytes we need. This may not be the same as
+            // the size of the message, as we may have already read from of the
+            // data from previous updates.
+            int sizeRequired = m_bufferSize - m_position;
+
+            // We find how much data there is available in the buffer and
+            // work out how many bytes to read from the buffer...
+            int sizeAvailable = bufferSize - bufferPosition;
+            int sizeToRead = Math.Min(sizeRequired, sizeAvailable);
+
+            // We copy the data into our buffer...
+            System.Buffer.BlockCopy(buffer, bufferPosition, m_buffer, m_position, sizeToRead);
+            bytesRead += sizeToRead;
+
+            // We update the data buffer position. It may be that we still have not read the
+            // whole message and we could need this position so we know where to append data
+            // from future updates...
+            m_position += sizeToRead;
+
+            // We check if we have the whole message...
+            if (m_position == m_bufferSize)
+            {
+                m_hasAllData = true;
+            }
+
+            return bytesRead;
         }
 
         #endregion
@@ -351,6 +415,48 @@ namespace MessagingMeshLib.NET
         #region Private functions
 
         /// <summary>
+        /// Reads the network message size (or as much as can be read) from the buffer.
+        /// </summary>
+        private int readNetworkMessageSize(byte[] buffer, int bufferSize, int bufferPosition)
+        {
+            // We check if we already have the size...
+            if (m_bufferSize != 0)
+            {
+                return 0;
+            }
+
+            // We read as many bytes as we can for the size from the buffer...
+            int bytesRead = 0;
+            while (m_networkMessageSizeBufferPosition < SIZE_SIZE)
+            {
+                if (bufferPosition >= bufferSize) break;
+                m_networkMessageSizeBuffer[m_networkMessageSizeBufferPosition++] = buffer[bufferPosition++];
+                bytesRead++;
+            }
+
+            // If we have read all the bytes for the size, we get the size...
+            if (m_networkMessageSizeBufferPosition == SIZE_SIZE)
+            {
+                // We copy the size buffer to the m_bufferSize field. (We can do this as
+                // the messaging-mesh network protocol for int32 is little-endian.)
+                m_bufferSize = BitConverter.ToInt32(m_networkMessageSizeBuffer, 0);
+
+                // We allocate the data buffer for the size...
+                m_dataSize = m_bufferSize;
+                m_buffer = new byte[m_bufferSize];
+
+                // We make sure that the position is four bytes from the start of the buffer.
+                // The first four bytes are reserved for the size itself. The data will be
+                // written after this.
+                m_position = SIZE_SIZE;
+            }
+
+            // We return the number of bytes read from the buffer (which may have not 
+            // been enough to fully parse the size)...
+            return bytesRead;
+        }
+
+        /// <summary>
         /// Checks that the buffer is large enough to read the specified number of bytes.
         /// Throws a MessagingMeshException if the buffer is not large enough.
         /// </summary>
@@ -456,6 +562,14 @@ namespace MessagingMeshLib.NET
         // The size of all data written to the buffer.
         // Note: This includes the size held in the first four bytes.
         private int m_dataSize = SIZE_SIZE;
+
+        // True if we have all data for a network message, false if not.
+        private bool m_hasAllData = false;
+
+        // Buffer when reading the size from a network message.
+        // (We may receive the size across multiple network updates.)
+        private byte[] m_networkMessageSizeBuffer = new byte[SIZE_SIZE];
+        private int m_networkMessageSizeBufferPosition = 0;
 
         #endregion
     }
