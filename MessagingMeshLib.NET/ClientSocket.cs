@@ -26,13 +26,13 @@ namespace MessagingMeshLib.NET
             /// <summary>
             /// Called when data has been received on the socket.
             /// </summary>
-            void onDataReceived(Socket socket, Buffer buffer);
+            void onDataReceived(ClientSocket socket, Buffer buffer);
 
             /// <summary>
             /// Called when a socket has been disconnected.
             /// Called on the RX thread.
             /// </summary>
-            void onDisconnected(Socket socket);
+            void onDisconnected(ClientSocket socket);
         };
 
         #endregion
@@ -149,13 +149,102 @@ namespace MessagingMeshLib.NET
             try
             {
                 Logger.info("Starting RX");
-                var receiveBuffer = new byte[8192];
+                var buffer = new byte[8192];  // RSSTODO: CHANGE THIS. MAYBE ALL OF THIS!!!
                 while (!m_stopThreads)
                 {
-                    var buffer = new Buffer();
-                    int bytesReceived = m_socket.Receive(receiveBuffer);
+                    int bytesReceived = m_socket.Receive(buffer);
                     Logger.info($"Received {bytesReceived} bytes");
-                    //buffer.
+                    onDataReceived(buffer, bytesReceived);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.error(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Called when data has been received on a socket.
+        /// </summary>
+        private void onDataReceived(byte[] buffer, int bufferSize)
+        {
+            try
+            {
+                // We check for errors...
+                if (bufferSize < 1)
+                {
+                    return;
+                }
+
+                // All data we receive comes in the form of network-data messages.
+                // These look like:
+                // - size  (int32, little-endian)
+                // - bytes[size]
+                //
+                // There are different cases where we can get this callback:
+                // 
+                // 1. A data buffer containing all (and only) the data for one message.
+                //
+                // 2. A data buffer containing multiple messages.
+                // 
+                // 3. Partial data for a message. In particular this will be the case
+                //    for very large messages which do not fit into one data buffer.
+                //
+                // It could be that the buffer holds data for some combination of the
+                // types described above. For example:
+                // - Two complete messages followed by one partial message.
+                // - The remainder of a message from a previous update, plus one or more new messages.
+                // - Other permutations and combinations along these lines.
+                // 
+                // In all cases we only really need to know two things:
+                // 
+                // a) Are we expecting a new message? 
+                //    If so, we read the size and then read that number of bytes.
+                // 
+                // b) Are we in the process of reading a message?
+                //    We have a message that started in a previous update and has data
+                //    continuing into this one.
+                // 
+                // We are always reading one message at a time into the m_currentMessage object.
+                // This is a shared pointer to a NetworkData object.
+                // - If this is null we are expecting a new message and need to read the size. 
+                // - If this is not null we are reading additional data for an existing message.
+                // 
+                // The NetworkData object knows the size we are expecting, so we can continue to
+                // read data until we have all the data we need for the message.
+                // 
+                // NOTE: We need to be careful when reading the size for a new message. It is
+                //       possible that the size itself may only be received across multiple of
+                //       these callbacks.
+
+                // We read the buffer...
+                int bufferPosition = 0;
+                while (bufferPosition < bufferSize)
+                {
+                    // If we do not have a current message we create one...
+                    if (m_currentMessage == null)
+                    {
+                        m_currentMessage = new Buffer();
+                    }
+
+                    // We read data into the current message...
+                    int bytesRead = m_currentMessage.readNetworkMessage(buffer, bufferSize, bufferPosition);
+
+                    // If we have read all data for the current message we call back with it...
+                    if (m_currentMessage.HasAllData)
+                    {
+                        // We reset the position of the message / buffer so that it is 
+                        // ready to be read by the client in the callback...
+                        m_currentMessage.resetPosition();
+                        m_callback?.onDataReceived(this, m_currentMessage);
+
+                        // We clear the current message to start a new one...
+                        m_currentMessage = null;
+                    }
+
+                    // We update the buffer position and loop to check if there is
+                    // more data to read...
+                    bufferPosition += bytesRead;
                 }
             }
             catch (Exception ex)
@@ -192,6 +281,9 @@ namespace MessagingMeshLib.NET
 
         // Buffers queued for writing...
         private readonly ThreadsafeConsumableList<Buffer> m_writeQueue = new();
+
+        // A buffer for the message being actively read from the socket...
+        private Buffer m_currentMessage = null;
 
         #endregion
     }

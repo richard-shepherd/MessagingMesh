@@ -165,7 +165,7 @@ namespace MessagingMeshLib.NET
         /// the buffer as specified by the size in the network message.
         /// Returns the number of bytes read from the buffer.
         /// </summary>
-        int readNetworkMessage(byte[] buffer, int bufferSize, int bufferPosition)
+        public int readNetworkMessage(byte[] buffer, int bufferSize, int bufferPosition)
         {
             // See also the comments in Socket::onDataReceived (in the C++ library)
             // about how data for a message can be received across multiple updates.
