@@ -1,7 +1,7 @@
 TODO
 ----
 - Support field types: 
-  - BLOB (C++, C#)
+  - BLOB (C++, C#): Change read_bytes, write_bytes to encode the size as well?
   - UNSIGNED_INT32 (C++, C#)
 
 - Message::getFields() to get all fields (C++, C#)

@@ -97,7 +97,7 @@ void Buffer::write_double(double item)
 // Reads a string from the buffer.
 std::string Buffer::read_string()
 {
-    // String are serialized as [length][chars].
+    // Strings are serialized as [length][chars].
 
     // We read the length...
     auto length = read_int32();
@@ -117,7 +117,7 @@ std::string Buffer::read_string()
 // Writes a string to the buffer.
 void Buffer::write_string(const std::string& item)
 {
-    // String are serialized as [length][chars].
+    // Strings are serialized as [length][chars].
 
     // We write the length...
     auto length = static_cast<int32_t>(item.length());
@@ -278,10 +278,10 @@ void Buffer::expandBuffer()
 }
 
 // Updates the position to reflect bytes read from the buffer.
-void Buffer::updatePosition_Read(int32_t bytesWritten)
+void Buffer::updatePosition_Read(int32_t bytesRead)
 {
     // We update the position...
-    m_position += bytesWritten;
+    m_position += bytesRead;
 }
 
 // Updates the position and data-size to reflect bytes written to the buffer.

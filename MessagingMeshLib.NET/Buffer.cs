@@ -152,7 +152,19 @@ namespace MessagingMeshLib.NET
 
         #endregion
 
-        #region write() methods for various types
+        #region read() and write() methods for various types
+
+        /// <summary>
+        /// Reads a byte from the buffer.
+        /// </summary>
+        public byte read_byte()
+        {
+            var size = sizeof(byte);
+            checkBufferSize_Read(size);
+            var result = m_buffer[m_position];
+            updatePosition_Read(size);
+            return result;
+        }
 
         /// <summary>
         /// Writes a byte to the buffer.
@@ -163,6 +175,18 @@ namespace MessagingMeshLib.NET
             checkBufferSize_Write(size);
             m_buffer[m_position] = item;
             updatePosition_Write(size);
+        }
+
+        /// <summary>
+        /// Reads a signed int from the buffer.
+        /// </summary>
+        public int read_int()
+        {
+            var size = sizeof(int);
+            checkBufferSize_Read(size);
+            var result = BitConverter.ToInt32(m_buffer, m_position);
+            updatePosition_Read(size);
+            return result;
         }
 
         /// <summary>
@@ -178,6 +202,18 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
+        /// Reads an unsigned int from the buffer.
+        /// </summary>
+        public uint read_uint()
+        {
+            var size = sizeof(uint);
+            checkBufferSize_Read(size);
+            var result = BitConverter.ToUInt32(m_buffer, m_position);
+            updatePosition_Read(size);
+            return result;
+        }
+
+        /// <summary>
         /// Writes an unsigned int to the buffer.
         /// </summary>
         public void write_uint(uint item)
@@ -187,6 +223,18 @@ namespace MessagingMeshLib.NET
             var bytes = BitConverter.GetBytes(item);
             System.Buffer.BlockCopy(bytes, 0, m_buffer, m_position, size);
             updatePosition_Write(size);
+        }
+
+        /// <summary>
+        /// Reads a double from the buffer.
+        /// </summary>
+        public double read_double()
+        {
+            var size = sizeof(double);
+            checkBufferSize_Read(size);
+            var result = BitConverter.ToDouble(m_buffer, m_position);
+            updatePosition_Read(size);
+            return result;
         }
 
         /// <summary>
@@ -202,11 +250,33 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
+        /// Reads a string from the buffer.
+        /// </summary>
+        public string read_string()
+        {
+            // Strings are serialized as [length][chars].
+
+            // We read the length...
+            var length = read_int();
+
+            // We check the buffer size...
+            checkBufferSize_Read(length);
+
+            // We read the string...
+            var result = Encoding.UTF8.GetString(m_buffer, m_position, length);
+
+            // We update the position...
+            updatePosition_Read(length);
+
+            return result;
+        }
+
+        /// <summary>
         /// Writes a string to the buffer.
         /// </summary>
         public void write_string(string item)
         {
-            // String are serialized as [length][chars].
+            // Strings are serialized as [length][chars].
 
             // We convert the string to UTF-8...
             var utf8Bytes = Encoding.UTF8.GetBytes(item);
@@ -235,6 +305,17 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
+        /// Reads a field from the buffer.
+        /// </summary>
+        public Field read_field()
+        {
+            // We create a new field and deserialize into it...
+            var field = new Field();
+            field.deserialize(this);
+            return field;
+        }
+
+        /// <summary>
         /// Writes a field to the buffer.
         /// </summary>
         public void write_field(Field item)
@@ -242,6 +323,17 @@ namespace MessagingMeshLib.NET
             // We call the field's serialize() method. This calls back into the buffer
             // to write the data for the field and the specific type it is managing...
             item.serialize(this);
+        }
+
+        /// <summary>
+        /// Reads a message from the buffer.
+        /// </summary>
+        public Message read_message()
+        {
+            // We create a new message and deserialize into it...
+            var message = new Message();
+            message.deserialize(this);
+            return message;
         }
 
         /// <summary>
@@ -259,9 +351,22 @@ namespace MessagingMeshLib.NET
         #region Private functions
 
         /// <summary>
+        /// Checks that the buffer is large enough to read the specified number of bytes.
+        /// Throws a MessagingMeshException if the buffer is not large enough.
+        /// </summary>
+        private void checkBufferSize_Read(int bytesRequired)
+        {
+            if (m_position + bytesRequired > m_dataSize)
+            {
+                // The buffer is not large enough to read the bytes requested...
+                throw new MessagingMeshException("Buffer is not large enough to read requested data");
+            }
+        }
+
+        /// <summary>
         /// Checks that the buffer has the capacity to hold the number of bytes specified
         /// and expands it if it does not.
-        /// Throws a MessagingMesh::Exception if the buffer required is too large.
+        /// Throws a MessagingMeshException if the buffer required is too large.
         /// </summary>
         private void checkBufferSize_Write(int bytesRequired)
         {
@@ -305,6 +410,15 @@ namespace MessagingMeshLib.NET
             // We use the new buffer...
             m_buffer = newBuffer;
             m_bufferSize = newBufferSize;
+        }
+
+        /// <summary>
+        /// Updates the position to reflect bytes read from the buffer.
+        /// </summary>
+        private void updatePosition_Read(int bytesRead)
+        {
+            // We update the position...
+            m_position += bytesRead;
         }
 
         /// <summary>

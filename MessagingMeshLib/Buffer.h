@@ -194,7 +194,7 @@ namespace MessagingMesh
         void expandBuffer();
 
         // Updates the position to reflect bytes read from the buffer.
-        void updatePosition_Read(int32_t bytesWritten);
+        void updatePosition_Read(int32_t bytesRead);
 
         // Updates the position and data-size to reflect bytes written to the buffer.
         void updatePosition_Write(int32_t bytesWritten);
