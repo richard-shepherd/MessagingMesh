@@ -75,6 +75,14 @@ namespace MessagingMeshLib.NET
             m_callback = callback;
         }
 
+        /// <summary>
+        /// Queues a buffer to be written to the socket.
+        /// </summary>
+        public void write(Buffer buffer)
+        {
+            m_writeQueue.add(buffer);
+        }
+
         #endregion
 
         #region IDisposable implementation
@@ -82,6 +90,15 @@ namespace MessagingMeshLib.NET
         public virtual void Dispose()
         {
             if (IsDisposed) return;
+
+            // We stop the threads...
+            m_stopThreads = true;
+            m_rxThread.Join();
+            m_txThread.Join();
+
+            // We close the socket...
+            m_socket.Close();
+            m_socket.Dispose();
 
             IsDisposed = true;
         }
@@ -92,14 +109,54 @@ namespace MessagingMeshLib.NET
 
         #region Private functions
 
+        /// <summary>
+        /// Thread entry point for sending data on the socket.
+        /// </summary>
         private void threadEntryPointTX()
         {
-            Thread.Sleep(5000);
+            try
+            {
+                Logger.info("Starting TX");
+                while (!m_stopThreads)
+                {
+                    // We wait for data to write to the socket...
+                    var buffers = m_writeQueue.waitAndGetItems(millisecondsTimeout: 1000);
+                    Logger.info($"Processing TX: {buffers.Count} buffers");
+
+                    // RSSTODO: DO THIS MORE EFFICIENTLY!!!
+                    foreach (var buffer in buffers)
+                    {
+                        var data = buffer.getBuffer();
+                        var dataSize = buffer.getBufferSize();
+                        Logger.info($"Sending {dataSize} bytes");
+                        var bytesSent = m_socket.Send(data, dataSize, SocketFlags.None);
+                        Logger.info($"Sent {bytesSent} bytes");
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Logger.error(ex.Message);
+            }
         }
 
+        /// <summary>
+        /// Thread entry point for receiving data on the socket.
+        /// </summary>
         private void threadEntryPointRX()
         {
-            Thread.Sleep(5000);
+            try
+            {
+                Logger.info("Starting RX");
+                while (!m_stopThreads)
+                {
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.error(ex.Message);
+            }
         }
 
         #endregion
@@ -124,6 +181,12 @@ namespace MessagingMeshLib.NET
         // RX and TX threads...
         private readonly Thread m_rxThread;
         private readonly Thread m_txThread;
+
+        // Used to signal threads to stop...
+        private volatile bool m_stopThreads = false;
+
+        // Buffers queued for writing...
+        private readonly ThreadsafeConsumableList<Buffer> m_writeQueue = new();
 
         #endregion
     }

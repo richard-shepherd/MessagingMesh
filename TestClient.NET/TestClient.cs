@@ -35,7 +35,18 @@ namespace TestClient.NET
             };
             var connection = new MM.Connection(connectionParams);
 
-            Console.WriteLine("Press Enter to exit");
+            //// We send updates...
+            //MM.Logger.info("Sending data");
+            //for (int i = 1; i <= 1000; ++i)
+            //{
+            //    {
+            //        var message =  new MM.Message();
+            //        message.addSignedInt("#", i);
+            //        connection.sendMessage("A.B", message);
+            //    }
+            //}
+
+            MM.Logger.info("Press Enter to exit");
             Console.ReadLine();
             connection.Dispose();
         }
