@@ -182,8 +182,7 @@ void ConnectionImpl::onDataReceived(Socket* /*pSocket*/, BufferPtr pBuffer)
 {
     try
     {
-        // The buffer holds a serialized NetworkMessage. We deserialize
-        // the header and check the action...
+        // The buffer holds a serialized NetworkMessage. We deserialize the header and check the action...
         NetworkMessage networkMessage;
         networkMessage.deserializeHeader(*pBuffer);
         auto& header = networkMessage.getHeader();

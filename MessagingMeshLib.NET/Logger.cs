@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace MessagingMeshLib.NET
@@ -51,17 +52,30 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public static void log(LogLevel logLevel, string message)
         {
+            // We take a copy of the callbacks (to avoid locking over the callbacks themselves)...
+            List<Callback> callbacks;
             lock (m_callbacksLocker)
             {
+                callbacks = new List<Callback>(m_callbacks);
+            }
 
-                // We add info the the message...
-                var threadName = Thread.CurrentThread.Name;
-                var messageToLog = $"MessagingMesh ({threadName}): {message}";
+            // We convert a null message to text...
+            message ??= "(null)";
 
-                // We notify the registered callbacks...
-                foreach (var callback in m_callbacks)
+            // We add info the the message...
+            var threadName = Thread.CurrentThread.Name;
+            var messageToLog = $"MessagingMesh ({threadName}): {message}";
+
+            // We notify the registered callbacks...
+            foreach (var callback in callbacks)
+            {
+                try
                 {
                     callback(logLevel, messageToLog);
+                }
+                catch (Exception)
+                {
+                    // We do not do anything here. We do not log, as this is the logger!
                 }
             }
         }

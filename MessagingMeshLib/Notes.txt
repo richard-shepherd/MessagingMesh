@@ -1,5 +1,15 @@
 TODO
 ----
+- Logger:
+  - Better scope for locks (iterate over a copy of the callbacks)
+  - try...catch
+  - Check message for null
+
+  - Do we need the wakeUp() thing?
+
+- Should we queue the NetworkMessages in the socket instead of the Buffers?
+  - Then we can serialize them in the sending function into one large buffer
+
 - Support field types (and add tests): 
   - BLOB (C++, C#): Change read_bytes, write_bytes to encode the size as well?
   - UNSIGNED_INT32 (C++, C#)
