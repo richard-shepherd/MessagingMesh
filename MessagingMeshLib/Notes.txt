@@ -18,8 +18,8 @@ TODO
 
 - ClientSocket: send more efficiently (combine buffers)
 
-- Gateway is not handling socket closed or DISCONNECT from C# client
-  - In particular if nothing else was done on the socket
+- Better disconnection handling
+  - Not all cases of gateway and/or clients dying are handled well
 
 - ConnectionParams class (C++, C#)
   - Include whether to call back on the connection's thread or to need manual dispatch (PMQ)
