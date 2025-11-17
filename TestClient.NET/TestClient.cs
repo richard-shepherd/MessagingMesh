@@ -37,7 +37,7 @@ namespace TestClient.NET
 
             // We send updates...
             MM.Logger.info("Sending data");
-            for (int i = 1; i <= 50000000; ++i)
+            for (int i = 1; i <= 10000000; ++i)
             {
                 {
                     var message = new MM.Message();

@@ -7,6 +7,8 @@ TODO
 
   - Do we need the wakeUp() thing?
 
+  - Can we do the IEnumerable<byte> thing for C++ as well?
+
 - Should we queue the NetworkMessages in the socket instead of the Buffers?
   - Then we can serialize them in the sending function into one large buffer
 

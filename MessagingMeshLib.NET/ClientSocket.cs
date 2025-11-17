@@ -79,9 +79,9 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Queues a message to be written to the socket.
         /// </summary>
-        public void write(NetworkMessage networkMessage)
+        public void write(Buffer buffer)
         {
-            m_writeQueue.add(networkMessage);
+            m_writeQueue.add(buffer);
         }
 
         #endregion
@@ -121,29 +121,28 @@ namespace MessagingMeshLib.NET
                 while (!m_stopThreads)
                 {
                     // We wait for data to write to the socket...
-                    var networkMessages = m_writeQueue.waitAndGetItems(millisecondsTimeout: 100);
-                    if (networkMessages.Count == 0)
+                    var buffers = m_writeQueue.waitAndGetItems(millisecondsTimeout: 100);
+                    if (buffers.Count == 0)
                     {
                         continue;
                     }
-                    Logger.info($"Processing TX: {networkMessages.Count} messages");  // RSSTODO: REMOVE THIS!!!
 
                     // We get an enumerable of all bytes to send, and send the data in fixed size chunks...
                     var bufferIndex = 0;
-                    foreach(var b in getBytesToSend(networkMessages))
+                    foreach(var b in getBytesToSend(buffers))
                     {
                         // We fill in the buffer...
-                        m_buffer[bufferIndex++] = b;
-                        if(bufferIndex == BUFFER_SIZE)
+                        m_sendBuffer[bufferIndex++] = b;
+                        if(bufferIndex == SEND_BUFFER_SIZE)
                         {
                             // We have a chunk, so we sent it...
-                            send(m_buffer, BUFFER_SIZE);
+                            send(m_sendBuffer, SEND_BUFFER_SIZE);
                             bufferIndex = 0;
                         }
                     }
 
                     // We send any remaining data...
-                    send(m_buffer, bufferIndex);
+                    send(m_sendBuffer, bufferIndex);
                 }
             }
             catch(Exception ex)
@@ -165,14 +164,12 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Returns an enumberable of all bytes from the serialized network messages.
+        /// Returns an enumberable of all bytes from the buffers.
         /// </summary>
-        private IEnumerable<byte> getBytesToSend(List<NetworkMessage> networkMessages)
+        private IEnumerable<byte> getBytesToSend(List<Buffer> buffers)
         {
-            foreach(var networkMessage in networkMessages)
+            foreach(var buffer in buffers)
             {
-                var buffer = new Buffer();
-                networkMessage.serialize(buffer);
                 var data = buffer.getBuffer();
                 var dataSize = buffer.getBufferSize();
                 for(var i=0; i< dataSize; ++i)
@@ -320,14 +317,14 @@ namespace MessagingMeshLib.NET
         private volatile bool m_stopThreads = false;
 
         // Messages queued for writing...
-        private readonly ThreadsafeConsumableList<NetworkMessage> m_writeQueue = new();
+        private readonly ThreadsafeConsumableList<Buffer> m_writeQueue = new();
 
         // A buffer for the message being actively read from the socket...
         private Buffer m_currentMessage = null;
 
         // Fixed sized buffer for sending data to the socket...
-        private const int BUFFER_SIZE = 16384;
-        private byte[] m_buffer = new byte[BUFFER_SIZE];
+        private const int SEND_BUFFER_SIZE = 8192;
+        private byte[] m_sendBuffer = new byte[SEND_BUFFER_SIZE];
 
         #endregion
     }

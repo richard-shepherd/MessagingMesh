@@ -24,7 +24,7 @@ namespace MessagingMeshLib.NET
             var networkMessage = new NetworkMessage();
             networkMessage.Header.Action = NetworkMessageHeader.ActionEnum.CONNECT;
             networkMessage.Header.Subject = connectionParams.Service;
-            m_clientSocket.write(networkMessage);
+            sendNetworkMessage(networkMessage);
 
             // We wait for the ACK to confirm that we have connected.
             //
@@ -51,7 +51,7 @@ namespace MessagingMeshLib.NET
             networkMessage.Message = message;
 
             // We send the message...
-            m_clientSocket.write(networkMessage);
+            sendNetworkMessage(networkMessage);
         }
 
         #endregion
@@ -65,7 +65,7 @@ namespace MessagingMeshLib.NET
             // We send a DISCONNECT message...
             var networkMessage = new NetworkMessage();
             networkMessage.Header.Action = NetworkMessageHeader.ActionEnum.DISCONNECT;
-            m_clientSocket.write(networkMessage);
+            sendNetworkMessage(networkMessage);
 
             // We dispose the socket...
             m_clientSocket.Dispose();
@@ -126,6 +126,17 @@ namespace MessagingMeshLib.NET
         #endregion
 
         #region Private functions
+
+        /// <summary>
+        /// Sends a network message to the gateway.
+        /// </summary>
+        private void sendNetworkMessage(NetworkMessage networkMessage)
+        {
+            // We serialize the message and send it...
+            var buffer = new Buffer();
+            networkMessage.serialize(buffer);
+            m_clientSocket.write(buffer);
+        }
 
         /// <summary>
         /// Called when we see the ACK message from the Gateway.
