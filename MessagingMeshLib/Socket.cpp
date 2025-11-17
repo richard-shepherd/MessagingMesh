@@ -393,7 +393,7 @@ void Socket::write(BufferPtr pBuffer, uint32_t subscriptionIDOverride)
     );
 }
 
-// Sends a coalesced network message for all queued writes.
+// Sends network messages for all queued writes.
 void Socket::processQueuedWrites()
 {
     try
@@ -404,42 +404,75 @@ void Socket::processQueuedWrites()
             return;
         }
 
-        // We find the combined size of the queued writes...
+        // Used by the subscription ID override...
+        char subscriptionIDBuffer[sizeof(uint32_t)];
+        const int subscriptionIDStartIndex = Buffer::SIZE_SIZE;
+        const int subscriptionIDEndIndex = Buffer::SIZE_SIZE + sizeof(uint32_t) - 1;
+
+        // We write the queued data in chunks...
+        const int SEND_BUFFER_SIZE = 8192;
+        auto pWriteRequest_Chunk = UVUtils::allocateWriteRequest(SEND_BUFFER_SIZE);
+        pWriteRequest_Chunk->write_request.data = this;
+
+        // We process the buffers, writing data to the chunk...
         auto queuedWrites = m_queuedWrites.getItems();
-        size_t totalSize = 0;
+        int sendBufferIndex = 0;
         for (const auto& bufferInfo : *queuedWrites)
         {
-            totalSize += bufferInfo.pBuffer->getBufferSize();
-        }
+            auto dataSize = bufferInfo.pBuffer->getBufferSize();
+            auto data = bufferInfo.pBuffer->getBuffer();
 
-        // We create a write-request with a buffer to hold all the queued items...
-        auto pWriteRequest = UVUtils::allocateWriteRequest(totalSize);
-        pWriteRequest->write_request.data = this;
-
-        // We copy the data into the buffer...
-        size_t bufferPosition = 0;
-        for (const auto& bufferInfo : *queuedWrites)
-        {
-            auto& pBuffer = bufferInfo.pBuffer;
-            auto itemSize = pBuffer->getBufferSize();
-            auto itemData = pBuffer->getBuffer();
-            std::memcpy(pWriteRequest->buffer.base + bufferPosition, itemData, itemSize);
-
-            // If the buffer-info specifies a subcription ID override, we write it to the buffer...
-            if (bufferInfo.subscriptionIDOverride != 0 && itemSize >= Buffer::SIZE_SIZE + sizeof(uint32_t))
+            // We check if we have a subscription ID override...
+            bool hasSubscriptionIDOverride = false;
+            if (bufferInfo.subscriptionIDOverride != 0 && dataSize >= Buffer::SIZE_SIZE + sizeof(uint32_t))
             {
-                char* pSubscriptionID = pWriteRequest->buffer.base + bufferPosition + Buffer::SIZE_SIZE;
-                std::memcpy(pSubscriptionID, &bufferInfo.subscriptionIDOverride, sizeof(uint32_t));
+                std::memcpy(subscriptionIDBuffer, &bufferInfo.subscriptionIDOverride, sizeof(uint32_t));
+                hasSubscriptionIDOverride = true;
             }
 
-            bufferPosition += itemSize;
+            // We copy the data from the buffer to the chunk...
+            for (int i = 0; i < dataSize; ++i)
+            {
+                if (hasSubscriptionIDOverride && i >= subscriptionIDStartIndex && i <= subscriptionIDEndIndex)
+                {
+                    // We override the subscription ID...
+                    pWriteRequest_Chunk->buffer.base[sendBufferIndex++] = subscriptionIDBuffer[i - subscriptionIDStartIndex];
+                }
+                else
+                {
+                    // We copy non-subscription ID data...
+                    pWriteRequest_Chunk->buffer.base[sendBufferIndex++] = data[i];
+                }
+
+                // We have a chunk, so we send it...
+                if (sendBufferIndex == SEND_BUFFER_SIZE)
+                {
+                    uv_write(
+                        &pWriteRequest_Chunk->write_request,
+                        (uv_stream_t*)m_pSocket,
+                        &pWriteRequest_Chunk->buffer,
+                        1,
+                        [](uv_write_t* r, int s)
+                        {
+                            auto self = (Socket*)r->data;
+                            self->onWriteCompleted(r, s);
+                        }
+                    );
+
+                    // We create a write request for the next chunk...
+                    sendBufferIndex = 0;
+                    pWriteRequest_Chunk = UVUtils::allocateWriteRequest(SEND_BUFFER_SIZE);
+                    pWriteRequest_Chunk->write_request.data = this;
+                }
+            }
         }
 
-        // We write the combined buffer...
+        // We send any remaining data...
+        pWriteRequest_Chunk->buffer.len = sendBufferIndex;
         uv_write(
-            &pWriteRequest->write_request,
+            &pWriteRequest_Chunk->write_request,
             (uv_stream_t*)m_pSocket,
-            &pWriteRequest->buffer,
+            &pWriteRequest_Chunk->buffer,
             1,
             [](uv_write_t* r, int s)
             {

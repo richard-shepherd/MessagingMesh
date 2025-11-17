@@ -124,7 +124,7 @@ namespace MessagingMesh
         // Called when a write request has completed.
         void onWriteCompleted(uv_write_t* pRequest, int status);
 
-        // Sends a coalesced network message for all queued writes.
+        // Sends network messages for all queued writes.
         void processQueuedWrites();
 
         // Called after the original socket is closed as part of moving the socket to another UV loop.
