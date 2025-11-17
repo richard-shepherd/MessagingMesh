@@ -406,8 +406,7 @@ void Socket::processQueuedWrites()
 
         // We write the queued data in chunks...
         const int SEND_BUFFER_SIZE = 8192;
-        auto pWriteRequest_Chunk = UVUtils::allocateWriteRequest(SEND_BUFFER_SIZE);
-        pWriteRequest_Chunk->write_request.data = this;
+        auto pWriteRequest_Chunk = UVUtils::allocateWriteRequest(SEND_BUFFER_SIZE, this);
 
         // We process the bytes in the queued buffers...
         auto queuedWrites = m_queuedWrites.getItems();
@@ -423,8 +422,7 @@ void Socket::processQueuedWrites()
 
                     // We create a write request for the next chunk...
                     sendBufferIndex = 0;
-                    pWriteRequest_Chunk = UVUtils::allocateWriteRequest(SEND_BUFFER_SIZE);
-                    pWriteRequest_Chunk->write_request.data = this;
+                    pWriteRequest_Chunk = UVUtils::allocateWriteRequest(SEND_BUFFER_SIZE, this);
                 }
             }
         );

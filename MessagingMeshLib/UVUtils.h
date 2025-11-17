@@ -24,22 +24,10 @@ namespace MessagingMesh
         // A UV write request plus the buffer it is writing.
         struct WriteRequest
         {
-            // Constructor from Buffer. 
-            // The buffer points to the data in the Buffer, and we hold a reference
-            // to the Buffer to ensure that its lifetime matches the write request.
-            WriteRequest(BufferPtr pBuffer) :
-                write_request{},
-                m_pBuffer(pBuffer)
-            {
-                buffer.base = pBuffer->getBuffer();
-                buffer.len = pBuffer->getBufferSize();
-            }
-
             // Constructor specifying a buffer size.
             // We allocate the buffer and release it in the destructor.
             WriteRequest(size_t bufferSize) :
-                write_request{},
-                m_pBuffer(nullptr)
+                write_request{}
             {
                 buffer.base = new char[bufferSize];
                 buffer.len = (ULONG)bufferSize;
@@ -48,17 +36,10 @@ namespace MessagingMesh
             // Destructor.
             ~WriteRequest()
             {
-                // If we allocated the buffer (ie, if we are not using the
-                // buffer from a Buffer), we release it.
-                if (!m_pBuffer)
-                {
-                    delete[] buffer.base;
-                }
             }
 
             uv_write_t write_request;
             uv_buf_t buffer;
-            BufferPtr m_pBuffer;
         };
 
     // Public functions...
@@ -74,10 +55,7 @@ namespace MessagingMesh
         static void releaseBufferMemory(const uv_buf_t* pBuffer);
 
         // Allocates a write request.
-        static WriteRequest* allocateWriteRequest(BufferPtr pBuffer);
-
-        // Allocates a write request.
-        static WriteRequest* allocateWriteRequest(size_t bufferSize);
+        static WriteRequest* allocateWriteRequest(size_t bufferSize, void* data);
 
         // Releases a write request.
         static void releaseWriteRequest(WriteRequest* pWriteRequest);

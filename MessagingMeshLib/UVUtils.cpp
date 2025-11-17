@@ -55,15 +55,11 @@ void UVUtils::releaseBufferMemory(const uv_buf_t* pBuffer)
 }
 
 // Allocates a write request.
-UVUtils::WriteRequest* UVUtils::allocateWriteRequest(BufferPtr pBuffer)
+UVUtils::WriteRequest* UVUtils::allocateWriteRequest(size_t bufferSize, void* data)
 {
-    return new WriteRequest(pBuffer);
-}
-
-// Allocates a write request.
-UVUtils::WriteRequest* UVUtils::allocateWriteRequest(size_t bufferSize)
-{
-    return new WriteRequest(bufferSize);
+    auto pWriteRequest = new WriteRequest(bufferSize);
+    pWriteRequest->write_request.data = data;
+    return pWriteRequest;
 }
 
 // Releases a write request.
