@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
+#include <functional>
 #include "uv.h"
 #include "SharedAliases.h"
 #include "ThreadsafeConsumableVector.h"
+#include "UVUtils.h"
 
 namespace MessagingMesh
 {
@@ -91,6 +93,16 @@ namespace MessagingMesh
             int port = 0;
         };
 
+    // Private types...
+    private:
+        // Data queued for writing.
+        struct BufferInfo
+        {
+            BufferInfo(BufferPtr b, uint32_t s) : pBuffer(b), subscriptionIDOverride(s) {}
+            BufferPtr pBuffer = nullptr;
+            uint32_t subscriptionIDOverride = 0;
+        };
+
     // Private functions...
     private:
         // Constructor.
@@ -127,6 +139,12 @@ namespace MessagingMesh
         // Sends network messages for all queued writes.
         void processQueuedWrites();
 
+        // Calls back with each byte (char) to send for queued data to write.
+        void getBytesToSend(const std::vector<BufferInfo>& bufferInfos, std::function<void(char)> callback);
+
+        // Sends data to the socket.
+        void send(UVUtils::WriteRequest* pWriteRequest);
+
         // Called after the original socket is closed as part of moving the socket to another UV loop.
         void moveToLoop_onSocketClosed(move_socket_t* pMoveInfo);
 
@@ -156,12 +174,6 @@ namespace MessagingMesh
         BufferPtr m_pCurrentMessage;
 
         // Data queued for writing.
-        struct BufferInfo
-        {
-            BufferInfo(BufferPtr b, uint32_t s) : pBuffer(b), subscriptionIDOverride(s) {}
-            BufferPtr pBuffer = nullptr;
-            uint32_t subscriptionIDOverride = 0;
-        };
         ThreadsafeConsumableVector<BufferInfo> m_queuedWrites;
 
     // Constants...

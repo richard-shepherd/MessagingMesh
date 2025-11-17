@@ -63,8 +63,10 @@ void subscribe()
     MM::Connection connection("localhost", 5050, "VULCAN");
 
     // We make subscriptions...
-    auto s1 = connection.subscribe("A.B", onMessage);
-    auto s2 = connection.subscribe("C.D", onMessage);
+    auto s1 = connection.subscribe("A.X", onMessage);
+    auto s2 = connection.subscribe("A.A", onMessage);
+    auto s3 = connection.subscribe("A.B", onMessage);
+    auto s4 = connection.subscribe("C.D", onMessage);
 
     MM::Logger::info("Press Enter to exit");
     std::cin.get();
