@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
 
@@ -6,9 +7,26 @@ namespace MessagingMeshLib.NET
 {
     /// <summary>
     /// Manages a client connection to the messaging mesh.
-    /// </summary>
+    /// </summary><remarks>
+    /// Note about multiple subsciptions to the same subject
+    /// ----------------------------------------------------
+    /// If multiple subscriptions are made to the same subject we only make one subscription
+    /// to the gateway for that subject. The multiple subscriptions are handled here at the 
+    /// client end. If we receive an update we route it to each callback (including any 
+    /// callback-speific tag). We unsubscribe from the gateway when all subscriptions have
+    /// been removed.
+    /// </remarks>
     public class Connection : ClientSocket.ICallback
     {
+        #region Public types
+
+        /// <summary>
+        /// Definition of the subscription callback.
+        /// </summary>
+        public delegate void SubscriptionCallback(Connection connection, string subject, string replySubject, Message message, object tag);
+
+        #endregion
+
         #region Public methods
 
         /// <summary>
@@ -52,6 +70,61 @@ namespace MessagingMeshLib.NET
 
             // We send the message...
             sendNetworkMessage(networkMessage);
+        }
+
+        /// <summary>
+        /// Subscribes to the subject requested.
+        /// 
+        /// The callback will be called when updates are received for messages on the requested subject.
+        /// Callbacks will include the tag.
+        /// 
+        /// The lifetime of the subscription is the lifetime of the returned Subscription object.
+        /// </summary>
+        public Subscription subscribe(string subject, SubscriptionCallback callback, object tag)
+        {
+            // We create the subscription-callback-info for this subscription...
+            var subscriptionCallbackInfo = new Subscription.CallbackInfo
+            {
+                Callback = callback,
+                Tag = tag
+            };
+
+            bool makeGatewaySubscription = false;
+            SubscriptionInfo subscriptionInfo;
+            lock (m_subscriptionsLocker)
+            {
+                // We check if we are already subscribed to this subject...
+                if (!m_subscriptions.TryGetValue(subject, out subscriptionInfo))
+                {
+                    // We are not subscribed to the subject, so we set up the subscription and
+                    // note that we need to subscribe via the gateway...
+                    subscriptionInfo = new SubscriptionInfo 
+                    { 
+                        Subject = subject,
+                        SubscriptionID = (uint)Interlocked.Increment(ref m_subscriptionID)
+                    };
+                    m_subscriptions.Add(subject, subscriptionInfo);
+                    makeGatewaySubscription = true;
+                }
+
+                // We add our subscription...
+                subscriptionInfo.SubscriptionCallbackInfos.Add(subscriptionCallbackInfo);
+            }
+
+            // We subscribe to the gateway if needed... 
+            if(makeGatewaySubscription)
+            {
+                // We send a SUBSCRIBE message...
+                var networkMessage = new NetworkMessage();
+                var header = networkMessage.Header;
+                header.Action = NetworkMessageHeader.ActionEnum.SUBSCRIBE;
+                header.SubscriptionID = subscriptionInfo.SubscriptionID;
+                header.Subject = subject;
+                sendNetworkMessage(networkMessage);
+            }
+
+            // We return a subscription object to manage the lifetime of the subscription...
+            return new Subscription(this, subject, subscriptionCallbackInfo);
         }
 
         #endregion
@@ -125,6 +198,49 @@ namespace MessagingMeshLib.NET
 
         #endregion
 
+        #region Internal methods
+
+        /// <summary>
+        /// Releases a subscription.
+        /// When all subscriptions for the subject have been released we unsubscribe from the 
+        /// subject on the gateway.
+        /// </summary>
+        internal void releaseSubscription(string subject, Subscription.CallbackInfo callbackInfo)
+        {
+            bool removeGatewaySubscription = false;
+            SubscriptionInfo subscriptionInfo = null;
+            lock(m_subscriptionsLocker)
+            {
+                // We find subsriptions for the subject...
+                if (!m_subscriptions.TryGetValue(subject, out subscriptionInfo))
+                {
+                    // There is no subscription for this subject...
+                    return;
+                }
+
+                // We remove the callback info...
+                subscriptionInfo.SubscriptionCallbackInfos.Remove(callbackInfo);
+
+                // If there are no subscriptions left we clean up the subscription and
+                // note that we need to unsubscribe on the gateway...
+                m_subscriptions.Remove(subject);
+                removeGatewaySubscription = true;
+            }
+
+            // We remove the gateway subscription if needed...
+            if(removeGatewaySubscription)
+            {
+                // We send an UNSUBSCRIBE message...
+                var networkMessage = new NetworkMessage();
+                var header = networkMessage.Header;
+                header.Action = NetworkMessageHeader.ActionEnum.UNSUBSCRIBE;
+                header.SubscriptionID = subscriptionInfo.SubscriptionID;
+                sendNetworkMessage(networkMessage);
+            }
+        }
+
+        #endregion
+
         #region Private functions
 
         /// <summary>
@@ -139,7 +255,7 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Called when we see the ACK message from the Gateway.
+        /// Called when we see an ACK message from the Gateway.
         /// </summary>
         private void onAck()
         {
@@ -155,7 +271,8 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Called when we see the SEND_MESSAGE message from the Gateway.
+        /// Called when we see a SEND_MESSAGE message from the Gateway, ie when we
+        /// receive a message for which we have a subscription.
         /// </summary>
         private void onSendMessage(NetworkMessageHeader header, Buffer buffer)
         {
@@ -171,6 +288,23 @@ namespace MessagingMeshLib.NET
 
         // Waits for the ACK signal...
         private AutoResetEvent m_ackSignal = new(false);
+
+        // Info for a subscription to a subject.
+        private class SubscriptionInfo
+        {
+            public string Subject { get; set; } = "";
+            public uint SubscriptionID { get; set; } = 0;
+            public List<Subscription.CallbackInfo> SubscriptionCallbackInfos { get; set; } = new();
+        }
+
+        // Subscriptions keyed by subject, and a locker for them...
+        private Dictionary<string, SubscriptionInfo> m_subscriptions = new();
+        private object m_subscriptionsLocker = new();
+
+        // Note 1: Zero is an invalid subscription ID and must note be sent as a subscriptnio ID to the gateway.
+        //         The value will be incremented before being used. So subscription IDs will start at one.
+        // Note 2: This is accessed via the Interlocked class to ensure thread safety.
+        private int m_subscriptionID = 0;
 
         #endregion
     }
