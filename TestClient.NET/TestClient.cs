@@ -28,7 +28,7 @@ namespace TestClient.NET
                 var value = message.getSignedInt("#");
                 if (value % 1000000 == 0)
                 {
-                    MM.Logger.info($"Update to {subject}: {value}");
+                    MM.Logger.info($"Update to {subject}: {value}, tag:{tag}");
                 }
             }
             catch (Exception ex)
@@ -54,8 +54,9 @@ namespace TestClient.NET
             // We make subscriptions...
             var s1 = connection.subscribe("A.X", onMessage);
             var s2 = connection.subscribe("A.A", onMessage);
-            var s3 = connection.subscribe("A.B", onMessage);
-            var s4 = connection.subscribe("C.D", onMessage);
+            var s3 = connection.subscribe("A.B", onMessage, "SUB1");
+            var s4 = connection.subscribe("A.B", onMessage, "SUB2");
+            var s5 = connection.subscribe("C.D", onMessage);
 
             MM.Logger.info("Press Enter to exit");
             Console.ReadLine();

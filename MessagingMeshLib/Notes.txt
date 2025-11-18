@@ -35,8 +35,6 @@ TODO
 
 - I'm not convinced that the ConnectionImpl and Subscription dtors are properly thread safe
 
-- Think about making Socket::write subscriptionIDOverride thing more generic?
-  - ie, so that the (generic-ish) socket doesn't know such a specific detail
 
 
 Creating a messaging-mesh client
