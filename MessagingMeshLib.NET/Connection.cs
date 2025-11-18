@@ -80,7 +80,7 @@ namespace MessagingMeshLib.NET
         /// 
         /// The lifetime of the subscription is the lifetime of the returned Subscription object.
         /// </summary>
-        public Subscription subscribe(string subject, SubscriptionCallback callback, object tag)
+        public Subscription subscribe(string subject, SubscriptionCallback callback, object tag = null)
         {
             // We create the subscription-callback-info for this subscription...
             var subscriptionCallbackInfo = new Subscription.CallbackInfo
@@ -94,7 +94,7 @@ namespace MessagingMeshLib.NET
             lock (m_subscriptionsLocker)
             {
                 // We check if we are already subscribed to this subject...
-                if (!m_subscriptions.TryGetValue(subject, out subscriptionInfo))
+                if (!m_subscriptionsBySubject.TryGetValue(subject, out subscriptionInfo))
                 {
                     // We are not subscribed to the subject, so we set up the subscription and
                     // note that we need to subscribe via the gateway...
@@ -103,7 +103,8 @@ namespace MessagingMeshLib.NET
                         Subject = subject,
                         SubscriptionID = (uint)Interlocked.Increment(ref m_subscriptionID)
                     };
-                    m_subscriptions.Add(subject, subscriptionInfo);
+                    m_subscriptionsBySubject.Add(subject, subscriptionInfo);
+                    m_subscriptionsByID.Add(subscriptionInfo.SubscriptionID, subscriptionInfo);
                     makeGatewaySubscription = true;
                 }
 
@@ -134,6 +135,8 @@ namespace MessagingMeshLib.NET
         public virtual void Dispose()
         {
             if (IsDisposed) return;
+
+            // RSSTODO: RELEASE ALL SUBSCRIPTIONS...
 
             // We send a DISCONNECT message...
             var networkMessage = new NetworkMessage();
@@ -212,7 +215,7 @@ namespace MessagingMeshLib.NET
             lock(m_subscriptionsLocker)
             {
                 // We find subsriptions for the subject...
-                if (!m_subscriptions.TryGetValue(subject, out subscriptionInfo))
+                if (!m_subscriptionsBySubject.TryGetValue(subject, out subscriptionInfo))
                 {
                     // There is no subscription for this subject...
                     return;
@@ -223,7 +226,8 @@ namespace MessagingMeshLib.NET
 
                 // If there are no subscriptions left we clean up the subscription and
                 // note that we need to unsubscribe on the gateway...
-                m_subscriptions.Remove(subject);
+                m_subscriptionsBySubject.Remove(subject);
+                m_subscriptionsByID.Remove(subscriptionInfo.SubscriptionID);
                 removeGatewaySubscription = true;
             }
 
@@ -276,7 +280,29 @@ namespace MessagingMeshLib.NET
         /// </summary>
         private void onSendMessage(NetworkMessageHeader header, Buffer buffer)
         {
-            // RSSTODO: WRITE THIS!!!
+            try
+            {
+                // We check if we have a subscription for the subscription ID...
+                SubscriptionInfo subscriptionInfo = null;
+                lock(m_subscriptionsLocker)
+                {
+                    m_subscriptionsByID.TryGetValue(header.SubscriptionID, out subscriptionInfo);
+                }
+                if(subscriptionInfo != null)
+                {
+                    // We have a subscription so we deserialize the message and call the callbacks...
+                    var message = new Message();
+                    message.deserialize(buffer);
+                    foreach(var callbackInfo in subscriptionInfo.SubscriptionCallbackInfos)
+                    {
+                        callbackInfo.Callback(this, header.Subject, header.ReplySubject, message, callbackInfo.Tag);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Logger.error(ex.Message);
+            }
         }
 
         #endregion
@@ -297,8 +323,9 @@ namespace MessagingMeshLib.NET
             public List<Subscription.CallbackInfo> SubscriptionCallbackInfos { get; set; } = new();
         }
 
-        // Subscriptions keyed by subject, and a locker for them...
-        private Dictionary<string, SubscriptionInfo> m_subscriptions = new();
+        // Subscriptions keyed by subject and ID, and a locker for them...
+        private Dictionary<string, SubscriptionInfo> m_subscriptionsBySubject = new();
+        private Dictionary<uint, SubscriptionInfo> m_subscriptionsByID = new();
         private object m_subscriptionsLocker = new();
 
         // Note 1: Zero is an invalid subscription ID and must note be sent as a subscriptnio ID to the gateway.

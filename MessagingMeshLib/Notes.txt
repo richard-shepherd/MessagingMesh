@@ -1,5 +1,7 @@
 TODO
 ----
+- C++ pub sample is leaking lots of memory!!!
+
 - Logger:
   - Better scope for locks (iterate over a copy of the callbacks)
   - try...catch
