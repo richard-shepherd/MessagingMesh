@@ -16,7 +16,11 @@ void onMessageLogged(MM::Logger::LogLevel logLevel, const std::string& message)
 void publish()
 {
     // We connect to the gateway...
-    MM::Connection connection("localhost", 5050, "VULCAN");
+    MM::ConnectionParams connectionParams;
+    connectionParams.GatewayHost = "localhost";
+    connectionParams.GatewayPort = 5050;
+    connectionParams.Service = "VULCAN";
+    MM::Connection connection(connectionParams);
 
     // We send updates...
     MM::Logger::info("Sending data");
@@ -60,7 +64,11 @@ void onMessage(const std::string& subject, const std::string& /*replySubject*/, 
 void subscribe()
 {
     // We connect to the gateway...
-    MM::Connection connection("localhost", 5050, "VULCAN");
+    MM::ConnectionParams connectionParams;
+    connectionParams.GatewayHost = "localhost";
+    connectionParams.GatewayPort = 5050;
+    connectionParams.Service = "VULCAN";
+    MM::Connection connection(connectionParams);
 
     // We make subscriptions...
     auto s1 = connection.subscribe("A.X", onMessage);
@@ -76,7 +84,11 @@ void subscribe()
 void client()
 {
     // We connect to the gateway...
-    MM::Connection connection("localhost", 5050, "VULCAN");
+    MM::ConnectionParams connectionParams;
+    connectionParams.GatewayHost = "localhost";
+    connectionParams.GatewayPort = 5050;
+    connectionParams.Service = "VULCAN";
+    MM::Connection connection(connectionParams);
 
     // We make requests to add two numbers...
     MM::Logger::info("Sending Service.Add requests");
@@ -100,7 +112,11 @@ void client()
 void server()
 {
     // We connect to the gateway...
-    MM::Connection connection("localhost", 5050, "VULCAN");
+    MM::ConnectionParams connectionParams;
+    connectionParams.GatewayHost = "localhost";
+    connectionParams.GatewayPort = 5050;
+    connectionParams.Service = "VULCAN";
+    MM::Connection connection(connectionParams);
 
     // We subscribe to requests...
     auto s1 = connection.subscribe(

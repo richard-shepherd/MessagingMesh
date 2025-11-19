@@ -6,6 +6,7 @@
 #include "Socket.h"
 #include "AutoResetEvent.h"
 #include "Callbacks.h"
+#include "ConnectionParams.h"
 
 namespace MessagingMesh
 {
@@ -22,7 +23,7 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        ConnectionImpl(const std::string& hostname, int port, const std::string& service);
+        ConnectionImpl(ConnectionParams connectionParams);
 
         // Destructor.
         ~ConnectionImpl();
@@ -70,11 +71,6 @@ namespace MessagingMesh
 
     // Private data...
     private:
-        // Construction params...
-        std::string m_hostname;
-        int m_port;
-        std::string m_service;
-
         // UV loop for client messaging...
         UVLoopPtr m_pUVLoop;
 

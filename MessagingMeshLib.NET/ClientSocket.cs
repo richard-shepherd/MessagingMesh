@@ -44,10 +44,6 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public ClientSocket(string host, int port, string service)
         {
-            m_host = host;
-            m_port = port;
-            m_service = service;
-
             // We create the socket connection to the gateway...
             Logger.info($"Creating gateway connection to {host}:{port} for service {service}");
             m_socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
@@ -292,15 +288,6 @@ namespace MessagingMeshLib.NET
         #endregion
 
         #region Private data
-
-        // The gateway hostname or IP address...
-        private readonly string m_host;
-
-        // The gateway port...
-        private readonly int m_port;
-
-        // The service name...
-        private readonly string m_service;
 
         // Callback...
         private ICallback m_callback = null;

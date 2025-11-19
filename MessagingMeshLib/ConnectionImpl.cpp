@@ -13,13 +13,10 @@
 using namespace MessagingMesh;
 
 // Constructor.
-ConnectionImpl::ConnectionImpl(const std::string& hostname, int port, const std::string& service) :
-    m_hostname(hostname),
-    m_port(port),
-    m_service(service)
+ConnectionImpl::ConnectionImpl(ConnectionParams connectionParams)
 {
     // We create the UV loop for client messaging...
-    auto name = std::format("MM-{}", service);
+    auto name = std::format("MM-{}", connectionParams.Service);
     m_pUVLoop = UVLoop::create(name);
 
     // We create the socket to connect to the gateway...
@@ -28,9 +25,9 @@ ConnectionImpl::ConnectionImpl(const std::string& hostname, int port, const std:
 
     // We connect to the gateway...
     m_pUVLoop->marshallEvent(
-        [this](uv_loop_t* /*pLoop*/)
+        [&connectionParams, this](uv_loop_t* /*pLoop*/)
         {
-            m_pSocket->connect(m_hostname, m_port);
+            m_pSocket->connect(connectionParams.GatewayHost, connectionParams.GatewayPort);
         }
     );
 
@@ -38,7 +35,7 @@ ConnectionImpl::ConnectionImpl(const std::string& hostname, int port, const std:
     NetworkMessage networkMessage;
     auto& header = networkMessage.getHeader();
     header.setAction(NetworkMessageHeader::Action::CONNECT);
-    header.setSubject(m_service);
+    header.setSubject(connectionParams.Service);
     MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 
     // We wait for the ACK to confirm that we have connected.

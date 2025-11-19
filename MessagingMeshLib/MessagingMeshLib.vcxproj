@@ -16,6 +16,7 @@
     <ClInclude Include="Callbacks.h" />
     <ClInclude Include="Connection.h" />
     <ClInclude Include="ConnectionImpl.h" />
+    <ClInclude Include="ConnectionParams.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="FieldImpl.h" />

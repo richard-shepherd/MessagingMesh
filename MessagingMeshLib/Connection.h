@@ -4,6 +4,7 @@
 #include <functional>
 #include "SharedAliases.h"
 #include "Callbacks.h"
+#include "ConnectionParams.h"
 
 namespace MessagingMesh
 {
@@ -18,7 +19,7 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        Connection(const std::string& hostname, int port, const std::string& service);
+        Connection(ConnectionParams connectionParams);
 
         // Destructor.
         ~Connection();

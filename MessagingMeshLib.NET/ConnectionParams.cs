@@ -19,7 +19,7 @@
         public int GatewayPort { get; set; } = 0;
 
         /// <summary>
-        /// Gets or sets the messaging-mesh service the the connection joins.
+        /// Gets or sets the messaging-mesh service to join.
         /// </summary>
         public string Service { get; set; } = "";
 
