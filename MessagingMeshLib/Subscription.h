@@ -10,7 +10,9 @@ namespace MessagingMesh
 
     /// <summary>
     /// Manages a client subscription.
-    /// Disposing the object unsubscribes.
+    /// 
+    /// The lifetime of the subscription is the lifetime of this object. When this object
+    /// is destructed, the subscription will be removed.
     /// </summary>
     class Subscription
     {
