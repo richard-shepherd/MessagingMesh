@@ -28,7 +28,10 @@ namespace MessagingMesh
         };
 
         // Callback signature.
-        typedef std::function<void(LogLevel logLevel, const std::string& message)> Callback;
+        using Callback = std::function<void(LogLevel logLevel, const std::string& message)>;
+
+        // Vector of callbacks.
+        using VecCallback = std::vector<Callback>;
 
     // Public methods...
     public:
@@ -59,7 +62,7 @@ namespace MessagingMesh
     // Private data...
     private:
         // Vector of registered callbacks and a mutex for it...
-        static std::vector<Callback> m_callbacks;
+        static VecCallback m_callbacks;
         static std::mutex m_mutex;
 
         // Log levels as strings...

@@ -6,7 +6,8 @@
 namespace MessagingMesh
 {
     // Signature for subscription callbacks.
-    typedef std::function<void(const std::string& subject, const std::string& replySubject, MessagePtr pMessage)> SubscriptionCallback;
+    using SubscriptionCallback = std::function<void(const std::string& subject, const std::string& replySubject, MessagePtr pMessage)>;
+
 } // namespace
 
 

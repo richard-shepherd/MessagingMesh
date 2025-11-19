@@ -19,10 +19,10 @@ namespace MessagingMesh
     // Public types...
     public:
         // Vector of ItemType.
-        typedef std::vector<ItemType> VecItemType;
+        using VecItemType = std::vector<ItemType>;
 
         // Shared pointer for VecItemType.
-        typedef std::shared_ptr<VecItemType> VecItemTypePtr;
+        using VecItemTypePtr = std::shared_ptr<VecItemType>;
 
     // Public methods...
     public:
@@ -75,7 +75,7 @@ namespace MessagingMesh
         VecItemTypePtr m_items;
 
         // Set of keys for registered unique items.
-        typedef std::set<UniqueKeyType> UniqueKeySet;
+        using UniqueKeySet = std::set<UniqueKeyType>;
         UniqueKeySet m_uniqueKeys;
 
         // Mutex.

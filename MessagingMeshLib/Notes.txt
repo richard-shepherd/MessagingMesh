@@ -4,11 +4,6 @@ TODO
   - Buffers lots of memory in the publisher
   - Doesn't work properly if the publisher or subscriber are restarted (with the same gateway)
 
-- Logger:
-  - Better scope for locks (iterate over a copy of the callbacks)
-  - try...catch
-  - Check message for null
-
 - Do we need the wakeUp() thing? (A: Yes, when running in PMQ mode)
 
 - Support field types (and add tests): 

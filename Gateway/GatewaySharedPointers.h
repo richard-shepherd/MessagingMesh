@@ -7,9 +7,9 @@ namespace MessagingMesh
     class SubscriptionInfo;
 
     // Shared pointer to a SubscriptionInfo.
-    typedef std::shared_ptr<SubscriptionInfo> SubscriptionInfoPtr;
+    using SubscriptionInfoPtr = std::shared_ptr<SubscriptionInfo>;
 
     // Vector of SubscriptionInfo.
-    typedef std::vector<SubscriptionInfoPtr> VecSubscriptionInfo;
+    using VecSubscriptionInfo = std::vector<SubscriptionInfoPtr>;
 
 } // namespace

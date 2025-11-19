@@ -18,7 +18,7 @@ namespace MessagingMesh
     // Public types...
     public:
         // An 'event' which can be marshalled to the event loop we are managing.
-        typedef std::function<void(uv_loop_t*)> MarshalledEvent;
+        using MarshalledEvent = std::function<void(uv_loop_t*)>;
 
         // Enum for unique marshalled events. (Events where we only marshall
         // one at any one time for a given key.)

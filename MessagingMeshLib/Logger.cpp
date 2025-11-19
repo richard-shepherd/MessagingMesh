@@ -28,17 +28,36 @@ void Logger::registerCallback(Callback callback)
 
 // Logs a message at the level specified.
 void Logger::log(LogLevel logLevel, const std::string& message)
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
 
-    // We add info the the message...
+{
+    // We take a copy of the callbacks (and return early if there are no registered callbacks)...
+    VecCallback callbacks;
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        if (m_callbacks.empty())
+        {
+            return;
+        }
+        callbacks = m_callbacks;
+    }
+
+    // We add info to the message...
     auto threadName = UVUtils::getThreadName();
     auto messageToLog = std::format("MessagingMesh ({}): {}", threadName, message);
 
     // We notify the registered callbacks...
-    for (auto& callback : m_callbacks)
+    for (auto& callback : callbacks)
     {
-        callback(logLevel, messageToLog);
+        try
+        {
+            callback(logLevel, messageToLog);
+        }
+        catch (...)
+        {
+            // We catch exceptions so that we continue logging to all callbacks even
+            // if one of them throws. We do not do anything here. In particular we do 
+            // not log the error, as we are the logger!
+        }
     }
 }
 
