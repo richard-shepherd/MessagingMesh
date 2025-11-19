@@ -1,6 +1,8 @@
 TODO
 ----
-- C++ pub sample is leaking lots of memory!!!
+- C++ -pub with C# -sub works weirdly
+  - Buffers lots of memory in the publisher
+  - Doesn't work properly if the publisher or subscriber are restarted (with the same gateway)
 
 - Logger:
   - Better scope for locks (iterate over a copy of the callbacks)

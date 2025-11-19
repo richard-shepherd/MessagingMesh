@@ -36,6 +36,7 @@ namespace MessagingMesh
             // Destructor.
             ~WriteRequest()
             {
+                delete[] buffer.base;
             }
 
             uv_write_t write_request;
