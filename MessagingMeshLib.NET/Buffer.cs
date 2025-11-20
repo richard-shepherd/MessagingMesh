@@ -410,6 +410,24 @@ namespace MessagingMeshLib.NET
             item.serialize(this);
         }
 
+        /// <summary>
+        /// Reads a bool from the buffer.
+        /// </summary>
+        public bool read_bool()
+        {
+            var b = read_byte();
+            return b == 1;
+        }
+
+        /// <summary>
+        /// Writes a bool to the buffer.
+        /// </summary>
+        public void write_bool(bool item)
+        {
+            var b = item ? (byte)1 : (byte)0;
+            write_byte(b);
+        }
+
         #endregion
 
         #region Private functions

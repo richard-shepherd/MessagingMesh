@@ -16,9 +16,10 @@ namespace MessagingMeshLib.NET
         {
             NOT_SET,
             STRING,
-            SIGNED_INT,
+            SIGNED_INT32,
             DOUBLE,
-            MESSAGE
+            MESSAGE,
+            BOOL
         };
 
         #endregion
@@ -77,7 +78,7 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public int getSignedInt()
         {
-            checkDataType(DataType.SIGNED_INT);
+            checkDataType(DataType.SIGNED_INT32);
             return (int)m_data;
         }
 
@@ -86,7 +87,7 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public void setSignedInt(int value)
         {
-            m_dataType = DataType.SIGNED_INT;
+            m_dataType = DataType.SIGNED_INT32;
             m_data = value;
         }
 
@@ -131,6 +132,25 @@ namespace MessagingMeshLib.NET
             m_data = value;
         }
 
+        /// <summary>
+        /// Gets the bool held by the field.
+        /// Throws a MessagingMeshException if the field does not hold this type.
+        /// </summary>
+        public bool getBool()
+        {
+            checkDataType(DataType.BOOL);
+            return (bool)m_data;
+        }
+
+        /// <summary>
+        /// Sets the field to hold a bool.
+        /// </summary>
+        public void setBool(bool value)
+        {
+            m_dataType = DataType.BOOL;
+            m_data = value;
+        }
+
         #endregion
 
         #region Serialization
@@ -153,7 +173,7 @@ namespace MessagingMeshLib.NET
                     buffer.write_string((string)m_data);
                     break;
 
-                case DataType.SIGNED_INT:
+                case DataType.SIGNED_INT32:
                     buffer.write_int((int)m_data);
                     break;
 
@@ -163,6 +183,10 @@ namespace MessagingMeshLib.NET
 
                 case DataType.MESSAGE:
                     buffer.write_message((Message)m_data);
+                    break;
+
+                case DataType.BOOL:
+                    buffer.write_bool((bool)m_data);
                     break;
 
                 default:
@@ -188,7 +212,7 @@ namespace MessagingMeshLib.NET
                     m_data = buffer.read_string();
                     break;
 
-                case DataType.SIGNED_INT:
+                case DataType.SIGNED_INT32:
                     m_data = buffer.read_int();
                     break;
 
@@ -198,6 +222,10 @@ namespace MessagingMeshLib.NET
 
                 case DataType.MESSAGE:
                     m_data = buffer.read_message();
+                    break;
+
+                case DataType.BOOL:
+                    m_data = buffer.read_bool();
                     break;
 
                 default:

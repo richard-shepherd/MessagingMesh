@@ -111,6 +111,24 @@ namespace MessagingMeshLib.NET
             return getField(name).getMessage();
         }
 
+        /// <summary>
+        /// Adds a bool field to the message.
+        /// </summary>
+        public void addBool(string name, bool value)
+        {
+            addField(name, (field) => field.setBool(value));
+        }
+
+        /// <summary>
+        /// Gets a bool from the named field.
+        /// Throws a MessagingMeshException if the message does not hold the field requested
+        /// or if the field is not the requested type.
+        /// </summary>
+        public bool getBool(string name)
+        {
+            return getField(name).getBool();
+        }
+
         #endregion
 
         #region Serialization
