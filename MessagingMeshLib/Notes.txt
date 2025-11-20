@@ -6,21 +6,20 @@ TODO
 
 - Do we need the wakeUp() thing? (A: Yes, when running in PMQ mode)
 
+- More efficient subscription lookup at the client end with copy-on-write pattern?
+
 - Support field types (and add tests): 
   - BLOB (C++, C#): Change read_bytes, write_bytes to encode the size as well?
+  - BOOL (C++, C#)
   - UNSIGNED_INT32 (C++, C#)
+  - SIGNED_INT64 (C++, C#)
+  - UNSIGNED_INT64 (C++, C#)
 
 - Better disconnection handling
   - Not all cases of gateway and/or clients dying are handled well
 
 - ConnectionParams class (C++, C#)
   - Include whether to call back on the connection's thread or to need manual dispatch (PMQ)
-
-- Connection must not make more than one subscription to the gateway for a
-  subject. It should check if the subsciption has already been made and map
-  the existing subscription ID to multiple callbacks if necessary.
-
-- Support a Tag ('closure') for subscriptions, returned with callbacks
 
 - Clean up removed subscriptions from the interest-graph
 
