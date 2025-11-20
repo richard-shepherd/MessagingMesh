@@ -19,7 +19,7 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        Connection(ConnectionParams connectionParams);
+        Connection(const ConnectionParams& connectionParams);
 
         // Destructor.
         ~Connection();
@@ -36,7 +36,7 @@ namespace MessagingMesh
 
         // Subscribes to a subject.
         // The lifetime of the subscription is the lifetime of the object returned.
-        SubscriptionPtr subscribe(const std::string& subject, SubscriptionCallback callback);
+        SubscriptionPtr subscribe(const std::string& subject, SubscriptionCallback callback, void* tag=nullptr);
         
     // Private data...
     private:

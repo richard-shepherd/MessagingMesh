@@ -44,7 +44,7 @@ void publish()
 }
 
 // Called when we receive a message.
-void onMessage(const std::string& subject, const std::string& /*replySubject*/, MM::MessagePtr pMessage)
+void onMessage(MM::Connection& /*connection*/, const std::string& subject, const std::string& /*replySubject*/, MM::MessagePtr pMessage, void* /*tag*/)
 {
     try
     {
@@ -121,7 +121,7 @@ void server()
     // We subscribe to requests...
     auto s1 = connection.subscribe(
         "Service.Add",
-        [&connection](const std::string& /*subject*/, const std::string& replySubject, MM::MessagePtr pMessage)
+        [](MM::Connection& connection, const std::string& /*subject*/, const std::string& replySubject, MM::MessagePtr pMessage, void* /*tag*/)
         {
             // We get the values from the request and add them...
             auto a = pMessage->getDouble("A");

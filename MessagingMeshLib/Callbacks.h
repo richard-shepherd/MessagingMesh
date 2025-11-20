@@ -5,8 +5,11 @@
 
 namespace MessagingMesh
 {
+    // Forward declarations...
+    class Connection;
+
     // Signature for subscription callbacks.
-    using SubscriptionCallback = std::function<void(const std::string& subject, const std::string& replySubject, MessagePtr pMessage)>;
+    using SubscriptionCallback = std::function<void(Connection& connection, const std::string& subject, const std::string& replySubject, MessagePtr pMessage, void* tag)>;
 
 } // namespace
 

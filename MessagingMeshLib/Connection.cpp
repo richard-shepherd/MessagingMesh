@@ -3,8 +3,8 @@
 using namespace MessagingMesh;
 
 // Constructor.
-Connection::Connection(ConnectionParams connectionParams) :
-    m_pImpl(std::make_unique<ConnectionImpl>(connectionParams))
+Connection::Connection(const ConnectionParams& connectionParams) :
+    m_pImpl(std::make_unique<ConnectionImpl>(connectionParams, this))
 {
 }
 
@@ -32,7 +32,7 @@ MessagePtr Connection::sendRequest(const std::string& subject, const MessagePtr&
 
 // Subscribes to a subject.
 // The lifetime of the subscription is the lifetime of the object returned.
-SubscriptionPtr Connection::subscribe(const std::string& subject, SubscriptionCallback callback)
+SubscriptionPtr Connection::subscribe(const std::string& subject, SubscriptionCallback callback, void* tag)
 {
-    return m_pImpl->subscribe(subject, callback);
+    return m_pImpl->subscribe(subject, callback, tag);
 }

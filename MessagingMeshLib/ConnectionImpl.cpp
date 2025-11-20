@@ -13,7 +13,8 @@
 using namespace MessagingMesh;
 
 // Constructor.
-ConnectionImpl::ConnectionImpl(ConnectionParams connectionParams)
+ConnectionImpl::ConnectionImpl(const ConnectionParams& connectionParams, Connection* pConnection) :
+    m_pConnection(pConnection)
 {
     // We create the UV loop for client messaging...
     auto name = std::format("MM-{}", connectionParams.Service);
@@ -55,19 +56,12 @@ ConnectionImpl::ConnectionImpl(ConnectionParams connectionParams)
 ConnectionImpl::~ConnectionImpl()
 {
     // We unsubscribe from all active subscriptions...
-    for (auto& pair : m_subscriptions)
+    for (const auto& [subscriptionID, subscriptionInfo] : m_subscriptionsByID)
     {
-        // We unsubscribe...
-        auto subscriptionID = pair.first;
-        unsubscribe(subscriptionID, false);
-
-        // We note in the Subscription object that the Connection has closed
-        // in case client code is holding these objects after the lifetime of
-        // the COnnection.
-        auto pSubscription = pair.second;
-        pSubscription->resetConnection();
+        unsubscribe(subscriptionID);
     }
-    m_subscriptions.clear();
+    m_subscriptionsByID.clear();
+    m_subscriptionsBySubject.clear();
 
     // We send a DISCONNECT message...
     NetworkMessage networkMessage;
@@ -105,7 +99,7 @@ MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const Message
     // We subscribe to the inbox...
     auto pSubscription = subscribe(
         inbox,
-        [&pResultMessage, &autoResetEvent](const std::string& /*subject*/, const std::string& /*replySubject*/, MessagePtr pMessage)
+        [&pResultMessage, &autoResetEvent](Connection& /*connection*/, const std::string& /*subject*/, const std::string& /*replySubject*/, MessagePtr pMessage, void* /*tag*/)
         {
             // Called on the UV thread when we receive a reply.
             // We note the result and signal that we have received it.
@@ -135,29 +129,59 @@ MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const Message
 
 // Subscribes to a subject.
 // The lifetime of the subscription is the lifetime of the object returned.
-SubscriptionPtr ConnectionImpl::subscribe(const std::string& subject, SubscriptionCallback callback)
+SubscriptionPtr ConnectionImpl::subscribe(const std::string& subject, SubscriptionCallback callback, void* tag)
 {
-    // We find the next subscription ID...
-    auto subscriptionID = m_nextSubscriptionID++;
+    // We create the subscription-callback-info for this subscription...
+    auto pSubscriptionCallbackInfo = new Subscription::CallbackInfo();
+    pSubscriptionCallbackInfo->Callback = callback;
+    pSubscriptionCallbackInfo->Tag = tag;
 
-    // We create an object to manage the subscription. 
-    // The subscription will be removed when this object is destructed.
-    auto pSubscription = Subscription::create(this, subscriptionID, callback);
-    m_subscriptions.insert({ subscriptionID, pSubscription.get()});
+    uint32_t subscriptionID;
+    bool makeGatewaySubscription = false;
+    {
+        std::lock_guard<std::mutex> lock(m_subscriptionsMutex);
 
-    // We send a SUBSCRIBE message...
-    NetworkMessage networkMessage;
-    auto& header = networkMessage.getHeader();
-    header.setAction(NetworkMessageHeader::Action::SUBSCRIBE);
-    header.setSubscriptionID(subscriptionID);
-    header.setSubject(subject);
-    MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
+        // We check if we are already subscribed to this subject...
+        auto it = m_subscriptionsBySubject.find(subject);
+        if (it == m_subscriptionsBySubject.end())
+        {
+            // We are not subscribed to this subject, so we create a subscription ID for it...
+            subscriptionID = m_nextSubscriptionID++;
+            m_subscriptionsBySubject.insert({ subject, subscriptionID });
 
-    return pSubscription;
+            // We create the subscription-info and associate it with the subscription-ID...
+            SubscriptionInfo subscriptionInfo;
+            subscriptionInfo.Subject = subject;
+            subscriptionInfo.SubscriptionID = subscriptionID;
+            m_subscriptionsByID.insert({ subscriptionID, subscriptionInfo });
+
+            // We note that we need to subscribe via the gateway...
+            makeGatewaySubscription = true;
+        }
+
+        // We add the callback-info to the subscription...
+        auto& subscriptionInfo = m_subscriptionsByID[subscriptionID];
+        subscriptionInfo.SubscriptionCallbackInfos.push_back(pSubscriptionCallbackInfo);
+    }
+
+    // We subscribe to the gateway if needed... 
+    if (makeGatewaySubscription)
+    {
+        // We send a SUBSCRIBE message...
+        NetworkMessage networkMessage;
+        auto& header = networkMessage.getHeader();
+        header.setAction(NetworkMessageHeader::Action::SUBSCRIBE);
+        header.setSubscriptionID(subscriptionID);
+        header.setSubject(subject);
+        MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
+    }
+
+    // We return a subscription object to manage the lifetime of the subscription...
+    return Subscription::create(this, subject, pSubscriptionCallbackInfo);
 }
 
-// Unsubscribes from a subscription.
-void ConnectionImpl::unsubscribe(uint32_t subscriptionID, bool removeFromCollection)
+// Unsubscribes from the subscription ID specified.
+void ConnectionImpl::unsubscribe(uint32_t subscriptionID)
 {
     // We send an UNSUBSCRIBE message...
     NetworkMessage networkMessage;
@@ -165,13 +189,48 @@ void ConnectionImpl::unsubscribe(uint32_t subscriptionID, bool removeFromCollect
     header.setAction(NetworkMessageHeader::Action::UNSUBSCRIBE);
     header.setSubscriptionID(subscriptionID);
     MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
+}
 
-    // We remove the subscription from the collection...
-    if (removeFromCollection)
+// Releases a subscription.
+void ConnectionImpl::releaseSubscription(const std::string& subject, const Subscription::CallbackInfo* pCallbackInfo)
+{
+    // RSSTODO: DO THIS MORE EFFICIENTLY!!!
+
+    std::lock_guard<std::mutex> lock(m_subscriptionsMutex);
+
+    // We find the subscription ID...
+    auto it_subject = m_subscriptionsBySubject.find(subject);
+    if (it_subject == m_subscriptionsBySubject.end())
     {
-        m_subscriptions.erase(subscriptionID);
+        // We do not have a subscription for this subject...
+        return;
+    }
+    auto& subscriptionID = it_subject->second;
+
+    // We find the subscription-info...
+    auto it_subscriptionID = m_subscriptionsByID.find(subscriptionID);
+    if (it_subscriptionID == m_subscriptionsByID.end())
+    {
+        // We do not have a subscription for the subscription ID...
+        return;
+    }
+    auto& callbackInfos = it_subscriptionID->second.SubscriptionCallbackInfos;
+
+    // We remove the callback...
+    auto it_callbackInfo = std::find(callbackInfos.begin(), callbackInfos.end(), pCallbackInfo);
+    if (it_callbackInfo != callbackInfos.end())
+    {
+        callbackInfos.erase(it_callbackInfo);
+    }
+
+    // If there are no callbacks left, we clean up the maps...
+    if (callbackInfos.empty())
+    {
+        m_subscriptionsByID.erase(it_subscriptionID);
+        m_subscriptionsBySubject.erase(it_subject);
     }
 }
+
 
 // Called when data has been received on the socket.
 // Called on the UV loop thread.
@@ -232,21 +291,34 @@ void ConnectionImpl::onAck()
 // Called when we see the SEND_MESSAGE message from the Gateway.
 void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer)
 {
-    // We check if we have a subscription for this update...
-    auto it = m_subscriptions.find(header.getSubscriptionID());
-    if (it == m_subscriptions.end())
+    // RSSTODO: NEEDS TO USE THE MUTEX!!! THINK ABOUT USING std::atomic<std::shared_ptr> THING.
+
+    SubscriptionInfo subscriptionInfo;
     {
-        Logger::warn("NO SUBSCRIPTION FOR UPDATE! RSSTODO: REMOVE THIS");
-        // We do not have a subscription for this update.
-        return;
+        std::lock_guard<std::mutex> lock(m_subscriptionsMutex);
+
+        // We check if we have a subscription for this update...
+        auto it = m_subscriptionsByID.find(header.getSubscriptionID());
+        if (it == m_subscriptionsByID.end())
+        {
+            // We do not have a subscription for this update.
+            // This may be because the client has removed the subscription while messages from the gateway
+            // are still in flight to it.
+            return;
+        }
+        subscriptionInfo = it->second;  // RSSTODO: This is copying the data which we would like not to do.
     }
-    auto pSubscription = it->second;
 
     // We deserialize the message. The buffer should already have its position
     // at the right point for this as the header was deserialized previously...
     auto pMessage = Message::create();
     pMessage->deserialize(*pBuffer);
-    pSubscription->callback(header.getSubject(), header.getReplySubject(), pMessage);
+
+    // We call the registered callbacks...
+    for (const auto& pCallbackInfo : subscriptionInfo.SubscriptionCallbackInfos)
+    {
+        pCallbackInfo->Callback(*m_pConnection, header.getSubject(), header.getReplySubject(), pMessage, pCallbackInfo->Tag);
+    }
 }
 
 // Returns a unique inbox name.

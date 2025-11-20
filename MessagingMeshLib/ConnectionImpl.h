@@ -7,6 +7,7 @@
 #include "AutoResetEvent.h"
 #include "Callbacks.h"
 #include "ConnectionParams.h"
+#include "Subscription.h"
 
 namespace MessagingMesh
 {
@@ -23,7 +24,7 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        ConnectionImpl(ConnectionParams connectionParams);
+        ConnectionImpl(const ConnectionParams& connectionParams, Connection* pConnection);
 
         // Destructor.
         ~ConnectionImpl();
@@ -40,10 +41,11 @@ namespace MessagingMesh
 
         // Subscribes to a subject.
         // The lifetime of the subscription is the lifetime of the object returned.
-        SubscriptionPtr subscribe(const std::string& subject, SubscriptionCallback callback);
+        SubscriptionPtr subscribe(const std::string& subject, SubscriptionCallback callback, void* tag = nullptr);
 
-        // Unsubscribes from a subscription.
-        void unsubscribe(uint32_t subscriptionID, bool removeFromCollection);
+        // Releases a subscription.
+        void releaseSubscription(const std::string& subject, const Subscription::CallbackInfo* pCallbackInfo);
+
 
     // Socket::ICallback implementation
     private:
@@ -69,8 +71,14 @@ namespace MessagingMesh
         // Called when we see the SEND_MESSAGE message from the Gateway.
         void onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer);
 
+        // Unsubscribes from the subscription ID specified.
+        void unsubscribe(uint32_t subscriptionID);
+
     // Private data...
     private:
+        // The (non-impl) Connection. Sent to subscription callbacks.
+        Connection* m_pConnection;
+
         // UV loop for client messaging...
         UVLoopPtr m_pUVLoop;
 
@@ -84,11 +92,22 @@ namespace MessagingMesh
         // Note: This starts at 1, which means we can use 0 to indicate an invalid subscription ID.
         std::atomic<uint32_t> m_nextSubscriptionID = 1;
 
-        // Active subscriptions, keyed by subscription ID.
-        // Note: This holds non-shared pointers as the lifetime of Subscriptions objects
-        //       is managed by the shared-pointers passed to client code.
-        // RSSTODO: THIS NEEDS TO BE THREAD SAFE!!!
-        std::map<uint32_t, Subscription*> m_subscriptions;
+        // Info for a subscription to a subject.
+        struct SubscriptionInfo
+        {
+            std::string Subject;
+            uint32_t SubscriptionID;
+            std::vector<const Subscription::CallbackInfo*> SubscriptionCallbackInfos;
+        };
+
+        // Subscriptions keyed by subscription-ID...
+        std::map<uint32_t, SubscriptionInfo> m_subscriptionsByID;
+
+        // Map of subject names to subscription IDs...
+        std::map<std::string, uint32_t> m_subscriptionsBySubject;
+
+        // A mutex for subscriptions...
+        std::mutex m_subscriptionsMutex;
     };
 } // namespace
 
