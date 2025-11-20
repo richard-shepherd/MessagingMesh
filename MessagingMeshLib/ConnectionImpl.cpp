@@ -13,8 +13,8 @@
 using namespace MessagingMesh;
 
 // Constructor.
-ConnectionImpl::ConnectionImpl(const ConnectionParams& connectionParams, Connection* pConnection) :
-    m_pConnection(pConnection)
+ConnectionImpl::ConnectionImpl(const ConnectionParams& connectionParams, Connection& connection) :
+    m_connection(connection)
 {
     // We create the UV loop for client messaging...
     auto name = std::format("MM-{}", connectionParams.Service);
@@ -132,9 +132,9 @@ MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const Message
 SubscriptionPtr ConnectionImpl::subscribe(const std::string& subject, SubscriptionCallback callback, void* tag)
 {
     // We create the subscription-callback-info for this subscription...
-    auto pSubscriptionCallbackInfo = new Subscription::CallbackInfo();
-    pSubscriptionCallbackInfo->Callback = callback;
-    pSubscriptionCallbackInfo->Tag = tag;
+    auto pCallbackInfo = new Subscription::CallbackInfo();
+    pCallbackInfo->Callback = callback;
+    pCallbackInfo->Tag = tag;
 
     uint32_t subscriptionID;
     bool makeGatewaySubscription = false;
@@ -161,7 +161,7 @@ SubscriptionPtr ConnectionImpl::subscribe(const std::string& subject, Subscripti
 
         // We add the callback-info to the subscription...
         auto& subscriptionInfo = m_subscriptionsByID[subscriptionID];
-        subscriptionInfo.SubscriptionCallbackInfos.push_back(pSubscriptionCallbackInfo);
+        subscriptionInfo.CallbackInfos.push_back(pCallbackInfo);
     }
 
     // We subscribe to the gateway if needed... 
@@ -177,7 +177,7 @@ SubscriptionPtr ConnectionImpl::subscribe(const std::string& subject, Subscripti
     }
 
     // We return a subscription object to manage the lifetime of the subscription...
-    return Subscription::create(this, subject, pSubscriptionCallbackInfo);
+    return Subscription::create(this, subject, pCallbackInfo);
 }
 
 // Unsubscribes from the subscription ID specified.
@@ -214,7 +214,7 @@ void ConnectionImpl::releaseSubscription(const std::string& subject, const Subsc
         // We do not have a subscription for the subscription ID...
         return;
     }
-    auto& callbackInfos = it_subscriptionID->second.SubscriptionCallbackInfos;
+    auto& callbackInfos = it_subscriptionID->second.CallbackInfos;
 
     // We remove the callback...
     auto it_callbackInfo = std::find(callbackInfos.begin(), callbackInfos.end(), pCallbackInfo);
@@ -291,7 +291,7 @@ void ConnectionImpl::onAck()
 // Called when we see the SEND_MESSAGE message from the Gateway.
 void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer)
 {
-    // RSSTODO: NEEDS TO USE THE MUTEX!!! THINK ABOUT USING std::atomic<std::shared_ptr> THING.
+    // RSSTODO: MAKE THIS MORE EFFICIENT THINK ABOUT USING std::atomic<std::shared_ptr> THING.
 
     SubscriptionInfo subscriptionInfo;
     {
@@ -315,9 +315,9 @@ void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr
     pMessage->deserialize(*pBuffer);
 
     // We call the registered callbacks...
-    for (const auto& pCallbackInfo : subscriptionInfo.SubscriptionCallbackInfos)
+    for (const auto& pCallbackInfo : subscriptionInfo.CallbackInfos)
     {
-        pCallbackInfo->Callback(*m_pConnection, header.getSubject(), header.getReplySubject(), pMessage, pCallbackInfo->Tag);
+        pCallbackInfo->Callback(m_connection, header.getSubject(), header.getReplySubject(), pMessage, pCallbackInfo->Tag);
     }
 }
 

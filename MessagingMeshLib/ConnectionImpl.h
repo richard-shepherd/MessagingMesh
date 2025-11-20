@@ -24,7 +24,7 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        ConnectionImpl(const ConnectionParams& connectionParams, Connection* pConnection);
+        ConnectionImpl(const ConnectionParams& connectionParams, Connection& connection);
 
         // Destructor.
         ~ConnectionImpl();
@@ -77,7 +77,7 @@ namespace MessagingMesh
     // Private data...
     private:
         // The (non-impl) Connection. Sent to subscription callbacks.
-        Connection* m_pConnection;
+        Connection& m_connection;
 
         // UV loop for client messaging...
         UVLoopPtr m_pUVLoop;
@@ -97,7 +97,7 @@ namespace MessagingMesh
         {
             std::string Subject;
             uint32_t SubscriptionID;
-            std::vector<const Subscription::CallbackInfo*> SubscriptionCallbackInfos;
+            std::vector<const Subscription::CallbackInfo*> CallbackInfos;
         };
 
         // Subscriptions keyed by subscription-ID...

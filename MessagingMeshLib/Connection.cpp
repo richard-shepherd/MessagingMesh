@@ -4,7 +4,7 @@ using namespace MessagingMesh;
 
 // Constructor.
 Connection::Connection(const ConnectionParams& connectionParams) :
-    m_pImpl(std::make_unique<ConnectionImpl>(connectionParams, this))
+    m_pImpl(std::make_unique<ConnectionImpl>(connectionParams, *this))
 {
 }
 
