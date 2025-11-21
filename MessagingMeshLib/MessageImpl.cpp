@@ -33,6 +33,12 @@ void MessageImpl::addSignedInt32(const std::string& name, int32_t value)
     addField(name, [&value](const FieldPtr& field) {field->setSignedInt32(value);});
 }
 
+// Adds an unsigned int32 field to the message. 
+void MessageImpl::addUnsignedInt32(const std::string& name, uint32_t value)
+{
+    addField(name, [&value](const FieldPtr& field) {field->setUnsignedInt32(value);});
+}
+
 // Adds a double field to the message. 
 void MessageImpl::addDouble(const std::string& name, double value)
 {

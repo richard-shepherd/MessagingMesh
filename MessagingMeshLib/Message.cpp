@@ -46,6 +46,19 @@ int32_t Message::getSignedInt32(const std::string& name) const
     return getField(name)->getSignedInt32();
 }
 
+// Adds an unsigned int32 field to the message. 
+void Message::addUnsignedInt32(const std::string& name, uint32_t value)
+{
+    m_pImpl->addUnsignedInt32(name, value);
+}
+
+// Gets the unsigned int32 value for the field specified.
+// Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
+uint32_t Message::getUnsignedInt32(const std::string& name) const
+{
+    return getField(name)->getUnsignedInt32();
+}
+
 // Adds a double field to the message. 
 void Message::addDouble(const std::string& name, double value)
 {

@@ -11,12 +11,15 @@ TODO
 - Do we need the wakeUp() thing? (A: Yes, when running in PMQ mode)
 
 - Support field types (and add tests): 
-  - BLOB (C++, C#): Change read_bytes, write_bytes to encode the size as well?
-  - BOOL (C++)
-  - UNSIGNED_INT32 (C++)
-  - SIGNED_INT64 (C++)
-  - UNSIGNED_INT64 (C++)
+  - BLOB (C++, C#):         Field, Message (Change read_bytes, write_bytes to encode the size as well? Or separate BLOB code?)
+  - BOOL (C++)              Field, Message
+  - SIGNED_INT64 (C++)      Field, Message
+  - UNSIGNED_INT64 (C++)    Field, Message
   - Make sure enums are lined up
+
+- Message::getAllField (C++, C#)
+
+- Message::getField() non-const, ie so that you can modify a field (C++, C#) 
 
 - Better disconnection handling
   - Not all cases of gateway and/or clients dying are handled well

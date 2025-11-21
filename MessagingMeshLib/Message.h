@@ -48,6 +48,13 @@ namespace MessagingMesh
         // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
         int32_t getSignedInt32(const std::string& name) const;
 
+        // Adds an unsigned int32 field to the message. 
+        void addUnsignedInt32(const std::string& name, uint32_t value);
+
+        // Gets the unsigned int32 value for the field specified.
+        // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
+        uint32_t getUnsignedInt32(const std::string& name) const;
+
         // Adds a double field to the message. 
         void addDouble(const std::string& name, double value);
 

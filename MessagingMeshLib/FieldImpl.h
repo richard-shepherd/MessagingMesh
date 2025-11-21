@@ -44,6 +44,13 @@ namespace MessagingMesh
         // Sets the field to hold a signed int32.
         void setSignedInt32(int32_t value);
 
+        // Gets the unsigned int32 held by the field.
+        // Throws a MessagingMesh::Exception if the field does not hold this type.
+        uint32_t getUnsignedInt32() const;
+
+        // Sets the field to hold an unsigned int32.
+        void setUnsignedInt32(uint32_t value);
+
         // Gets the double held by the field.
         // Throws a MessagingMesh::Exception  if the field does not hold this type.
         double getDouble() const;
@@ -67,6 +74,7 @@ namespace MessagingMesh
         union NumericDataUnion
         {
             int32_t Int32;
+            uint32_t UInt32;
             double Double;
         };
         NumericDataUnion m_dataNumeric;

@@ -7,74 +7,106 @@ using namespace MessagingMesh;
 // (This is a macro so that we can stringify the enum name in exception text.)
 #define CHECK_DATA_TYPE(x) if(m_dataType != x) throw Exception("Field '" + m_name + "' is not a " + #x)
 
+// Constructor.
 FieldImpl::FieldImpl() :
     m_dataType(Field::NOT_SET),
     m_dataNumeric({ 0 })
 {
 }
 
+// Destructor.
 FieldImpl::~FieldImpl()
 {
 }
 
-void FieldImpl::setName(const std::string& name)
-{
-    m_name = name;
-}
-
+// Gets the field's name.
 const std::string& FieldImpl::getName() const
 {
     return m_name;
 }
 
-const std::string& FieldImpl::getString() const 
+// Sets the field's name.
+void FieldImpl::setName(const std::string& name)
+{
+    m_name = name;
+}
+
+// Gets the string held by the field.
+// Throws a MessagingMesh::Exception if the field does not hold this type.
+const std::string& FieldImpl::getString() const
 {
     CHECK_DATA_TYPE(Field::STRING);
     return m_dataString;
 }
 
-void FieldImpl::setString(const std::string& value) 
+// Sets the field to hold a string.
+void FieldImpl::setString(const std::string& value)
 {
     m_dataType = Field::STRING;
     m_dataString = value;
 }
 
+// Gets the signed int32 held by the field.
+// Throws a MessagingMesh::Exception if the field does not hold this type.
 int32_t FieldImpl::getSignedInt32() const
 {
     CHECK_DATA_TYPE(Field::SIGNED_INT32);
     return m_dataNumeric.Int32;
 }
 
+// Sets the field to hold a signed int32.
 void FieldImpl::setSignedInt32(int32_t value)
 {
     m_dataType = Field::SIGNED_INT32;
     m_dataNumeric.Int32 = value;
 }
 
+// Gets the unsigned int32 held by the field.
+// Throws a MessagingMesh::Exception if the field does not hold this type.
+uint32_t FieldImpl::getUnsignedInt32() const
+{
+    CHECK_DATA_TYPE(Field::UNSIGNED_INT32);
+    return m_dataNumeric.UInt32;
+}
+
+// Sets the field to hold an unsigned int32.
+void FieldImpl::setUnsignedInt32(uint32_t value)
+{
+    m_dataType = Field::UNSIGNED_INT32;
+    m_dataNumeric.UInt32 = value;
+}
+
+// Gets the double held by the field.
+// Throws a MessagingMesh::Exception  if the field does not hold this type.
 double FieldImpl::getDouble() const
 {
     CHECK_DATA_TYPE(Field::DOUBLE);
     return m_dataNumeric.Double;
 }
 
+// Sets the field to hold a double.
 void FieldImpl::setDouble(double value)
 {
     m_dataType = Field::DOUBLE;
     m_dataNumeric.Double = value;
 }
 
+// Gets the message held by the field.
+// Throws a MessagingMesh::Exception if the field does not hold this type.
 const ConstMessagePtr& FieldImpl::getMessage() const
 {
     CHECK_DATA_TYPE(Field::MESSAGE);
     return m_dataMessage;
 }
 
+// Sets the field to hold a message.
 void FieldImpl::setMessage(const ConstMessagePtr& value)
 {
     m_dataType = Field::MESSAGE;
     m_dataMessage = value;
 }
 
+// Serializes the field to the current position of the buffer.
 void FieldImpl::serialize(Buffer& buffer) const
 {
     // We serialize the field name...
@@ -94,6 +126,10 @@ void FieldImpl::serialize(Buffer& buffer) const
         buffer.write_int32(m_dataNumeric.Int32);
         break;
 
+    case Field::UNSIGNED_INT32:
+        buffer.write_uint32(m_dataNumeric.UInt32);
+        break;
+
     case Field::DOUBLE:
         buffer.write_double(m_dataNumeric.Double);
         break;
@@ -107,6 +143,7 @@ void FieldImpl::serialize(Buffer& buffer) const
     }
 }
 
+// Deserializes the field from the current position in the buffer.
 void FieldImpl::deserialize(Buffer& buffer)
 {
     // We deserialize the name...
@@ -124,6 +161,10 @@ void FieldImpl::deserialize(Buffer& buffer)
 
     case Field::SIGNED_INT32:
         m_dataNumeric.Int32 = buffer.read_int32();
+        break;
+
+    case Field::UNSIGNED_INT32:
+        m_dataNumeric.UInt32 = buffer.read_uint32();
         break;
 
     case Field::DOUBLE:

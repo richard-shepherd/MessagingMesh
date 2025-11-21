@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MessagingMeshLib.NET
+﻿namespace MessagingMeshLib.NET
 {
     /// <summary>
     /// Holds one field in a message.
