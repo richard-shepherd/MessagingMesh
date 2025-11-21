@@ -327,7 +327,7 @@ void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr
                 // are still in flight to it.
                 return;
             }
-            subscriptionInfo = it->second;  // RSSTODO: This is copying the data which we would like not to do.
+            subscriptionInfo = it->second;
         }
 
         // We add it to the cache and perform the callbacks...
