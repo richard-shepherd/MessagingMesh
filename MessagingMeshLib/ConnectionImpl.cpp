@@ -307,7 +307,8 @@ void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr
     if (it_cache != m_onSendMessageCache.end())
     {
         // We have the subscription-info in the cache...
-        const auto& callbackInfos = it_cache->second.CallbackInfos;
+        const auto& subsciptionInfo = it_cache->second;
+        const auto& callbackInfos = subsciptionInfo.CallbackInfos;
         performSubscriptionCallbacks(callbackInfos, header, pBuffer);
     }
     else
