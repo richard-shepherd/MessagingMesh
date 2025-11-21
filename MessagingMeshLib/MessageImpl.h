@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <functional>
 #include "SharedAliases.h"
@@ -53,7 +53,7 @@ namespace MessagingMesh
         std::vector<ConstFieldPtr> m_fields;
 
         // Map of field name to the first field with that name...
-        std::map<std::string, ConstFieldPtr> m_mapNameToField;
+        std::unordered_map<std::string, ConstFieldPtr> m_mapNameToField;
     };
 } // namespace
 

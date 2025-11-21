@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <atomic>
 #include "SharedAliases.h"
 #include "Socket.h"
@@ -101,10 +101,10 @@ namespace MessagingMesh
         };
 
         // Subscriptions keyed by subscription-ID...
-        std::map<uint32_t, SubscriptionInfo> m_subscriptionsByID;
+        std::unordered_map<uint32_t, SubscriptionInfo> m_subscriptionsByID;
 
         // Map of subject names to subscription IDs...
-        std::map<std::string, uint32_t> m_subscriptionsBySubject;
+        std::unordered_map<std::string, uint32_t> m_subscriptionsBySubject;
 
         // A mutex for subscriptions...
         std::mutex m_subscriptionsMutex;

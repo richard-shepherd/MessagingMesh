@@ -1,5 +1,5 @@
 #pragma once
-#include <map>
+#include <unordered_map>
 #include <string>
 #include "SharedAliases.h"
 #include "Socket.h"
@@ -74,7 +74,7 @@ namespace MessagingMesh
         UVLoopPtr m_pUVLoop;
 
         // Client sockets, keyed by socket name...
-        std::map<std::string, SocketPtr> m_clientSockets;
+        std::unordered_map<std::string, SocketPtr> m_clientSockets;
 
         // Maps sent messages to clients who are subscribed to them...
         SubjectMatchingEngine m_subjectMatchingEngine;

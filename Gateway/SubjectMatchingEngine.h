@@ -3,6 +3,7 @@
 #include <string>
 #include <string_view>
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include "GatewaySharedPointers.h"
 #include "MMUtils.h"
@@ -131,7 +132,7 @@ namespace MessagingMesh
             Node* pNode_Wildcard_GreaterThan = nullptr;
 
             // Map of client socket name to SubscriptionInfo.
-            std::map<std::string, SubscriptionInfoPtr> SubscriptionInfos;
+            std::unordered_map<std::string, SubscriptionInfoPtr> SubscriptionInfos;
         };
 
     // Private functions...
@@ -159,7 +160,7 @@ namespace MessagingMesh
         bool m_cachingEnabled = false;
 
         // Cache of sent subjects to subscription-infos for them...
-        std::map<std::string, VecSubscriptionInfo> m_cache;
+        std::unordered_map<std::string, VecSubscriptionInfo> m_cache;
 
     // Constants...
     private:

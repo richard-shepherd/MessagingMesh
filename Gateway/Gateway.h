@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include "UVLoop.h"
 #include "Socket.h"
 #include "SharedAliases.h"
@@ -95,10 +95,10 @@ namespace MessagingMesh
         // Sockets for which we have not yet received a CONNECT message, keyed 
         // by socket name. We need to hold onto these to avoid the Sockets going
         // out of scope and being destructed.
-        std::map<std::string, SocketPtr> m_pendingConnections;
+        std::unordered_map<std::string, SocketPtr> m_pendingConnections;
 
         // Service managers, keyed by service name...
-        std::map<std::string, ServiceManager> m_serviceManagers;
+        std::unordered_map<std::string, ServiceManager> m_serviceManagers;
     };
 } // namespace
 

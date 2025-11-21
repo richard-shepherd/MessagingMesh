@@ -1,5 +1,5 @@
 #pragma once
-#include <map>
+#include <unordered_map>
 #include <mutex>
 
 namespace MessagingMesh
@@ -37,7 +37,7 @@ namespace MessagingMesh
     // Private data...
     private:
         // The map itself...
-        std::map<KeyType, ItemType> m_map;
+        std::unordered_map<KeyType, ItemType> m_map;
 
         // Mutex.
         std::mutex m_mutex;
