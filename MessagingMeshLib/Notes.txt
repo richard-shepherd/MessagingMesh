@@ -10,8 +10,6 @@ TODO
 
 - Do we need the wakeUp() thing? (A: Yes, when running in PMQ mode)
 
-- More efficient subscription lookup at the client end with copy-on-write pattern?
-
 - Support field types (and add tests): 
   - BLOB (C++, C#): Change read_bytes, write_bytes to encode the size as well?
   - BOOL (C++)
@@ -29,12 +27,12 @@ TODO
 - Clean up removed subscriptions from the interest-graph
 
 - ConnectionImpl::m_subscriptions needs to be thread safe
+  - I'm not convinced that the ConnectionImpl and Subscription dtors are properly thread safe
 
 - Replace enum with enum class
 
 - Handle fast producers and slow consumers
 
-- I'm not convinced that the ConnectionImpl and Subscription dtors are properly thread safe
 
 
 
