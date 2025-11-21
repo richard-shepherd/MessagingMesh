@@ -67,6 +67,19 @@ void Field::setUnsignedInt32(uint32_t value)
     m_pImpl->setUnsignedInt32(value);
 }
 
+// Gets the signed int64 held by the field.
+// Throws a MessagingMesh::Exception if the field does not hold this type.
+int64_t Field::getSignedInt64() const
+{
+    return m_pImpl->getSignedInt64();
+}
+
+// Sets the field to hold a signed int64.
+void Field::setSignedInt64(int64_t value)
+{
+    m_pImpl->setSignedInt64(value);
+}
+
 // Gets the double held by the field.
 // Throws a MessagingMesh::Exception  if the field does not hold this type.
 double Field::getDouble() const

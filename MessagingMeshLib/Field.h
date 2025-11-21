@@ -19,6 +19,7 @@ namespace MessagingMesh
             STRING,
             SIGNED_INT32,
             UNSIGNED_INT32,
+            SIGNED_INT64,
             DOUBLE,
             MESSAGE
         };
@@ -65,6 +66,13 @@ namespace MessagingMesh
 
         // Sets the field to hold an unsigned int32.
         void setUnsignedInt32(uint32_t value);
+
+        // Gets the signed int64 held by the field.
+        // Throws a MessagingMesh::Exception if the field does not hold this type.
+        int64_t getSignedInt64() const;
+
+        // Sets the field to hold a signed int64.
+        void setSignedInt64(int64_t value);
 
         // Gets the double held by the field.
         // Throws a MessagingMesh::Exception  if the field does not hold this type.

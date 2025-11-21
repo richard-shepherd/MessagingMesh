@@ -39,6 +39,9 @@ namespace MessagingMesh
         // Adds an unsigned int32 field to the message. 
         void addUnsignedInt32(const std::string& name, uint32_t value);
 
+        // Adds a signed int64 field to the message. 
+        void addSignedInt64(const std::string& name, int64_t value);
+
         // Adds a double field to the message. 
         void addDouble(const std::string& name, double value);
 

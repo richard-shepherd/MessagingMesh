@@ -116,32 +116,6 @@ namespace MessagingMesh
         // Returns the number of bytes read from the buffer.
         size_t readNetworkMessage(const char* pBuffer, size_t bufferSize, size_t bufferPosition);
 
-    // write() method for various types...
-    public:
-        // Writes an int8 to the buffer.
-        void write_int8(int8_t item);
-
-        // Writes a signed int32 to the buffer.
-        void write_int32(int32_t item);
-
-        // Writes an unsigned int32 to the buffer.
-        void write_uint32(uint32_t item);
-
-        // Writes a double to the buffer.
-        void write_double(double item);
-
-        // Writes a string to the buffer.
-        void write_string(const std::string& item);
-
-        // Writes bytes to the buffer from the pointer passed in.
-        void write_bytes(const void* p, int32_t size);
-
-        // Writes a field to the buffer.
-        void write_field(const ConstFieldPtr& item);
-
-        // Writes a message to the buffer.
-        void write_message(const ConstMessagePtr& item);
-
     // read() method for various types...
     public:
         // Reads an int8 from the buffer.
@@ -152,6 +126,9 @@ namespace MessagingMesh
 
         // Reads a uint32 from the buffer.
         uint32_t read_uint32();
+
+        // Reads an int64 from the buffer.
+        int64_t read_int64();
 
         // Reads a double from the buffer.
         double read_double();
@@ -168,6 +145,35 @@ namespace MessagingMesh
 
         // Reads a message from the buffer.
         ConstMessagePtr read_message();
+
+    // write() method for various types...
+    public:
+        // Writes an int8 to the buffer.
+        void write_int8(int8_t item);
+
+        // Writes a signed int32 to the buffer.
+        void write_int32(int32_t item);
+
+        // Writes an unsigned int32 to the buffer.
+        void write_uint32(uint32_t item);
+
+        // Writes a signed int64 to the buffer.
+        void write_int64(int64_t item);
+
+        // Writes a double to the buffer.
+        void write_double(double item);
+
+        // Writes a string to the buffer.
+        void write_string(const std::string& item);
+
+        // Writes bytes to the buffer from the pointer passed in.
+        void write_bytes(const void* p, int32_t size);
+
+        // Writes a field to the buffer.
+        void write_field(const ConstFieldPtr& item);
+
+        // Writes a message to the buffer.
+        void write_message(const ConstMessagePtr& item);
 
     // Private functions...
     private:

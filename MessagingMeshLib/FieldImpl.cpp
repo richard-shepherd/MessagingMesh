@@ -76,6 +76,21 @@ void FieldImpl::setUnsignedInt32(uint32_t value)
     m_dataNumeric.UInt32 = value;
 }
 
+// Gets the signed int64 held by the field.
+// Throws a MessagingMesh::Exception if the field does not hold this type.
+int64_t FieldImpl::getSignedInt64() const
+{
+    CHECK_DATA_TYPE(Field::SIGNED_INT64);
+    return m_dataNumeric.Int64;
+}
+
+// Sets the field to hold a signed int64.
+void FieldImpl::setSignedInt64(int64_t value)
+{
+    m_dataType = Field::SIGNED_INT64;
+    m_dataNumeric.Int64 = value;
+}
+
 // Gets the double held by the field.
 // Throws a MessagingMesh::Exception  if the field does not hold this type.
 double FieldImpl::getDouble() const
@@ -130,6 +145,10 @@ void FieldImpl::serialize(Buffer& buffer) const
         buffer.write_uint32(m_dataNumeric.UInt32);
         break;
 
+    case Field::SIGNED_INT64:
+        buffer.write_int64(m_dataNumeric.Int64);
+        break;
+
     case Field::DOUBLE:
         buffer.write_double(m_dataNumeric.Double);
         break;
@@ -165,6 +184,10 @@ void FieldImpl::deserialize(Buffer& buffer)
 
     case Field::UNSIGNED_INT32:
         m_dataNumeric.UInt32 = buffer.read_uint32();
+        break;
+
+    case Field::SIGNED_INT64:
+        m_dataNumeric.Int64 = buffer.read_int64();
         break;
 
     case Field::DOUBLE:

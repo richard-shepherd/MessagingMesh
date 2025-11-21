@@ -59,6 +59,19 @@ uint32_t Message::getUnsignedInt32(const std::string& name) const
     return getField(name)->getUnsignedInt32();
 }
 
+// Adds a signed int64 field to the message. 
+void Message::addSignedInt64(const std::string& name, int64_t value)
+{
+    m_pImpl->addSignedInt64(name, value);
+}
+
+// Gets the signed int64 value for the field specified.
+// Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
+int64_t Message::getSignedInt64(const std::string& name) const
+{
+    return getField(name)->getSignedInt64();
+}
+
 // Adds a double field to the message. 
 void Message::addDouble(const std::string& name, double value)
 {
