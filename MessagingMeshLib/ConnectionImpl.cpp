@@ -155,6 +155,9 @@ SubscriptionPtr ConnectionImpl::subscribe(const std::string& subject, Subscripti
             subscriptionInfo.SubscriptionID = subscriptionID;
             m_subscriptionsByID.insert({ subscriptionID, subscriptionInfo });
 
+            // We invalidate the cache used when processing messages and calling back to clients...
+            m_onSendMessageCacheInvalidated = true;
+
             // We note that we need to subscribe via the gateway...
             makeGatewaySubscription = true;
         }
@@ -194,8 +197,6 @@ void ConnectionImpl::unsubscribe(uint32_t subscriptionID)
 // Releases a subscription.
 void ConnectionImpl::releaseSubscription(const std::string& subject, const Subscription::CallbackInfo* pCallbackInfo)
 {
-    // RSSTODO: DO THIS MORE EFFICIENTLY!!!
-
     std::lock_guard<std::mutex> lock(m_subscriptionsMutex);
 
     // We find the subscription ID...
@@ -229,6 +230,9 @@ void ConnectionImpl::releaseSubscription(const std::string& subject, const Subsc
         m_subscriptionsByID.erase(it_subscriptionID);
         m_subscriptionsBySubject.erase(it_subject);
     }
+
+    // We invalidate the cache used when processing messages and calling back to clients...
+    m_onSendMessageCacheInvalidated = true;
 }
 
 
@@ -291,35 +295,61 @@ void ConnectionImpl::onAck()
 // Called when we see the SEND_MESSAGE message from the Gateway.
 void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer)
 {
-    // RSSTODO: MAKE THIS MORE EFFICIENT THINK ABOUT USING std::atomic<std::shared_ptr> THING.
-
-    SubscriptionInfo subscriptionInfo;
+    // We check if subscriptions have changed, which will invalidate our cache of subscription-infos...
+    auto cacheInvalidated = m_onSendMessageCacheInvalidated.exchange(false);
+    if (cacheInvalidated)
     {
-        std::lock_guard<std::mutex> lock(m_subscriptionsMutex);
-
-        // We check if we have a subscription for this update...
-        auto it = m_subscriptionsByID.find(header.getSubscriptionID());
-        if (it == m_subscriptionsByID.end())
-        {
-            // We do not have a subscription for this update.
-            // This may be because the client has removed the subscription while messages from the gateway
-            // are still in flight to it.
-            return;
-        }
-        subscriptionInfo = it->second;  // RSSTODO: This is copying the data which we would like not to do.
+        m_onSendMessageCache.clear();
     }
 
+    // We check if we have the subscription in the cache...
+    auto it_cache = m_onSendMessageCache.find(header.getSubscriptionID());
+    if (it_cache != m_onSendMessageCache.end())
+    {
+        // We have the subscription-info in the cache...
+        const auto& callbackInfos = it_cache->second.CallbackInfos;
+        performSubscriptionCallbacks(callbackInfos, header, pBuffer);
+    }
+    else
+    {
+        // We do not have the subsciption-info in the cache, so we look it up from the main collection...
+        SubscriptionInfo subscriptionInfo;
+        {
+            std::lock_guard<std::mutex> lock(m_subscriptionsMutex);
+
+            // We check if we have a subscription for this update...
+            auto it = m_subscriptionsByID.find(header.getSubscriptionID());
+            if (it == m_subscriptionsByID.end())
+            {
+                // We do not have a subscription for this update.
+                // This may be because the client has removed the subscription while messages from the gateway
+                // are still in flight to it.
+                return;
+            }
+            subscriptionInfo = it->second;  // RSSTODO: This is copying the data which we would like not to do.
+        }
+
+        // We add it to the cache and perform the callbacks...
+        m_onSendMessageCache.insert({ header.getSubscriptionID(), subscriptionInfo });
+        performSubscriptionCallbacks(subscriptionInfo.CallbackInfos, header, pBuffer);
+    }
+}
+
+// Calls back for subscriptions to the message described by the header and buffer.
+void ConnectionImpl::performSubscriptionCallbacks(const VecCallbackInfo& callbackInfos, const NetworkMessageHeader& header, BufferPtr pBuffer)
+{
     // We deserialize the message. The buffer should already have its position
     // at the right point for this as the header was deserialized previously...
     auto pMessage = Message::create();
     pMessage->deserialize(*pBuffer);
 
     // We call the registered callbacks...
-    for (const auto& pCallbackInfo : subscriptionInfo.CallbackInfos)
+    for (const auto& pCallbackInfo : callbackInfos)
     {
         pCallbackInfo->Callback(m_connection, header.getSubject(), header.getReplySubject(), pMessage, pCallbackInfo->Tag);
     }
 }
+
 
 // Returns a unique inbox name.
 std::string ConnectionImpl::createInbox()

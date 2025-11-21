@@ -63,6 +63,10 @@ namespace MessagingMesh
         // Called when the movement of the socket to a new UV loop has been completed.
         void onMoveToLoopComplete(Socket* /*pSocket*/) {}
 
+    // Private types...
+    private:
+        using VecCallbackInfo = std::vector<const Subscription::CallbackInfo*>;
+
     // Private functions...
     private:
         // Called when we see the ACK message from the Gateway.
@@ -73,6 +77,9 @@ namespace MessagingMesh
 
         // Unsubscribes from the subscription ID specified.
         void unsubscribe(uint32_t subscriptionID);
+
+        // Calls back for subscriptions to the message described by the header and buffer.
+        void performSubscriptionCallbacks(const VecCallbackInfo& callbackInfos, const NetworkMessageHeader& header, BufferPtr pBuffer);
 
     // Private data...
     private:
@@ -100,8 +107,12 @@ namespace MessagingMesh
             std::vector<const Subscription::CallbackInfo*> CallbackInfos;
         };
 
-        // Subscriptions keyed by subscription-ID...
+        // Subscription-infos keyed by subscription-ID, used when setting up subscriptions...
         std::unordered_map<uint32_t, SubscriptionInfo> m_subscriptionsByID;
+
+        // A cache of the map above used in the onSendMessage function (on its own thread)...
+        std::unordered_map<uint32_t, SubscriptionInfo> m_onSendMessageCache;
+        std::atomic<bool> m_onSendMessageCacheInvalidated;
 
         // Map of subject names to subscription IDs...
         std::unordered_map<std::string, uint32_t> m_subscriptionsBySubject;
