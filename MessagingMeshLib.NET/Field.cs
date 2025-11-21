@@ -17,6 +17,7 @@ namespace MessagingMeshLib.NET
             NOT_SET,
             STRING,
             SIGNED_INT32,
+            UNSIGNED_INT32,
             DOUBLE,
             MESSAGE,
             BOOL
@@ -76,7 +77,7 @@ namespace MessagingMeshLib.NET
         /// Gets the signed int held by the field.
         /// Throws a MessagingMeshException if the field does not hold this type.
         /// </summary>
-        public int getSignedInt()
+        public int getSignedInt32()
         {
             checkDataType(DataType.SIGNED_INT32);
             return (int)m_data;
@@ -85,9 +86,28 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Sets the field to hold a signed int.
         /// </summary>
-        public void setSignedInt(int value)
+        public void setSignedInt32(int value)
         {
             m_dataType = DataType.SIGNED_INT32;
+            m_data = value;
+        }
+
+        /// <summary>
+        /// Gets the unsigned int held by the field.
+        /// Throws a MessagingMeshException if the field does not hold this type.
+        /// </summary>
+        public uint getUnsignedInt32()
+        {
+            checkDataType(DataType.UNSIGNED_INT32);
+            return (uint)m_data;
+        }
+
+        /// <summary>
+        /// Sets the field to hold a signed int.
+        /// </summary>
+        public void setUnsignedInt32(uint value)
+        {
+            m_dataType = DataType.UNSIGNED_INT32;
             m_data = value;
         }
 
@@ -177,6 +197,10 @@ namespace MessagingMeshLib.NET
                     buffer.write_int((int)m_data);
                     break;
 
+                case DataType.UNSIGNED_INT32:
+                    buffer.write_uint((uint)m_data);
+                    break;
+
                 case DataType.DOUBLE:
                     buffer.write_double((double)m_data);
                     break;
@@ -214,6 +238,10 @@ namespace MessagingMeshLib.NET
 
                 case DataType.SIGNED_INT32:
                     m_data = buffer.read_int();
+                    break;
+
+                case DataType.UNSIGNED_INT32:
+                    m_data = buffer.read_uint();
                     break;
 
                 case DataType.DOUBLE:

@@ -31,7 +31,7 @@ namespace MessagingMeshLib.NET.Tests
 
             // We add a sub-message...
             var address = new Message();
-            address.addSignedInt("HOUSE-NUMBER", houseNumber);
+            address.addSignedInt32("HOUSE-NUMBER", houseNumber);
             address.addString("STREET", street);
             address.addString("CITY", city);
             person.addMessage("ADDRESS", address);
@@ -51,7 +51,7 @@ namespace MessagingMeshLib.NET.Tests
             Assert.AreEqual(hasCat, result.getBool("HAS_CAT"));
 
             var addressResult = result.getMessage("ADDRESS");
-            Assert.AreEqual(houseNumber, addressResult.getSignedInt("HOUSE-NUMBER"));
+            Assert.AreEqual(houseNumber, addressResult.getSignedInt32("HOUSE-NUMBER"));
             Assert.AreEqual(street, addressResult.getString("STREET"));
             Assert.AreEqual(city, addressResult.getString("CITY"));
         }

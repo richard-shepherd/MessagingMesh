@@ -25,7 +25,7 @@ namespace TestClient.NET
         {
             try
             {
-                var value = message.getSignedInt("#");
+                var value = message.getSignedInt32("#");
                 if (value % 1000000 == 0)
                 {
                     MM.Logger.info($"Update to {subject}: {value}, tag:{tag}");
@@ -85,7 +85,7 @@ namespace TestClient.NET
             {
                 {
                     var message = new MM.Message();
-                    message.addSignedInt("#", i);
+                    message.addSignedInt32("#", i);
                     connection.sendMessage("A.B", message);
                 }
             }

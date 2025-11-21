@@ -60,9 +60,9 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Adds a signed int field to the message.
         /// </summary>
-        public void addSignedInt(string name, int value)
+        public void addSignedInt32(string name, int value)
         {
-            addField(name, (field) => field.setSignedInt(value));
+            addField(name, (field) => field.setSignedInt32(value));
         }
 
         /// <summary>
@@ -70,9 +70,9 @@ namespace MessagingMeshLib.NET
         /// Throws a MessagingMeshException if the message does not hold the field requested
         /// or if the field is not the requested type.
         /// </summary>
-        public int getSignedInt(string name)
+        public int getSignedInt32(string name)
         {
-            return getField(name).getSignedInt();
+            return getField(name).getSignedInt32();
         }
 
         /// <summary>
