@@ -15,7 +15,7 @@ TODO
 - Support field types (and add tests): 
   - BLOB (C++, C#): Change read_bytes, write_bytes to encode the size as well?
   - BOOL (C++)
-  - UNSIGNED_INT32 (C++, C#)
+  - UNSIGNED_INT32 (C++)
   - SIGNED_INT64 (C++, C#)
   - UNSIGNED_INT64 (C++, C#)
   - Make sure enums are lined up

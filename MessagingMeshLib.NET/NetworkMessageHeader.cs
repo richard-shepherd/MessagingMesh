@@ -58,7 +58,7 @@ namespace MessagingMeshLib.NET
         public void serialize(Buffer buffer)
         {
             // Subscription ID...
-            buffer.write_uint(SubscriptionID);
+            buffer.write_uint32(SubscriptionID);
 
             // Subject...
             buffer.write_string(Subject);
@@ -76,7 +76,7 @@ namespace MessagingMeshLib.NET
         public void deserialize(Buffer buffer)
         {
             // Subscription ID...
-            SubscriptionID = buffer.read_uint();
+            SubscriptionID = buffer.read_uint32();
 
             // Subject...
             Subject = buffer.read_string();

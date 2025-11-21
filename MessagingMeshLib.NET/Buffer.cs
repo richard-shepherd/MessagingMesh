@@ -242,9 +242,9 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Reads a signed int from the buffer.
+        /// Reads a signed int32 from the buffer.
         /// </summary>
-        public int read_int()
+        public int read_int32()
         {
             var size = sizeof(int);
             checkBufferSize_Read(size);
@@ -254,9 +254,9 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Writes a signed int to the buffer.
+        /// Writes a signed int32 to the buffer.
         /// </summary>
-        public void write_int(int item)
+        public void write_int32(int item)
         {
             var size = sizeof(int);
             checkBufferSize_Write(size);
@@ -268,7 +268,7 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Reads an unsigned int from the buffer.
         /// </summary>
-        public uint read_uint()
+        public uint read_uint32()
         {
             var size = sizeof(uint);
             checkBufferSize_Read(size);
@@ -280,9 +280,57 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Writes an unsigned int to the buffer.
         /// </summary>
-        public void write_uint(uint item)
+        public void write_uint32(uint item)
         {
             var size = sizeof(uint);
+            checkBufferSize_Write(size);
+            var bytes = BitConverter.GetBytes(item);
+            System.Buffer.BlockCopy(bytes, 0, m_buffer, m_position, size);
+            updatePosition_Write(size);
+        }
+
+        /// <summary>
+        /// Reads a signed int64 from the buffer.
+        /// </summary>
+        public long read_int64()
+        {
+            var size = sizeof(long);
+            checkBufferSize_Read(size);
+            var result = BitConverter.ToInt64(m_buffer, m_position);
+            updatePosition_Read(size);
+            return result;
+        }
+
+        /// <summary>
+        /// Writes a signed int64 to the buffer.
+        /// </summary>
+        public void write_int64(long item)
+        {
+            var size = sizeof(long);
+            checkBufferSize_Write(size);
+            var bytes = BitConverter.GetBytes(item);
+            System.Buffer.BlockCopy(bytes, 0, m_buffer, m_position, size);
+            updatePosition_Write(size);
+        }
+
+        /// <summary>
+        /// Reads an unsigned int64 from the buffer.
+        /// </summary>
+        public ulong read_uint64()
+        {
+            var size = sizeof(ulong);
+            checkBufferSize_Read(size);
+            var result = BitConverter.ToUInt64(m_buffer, m_position);
+            updatePosition_Read(size);
+            return result;
+        }
+
+        /// <summary>
+        /// Writes an unsigned int64 to the buffer.
+        /// </summary>
+        public void write_uint64(ulong item)
+        {
+            var size = sizeof(ulong);
             checkBufferSize_Write(size);
             var bytes = BitConverter.GetBytes(item);
             System.Buffer.BlockCopy(bytes, 0, m_buffer, m_position, size);
@@ -321,7 +369,7 @@ namespace MessagingMeshLib.NET
             // Strings are serialized as [length][chars].
 
             // We read the length...
-            var length = read_int();
+            var length = read_int32();
 
             // We check the buffer size...
             checkBufferSize_Read(length);
@@ -346,7 +394,7 @@ namespace MessagingMeshLib.NET
             var utf8Bytes = Encoding.UTF8.GetBytes(item);
 
             // We write the length...
-            write_int(utf8Bytes.Length);
+            write_int32(utf8Bytes.Length);
 
             // We write the characters...
             write_bytes(utf8Bytes);

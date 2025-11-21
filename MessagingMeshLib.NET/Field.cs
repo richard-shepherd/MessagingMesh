@@ -18,6 +18,8 @@ namespace MessagingMeshLib.NET
             STRING,
             SIGNED_INT32,
             UNSIGNED_INT32,
+            SIGNED_INT64,
+            UNSIGNED_INT64,
             DOUBLE,
             MESSAGE,
             BOOL
@@ -74,7 +76,7 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Gets the signed int held by the field.
+        /// Gets the signed int32 held by the field.
         /// Throws a MessagingMeshException if the field does not hold this type.
         /// </summary>
         public int getSignedInt32()
@@ -84,7 +86,7 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Sets the field to hold a signed int.
+        /// Sets the field to hold a signed int32.
         /// </summary>
         public void setSignedInt32(int value)
         {
@@ -93,7 +95,7 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Gets the unsigned int held by the field.
+        /// Gets the unsigned int32 held by the field.
         /// Throws a MessagingMeshException if the field does not hold this type.
         /// </summary>
         public uint getUnsignedInt32()
@@ -103,7 +105,7 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Sets the field to hold a signed int.
+        /// Sets the field to hold an unsigned int32.
         /// </summary>
         public void setUnsignedInt32(uint value)
         {
@@ -111,8 +113,43 @@ namespace MessagingMeshLib.NET
             m_data = value;
         }
 
-        //// Gets the double held by the field.
-        //// Throws a MessagingMesh::Exception  if the field does not hold this type.
+        /// <summary>
+        /// Gets the signed int64 held by the field.
+        /// Throws a MessagingMeshException if the field does not hold this type.
+        /// </summary>
+        public long getSignedInt64()
+        {
+            checkDataType(DataType.SIGNED_INT64);
+            return (long)m_data;
+        }
+
+        /// <summary>
+        /// Sets the field to hold a signed int64.
+        /// </summary>
+        public void setSignedInt64(long value)
+        {
+            m_dataType = DataType.SIGNED_INT64;
+            m_data = value;
+        }
+
+        /// <summary>
+        /// Gets the unsigned int64 held by the field.
+        /// Throws a MessagingMeshException if the field does not hold this type.
+        /// </summary>
+        public ulong getUnsignedInt64()
+        {
+            checkDataType(DataType.UNSIGNED_INT64);
+            return (ulong)m_data;
+        }
+
+        /// <summary>
+        /// Sets the field to hold an unsigned int64.
+        /// </summary>
+        public void setUnsignedInt64(ulong value)
+        {
+            m_dataType = DataType.UNSIGNED_INT64;
+            m_data = value;
+        }
 
         /// <summary>
         /// Gets the double held by the field.
@@ -194,11 +231,19 @@ namespace MessagingMeshLib.NET
                     break;
 
                 case DataType.SIGNED_INT32:
-                    buffer.write_int((int)m_data);
+                    buffer.write_int32((int)m_data);
                     break;
 
                 case DataType.UNSIGNED_INT32:
-                    buffer.write_uint((uint)m_data);
+                    buffer.write_uint32((uint)m_data);
+                    break;
+
+                case DataType.SIGNED_INT64:
+                    buffer.write_int64((long)m_data);
+                    break;
+
+                case DataType.UNSIGNED_INT64:
+                    buffer.write_uint64((ulong)m_data);
                     break;
 
                 case DataType.DOUBLE:
@@ -237,11 +282,19 @@ namespace MessagingMeshLib.NET
                     break;
 
                 case DataType.SIGNED_INT32:
-                    m_data = buffer.read_int();
+                    m_data = buffer.read_int32();
                     break;
 
                 case DataType.UNSIGNED_INT32:
-                    m_data = buffer.read_uint();
+                    m_data = buffer.read_uint32();
+                    break;
+
+                case DataType.SIGNED_INT64:
+                    m_data = buffer.read_int64();
+                    break;
+
+                case DataType.UNSIGNED_INT64:
+                    m_data = buffer.read_uint64();
                     break;
 
                 case DataType.DOUBLE:

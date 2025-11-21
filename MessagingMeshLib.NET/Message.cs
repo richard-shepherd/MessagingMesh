@@ -58,7 +58,7 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Adds a signed int field to the message.
+        /// Adds a signed int32 field to the message.
         /// </summary>
         public void addSignedInt32(string name, int value)
         {
@@ -66,13 +66,67 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Gets a signed int from the named field.
+        /// Gets a signed int32 from the named field.
         /// Throws a MessagingMeshException if the message does not hold the field requested
         /// or if the field is not the requested type.
         /// </summary>
         public int getSignedInt32(string name)
         {
             return getField(name).getSignedInt32();
+        }
+
+        /// <summary>
+        /// Adds an unsigned int32 field to the message.
+        /// </summary>
+        public void addUnsignedInt32(string name, uint value)
+        {
+            addField(name, (field) => field.setUnsignedInt32(value));
+        }
+
+        /// <summary>
+        /// Gets an unsigned int32 from the named field.
+        /// Throws a MessagingMeshException if the message does not hold the field requested
+        /// or if the field is not the requested type.
+        /// </summary>
+        public uint getUnsignedInt32(string name)
+        {
+            return getField(name).getUnsignedInt32();
+        }
+
+        /// <summary>
+        /// Adds a signed int64 field to the message.
+        /// </summary>
+        public void addSignedInt64(string name, long value)
+        {
+            addField(name, (field) => field.setSignedInt64(value));
+        }
+
+        /// <summary>
+        /// Gets a signed int64 from the named field.
+        /// Throws a MessagingMeshException if the message does not hold the field requested
+        /// or if the field is not the requested type.
+        /// </summary>
+        public long getSignedInt64(string name)
+        {
+            return getField(name).getSignedInt64();
+        }
+
+        /// <summary>
+        /// Adds an unsigned int64 field to the message.
+        /// </summary>
+        public void addUnsignedInt64(string name, ulong value)
+        {
+            addField(name, (field) => field.setUnsignedInt64(value));
+        }
+
+        /// <summary>
+        /// Gets an unsigned int64 from the named field.
+        /// Throws a MessagingMeshException if the message does not hold the field requested
+        /// or if the field is not the requested type.
+        /// </summary>
+        public ulong getUnsignedInt64(string name)
+        {
+            return getField(name).getUnsignedInt64();
         }
 
         /// <summary>
@@ -140,7 +194,7 @@ namespace MessagingMeshLib.NET
         {
             // We write the number of fields...
             var fieldCount = m_fields.Count;
-            buffer.write_int(fieldCount);
+            buffer.write_int32(fieldCount);
 
             // We write each field...
             foreach (var field in m_fields)
@@ -153,7 +207,7 @@ namespace MessagingMeshLib.NET
         internal void deserialize(Buffer buffer)
         {
             // We find the number of fields...
-            var fieldCount = buffer.read_int();
+            var fieldCount = buffer.read_int32();
 
             // We read each field and add them to the message...
             for (var i = 0; i < fieldCount; ++i)
