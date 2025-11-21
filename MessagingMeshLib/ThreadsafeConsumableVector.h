@@ -36,7 +36,7 @@ namespace MessagingMesh
         // Adds an item to the vector.
         void add(ItemType& item)
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
             m_items->push_back(item);
         }
 
@@ -44,7 +44,7 @@ namespace MessagingMesh
         // Returns true if the item was added, false if not.
         bool addUnique(const UniqueKeyType& key, ItemType& item)
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
             if (m_uniqueKeys.count(key))
             {
                 // The name has already been registered...
@@ -62,7 +62,7 @@ namespace MessagingMesh
         // Gets the current contents of the vector, and clears the data being held.
         VecItemTypePtr getItems()
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
             auto result = m_items;
             m_items = std::make_shared<VecItemType>();
             m_uniqueKeys.clear();

@@ -24,7 +24,7 @@ namespace MessagingMesh
         // Sets the signal / event.
         void set()
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
             m_flag = true;
             m_signal.notify_all();
         }
@@ -32,7 +32,7 @@ namespace MessagingMesh
         // Resets the signal / event.
         void reset()
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
             m_flag = false;
         }
 

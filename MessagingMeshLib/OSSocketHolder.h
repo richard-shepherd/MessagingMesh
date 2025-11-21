@@ -18,14 +18,14 @@ namespace MessagingMesh
         // Sets the socket.
         void setSocket(uv_os_sock_t socket)
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
             m_socket = socket;
         }
 
         // Gets the socket,
         uv_os_sock_t getSocket() const
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
             return m_socket;
         }
 

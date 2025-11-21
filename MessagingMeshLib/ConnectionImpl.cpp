@@ -139,7 +139,7 @@ SubscriptionPtr ConnectionImpl::subscribe(const std::string& subject, Subscripti
     uint32_t subscriptionID;
     bool makeGatewaySubscription = false;
     {
-        std::lock_guard<std::mutex> lock(m_subscriptionsMutex);
+        std::scoped_lock lock(m_subscriptionsMutex);
 
         // We check if we are already subscribed to this subject...
         auto it = m_subscriptionsBySubject.find(subject);
@@ -197,7 +197,7 @@ void ConnectionImpl::unsubscribe(uint32_t subscriptionID)
 // Releases a subscription.
 void ConnectionImpl::releaseSubscription(const std::string& subject, const Subscription::CallbackInfo* pCallbackInfo)
 {
-    std::lock_guard<std::mutex> lock(m_subscriptionsMutex);
+    std::scoped_lock lock(m_subscriptionsMutex);
 
     // We find the subscription ID...
     auto it_subject = m_subscriptionsBySubject.find(subject);
@@ -316,7 +316,7 @@ void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr
         // We do not have the subsciption-info in the cache, so we look it up from the main collection...
         SubscriptionInfo subscriptionInfo;
         {
-            std::lock_guard<std::mutex> lock(m_subscriptionsMutex);
+            std::scoped_lock lock(m_subscriptionsMutex);
 
             // We check if we have a subscription for this update...
             auto it = m_subscriptionsByID.find(header.getSubscriptionID());

@@ -22,7 +22,7 @@ const std::string Logger::UNKNOWN_LOG_LEVEL_STRING = "[UNKNOWN-LOG-LEVEL]";
 // Registers a function to be called when messages are logged.
 void Logger::registerCallback(Callback callback)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
 
     // Copy-on-write pattern...
     auto oldCallbacks = m_callbacks.load();

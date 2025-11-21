@@ -15,7 +15,7 @@ namespace MessagingMesh
         // Inserts an item into the map.
         void insert(const KeyType& key, const ItemType& item)
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
             m_map.insert({ key, item });
         }
 
@@ -23,7 +23,7 @@ namespace MessagingMesh
         // Removes the item from the map.
         ItemType getAndRemove(const KeyType& key)
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
             auto it = m_map.find(key);
             if (it == m_map.end())
             {
