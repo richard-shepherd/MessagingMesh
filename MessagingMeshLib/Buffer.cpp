@@ -94,6 +94,20 @@ void Buffer::write_int64(int64_t item)
     writeCopyable(item);
 }
 
+// Reads a uint64 from the buffer.
+uint64_t Buffer::read_uint64()
+{
+    uint64_t result;
+    readCopyable(result);
+    return result;
+}
+
+// Writes an unsigned int64 to the buffer.
+void Buffer::write_uint64(uint64_t item)
+{
+    writeCopyable(item);
+}
+
 // Reads a double from the buffer.
 double Buffer::read_double()
 {

@@ -130,6 +130,9 @@ namespace MessagingMesh
         // Reads an int64 from the buffer.
         int64_t read_int64();
 
+        // Reads a uint64 from the buffer.
+        uint64_t read_uint64();
+
         // Reads a double from the buffer.
         double read_double();
 
@@ -159,6 +162,9 @@ namespace MessagingMesh
 
         // Writes a signed int64 to the buffer.
         void write_int64(int64_t item);
+
+        // Writes an unsigned int64 to the buffer.
+        void write_uint64(uint64_t item);
 
         // Writes a double to the buffer.
         void write_double(double item);

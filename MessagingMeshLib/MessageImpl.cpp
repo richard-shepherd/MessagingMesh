@@ -45,6 +45,12 @@ void MessageImpl::addSignedInt64(const std::string& name, int64_t value)
     addField(name, [&value](const FieldPtr& field) {field->setSignedInt64(value);});
 }
 
+// Adds an unsigned int64 field to the message. 
+void MessageImpl::addUnsignedInt64(const std::string& name, uint64_t value)
+{
+    addField(name, [&value](const FieldPtr& field) {field->setUnsignedInt64(value);});
+}
+
 // Adds a double field to the message. 
 void MessageImpl::addDouble(const std::string& name, double value)
 {
