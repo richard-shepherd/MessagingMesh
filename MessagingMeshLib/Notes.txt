@@ -1,9 +1,5 @@
 TODO
 ----
-- Test a message between C++ and C# with all field types
-  - C++ => C#
-  - C# => C++
-
 - C++ -pub with C# -sub works weirdly
   - Buffers lots of memory in the publisher
   - Doesn't work properly if the publisher or subscriber are restarted (with the same gateway)
@@ -11,9 +7,10 @@ TODO
 - Do we need the wakeUp() thing? (A: Yes, when running in PMQ mode)
 
 - Support field types (and add tests): 
+  - Add tests for all types
+  - Test serializing between languages (via binary files)
   - BLOB (C++, C#):         Field (S,D), Message (Change read_bytes, write_bytes to encode the size as well? Or separate BLOB code?)
   - BOOL (C++)              Field (S,D), Message
-  - UNSIGNED_INT64 (C++)    Field (S,D), Message
   - Make sure enums are lined up
 
 - Message::getAllField (C++, C#)
