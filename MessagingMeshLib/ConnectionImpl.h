@@ -72,7 +72,7 @@ namespace MessagingMesh
         // Called when we see the ACK message from the Gateway.
         void onAck();
 
-        // Called when we see the SEND_MESSAGE message from the Gateway.
+        // Called when we see a SEND_MESSAGE message from the Gateway.
         void onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer);
 
         // Unsubscribes from the subscription ID specified.

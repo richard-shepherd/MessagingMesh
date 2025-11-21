@@ -292,7 +292,7 @@ void ConnectionImpl::onAck()
     }
 }
 
-// Called when we see the SEND_MESSAGE message from the Gateway.
+// Called when we see a SEND_MESSAGE message from the Gateway.
 void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer)
 {
     // We check if subscriptions have changed, which will invalidate our cache of subscription-infos...
