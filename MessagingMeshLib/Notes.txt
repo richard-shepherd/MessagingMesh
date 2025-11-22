@@ -32,9 +32,8 @@ TODO
 - ConnectionImpl::m_subscriptions needs to be thread safe
   - I'm not convinced that the ConnectionImpl and Subscription dtors are properly thread safe
 
-- Replace enum with enum class
-
 - Handle fast producers and slow consumers
+  - What happens if a consumer is slow? Does it slow down publication from the Gateway to other clients?
 
 
 
