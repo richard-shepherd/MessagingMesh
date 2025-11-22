@@ -2,6 +2,7 @@
 #include "TestUtils.h"
 #include "Message.h"
 #include "Field.h"
+#include "BLOB.h"
 #include "Buffer.h"
 #include "MMUtils.h"
 using namespace MessagingMesh;
@@ -97,40 +98,75 @@ void Tests_MessagingMeshLib::messageSerialization(TestRun& testRun)
 {
     TestUtils::log("Message serialization...");
 
-    std::string name = "Charles";
-    double age = 47.5;
-    int houseNumber = 3;
-    std::string street = "London Road";
-    std::string city = "Bristol";
+    std::string s = "hello, world!";
+    int32_t i32_1 = 123456;
+    int32_t i32_2 = -123456;
+    uint32_t ui32 = 3123456789;
+    int64_t i64_1 = 4123456789123456789;
+    int64_t i64_2 = -4123456789123456789;
+    uint64_t ui64 = 11123456789123456789;
+    double d = 123.456;
+    bool b1 = true;
+    bool b2 = false;
+    unsigned char blob[6] = {1, 2, 3, 230, 240, 250 };
+    auto pBLOB = BLOB::create_fromData(blob, 6, BLOB::Ownership::TAKE_COPY);
 
-    // We create a message...
-    auto pPerson = Message::create();
-    pPerson->addString("NAME", name);
-    pPerson->addDouble("AGE", age);
+    // We create a message holding all the types...
+    auto m = Message::create();
+    m->addString("s", s);
+    m->addSignedInt32("i32_1", i32_1);
+    m->addSignedInt32("i32_2", i32_2);
+    m->addUnsignedInt32("ui32", ui32);
+    m->addSignedInt64("i64_1", i64_1);
+    m->addSignedInt64("i64_2", i64_2);
+    m->addUnsignedInt64("ui64", ui64);
+    m->addDouble("d", d);
+    m->addBool("b1", b1);
+    m->addBool("b2", b2);
+    m->addBLOB("blob", pBLOB);
 
-    // We add a sub-message...
-    auto pAddress = Message::create();
-    pAddress->addSignedInt32("HOUSE-NUMBER", houseNumber);
-    pAddress->addString("STREET", street);
-    pAddress->addString("CITY", city);
-    pPerson->addMessage("ADDRESS", pAddress);
+    // We create a sub-message and add it...
+    auto sm = Message::create();
+    sm->addString("s", s);
+    sm->addDouble("d", d);
+    m->addMessage("sm", sm);
 
-    // We serialize the message...
-    auto pBuffer = Buffer::create();
-    pPerson->serialize(*pBuffer);
+    // We serialize the message to a buffer...
+    auto buffer = Buffer::create();
+    m->serialize(*buffer);
 
-    // We deserialize the message...
-    pBuffer->resetPosition();
-    auto pResult = Message::create();
-    pResult->deserialize(*pBuffer);
+    // We deserialize to a new message...
+    buffer->resetPosition();
+    auto m2 = Message::create();
+    m2->deserialize(*buffer);
 
-    assertEqual(testRun, pResult->getString("NAME"), name);
-    assertEqual(testRun, pResult->getDouble("AGE"), age);
+    // We check the values...
+    assertEqual(testRun, m2->getString("s"), s);
+    assertEqual(testRun, m2->getSignedInt32("i32_1"), i32_1);
+    assertEqual(testRun, m2->getSignedInt32("i32_2"), i32_2);
+    assertEqual(testRun, m2->getUnsignedInt32("ui32"), ui32);
+    assertEqual(testRun, m2->getSignedInt64("i64_1"), i64_1);
+    assertEqual(testRun, m2->getSignedInt64("i64_2"), i64_2);
+    assertEqual(testRun, m2->getUnsignedInt64("ui64"), ui64);
+    assertEqual(testRun, m2->getDouble("d"), d);
+    assertEqual(testRun, m2->getBool("b1"), b1);
+    assertEqual(testRun, m2->getBool("b2"), b2);
 
-    auto pAddressResult = pResult->getMessage("ADDRESS");
-    assertEqual(testRun, pAddressResult->getSignedInt32("HOUSE-NUMBER"), houseNumber);
-    assertEqual(testRun, pAddressResult->getString("STREET"), street);
-    assertEqual(testRun, pAddressResult->getString("CITY"), city);
+    // The BLOB...
+    auto pBLOB2 = m2->getBLOB("blob");
+    auto blob2 = (unsigned char*)pBLOB2->getData();
+    assertEqual(testRun, pBLOB2->getLength(), 6);
+    assertEqual(testRun, blob2[0], 1);
+    assertEqual(testRun, blob2[1], 2);
+    assertEqual(testRun, blob2[2], 3);
+    assertEqual(testRun, blob2[3], 230);
+    assertEqual(testRun, blob2[4], 240);
+    assertEqual(testRun, blob2[5], 250);
+
+    // The sub-message...
+    auto sm2 = m2->getMessage("sm");
+    assertEqual(testRun, sm2->getString("s"), s);
+    assertEqual(testRun, sm2->getDouble("d"), d);
 }
 
 

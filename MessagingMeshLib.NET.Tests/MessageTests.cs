@@ -12,7 +12,7 @@ namespace MessagingMeshLib.NET.Tests
         /// Tests serializing a message holding all supported field types.
         /// </summary>
         [TestMethod]
-        public void messageSerialization_AllFieldTypes()
+        public void messageSerialization()
         {
             string s = "hello, world!";
             int i32_1 = 123456;

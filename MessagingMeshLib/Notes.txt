@@ -1,7 +1,5 @@
 TODO
 ----
-- Make Buffer read() methods const
-
 - C++ -pub with C# -sub works weirdly
   - Buffers lots of memory in the publisher
   - Doesn't work properly if the publisher or subscriber are restarted (with the same gateway)
@@ -17,8 +15,6 @@ TODO
 - Support field types (and add tests): 
   - Add tests for all types
   - Test serializing between languages (via binary files)
-  - BLOB (C++, C#):         Field (S,D), Message (Change read_bytes, write_bytes to encode the size as well? Or separate BLOB code?)
-  - Make sure enums are lined up
 
 - Message::getAllField (C++, C#)
 
