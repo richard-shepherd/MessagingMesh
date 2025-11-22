@@ -86,6 +86,13 @@ namespace MessagingMesh
         // Sets the field to hold a bool.
         void setBool(bool value);
 
+        // Gets the BLOB held by the field.
+        // Throws a MessagingMesh::Exception  if the field does not hold this type.
+        const ConstBLOBPtr& getBLOB() const;
+
+        // Sets the field to hold a BLOB.
+        void setBLOB(const ConstBLOBPtr& value);
+
     // Private data...
     private:
         std::string m_name;
@@ -104,6 +111,7 @@ namespace MessagingMesh
         std::string m_dataString;
         ConstMessagePtr m_dataMessage = nullptr;
         bool m_dataBool = false;
+        ConstBLOBPtr m_dataBLOB = nullptr;
     };
 } // namespace
 

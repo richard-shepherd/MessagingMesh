@@ -23,7 +23,8 @@ namespace MessagingMesh
             UNSIGNED_INT64,
             DOUBLE,
             MESSAGE,
-            BOOL
+            BOOL,
+            BLOB
         };
         
     // Public methods...
@@ -103,6 +104,13 @@ namespace MessagingMesh
 
         // Sets the field to hold a bool.
         void setBool(bool value);
+
+        // Gets the BLOB held by the field.
+        // Throws a MessagingMesh::Exception  if the field does not hold this type.
+        const ConstBLOBPtr& getBLOB() const;
+
+        // Sets the field to hold a BLOB.
+        void setBLOB(const ConstBLOBPtr& value);
 
     // Private functions...
     private:

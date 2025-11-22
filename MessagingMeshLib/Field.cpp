@@ -132,6 +132,19 @@ void Field::setBool(bool value)
     m_pImpl->setBool(value);
 }
 
+// Gets the BLOB held by the field.
+// Throws a MessagingMesh::Exception  if the field does not hold this type.
+const ConstBLOBPtr& Field::getBLOB() const
+{
+    return m_pImpl->getBLOB();
+}
+
+// Sets the field to hold a BLOB.
+void Field::setBLOB(const ConstBLOBPtr& value)
+{
+    m_pImpl->setBLOB(value);
+}
+
 // Serializes the field to the current position of the buffer.
 void Field::serialize(Buffer& buffer) const
 {

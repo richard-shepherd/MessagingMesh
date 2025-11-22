@@ -90,6 +90,13 @@ namespace MessagingMesh
         // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
         bool getBool(const std::string& name) const;
 
+        // Adds a BLOB field to the message. 
+        void addBLOB(const std::string& name, const ConstBLOBPtr& value);
+
+        // Gets the BLOB value for the field specified.
+        // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
+        const ConstBLOBPtr& getBLOB(const std::string& name) const;
+
     // Private functions...
     private:
         // Constructor.

@@ -54,6 +54,9 @@ namespace MessagingMesh
         // Adds a bool field to the message. 
         void addBool(const std::string& name, bool value);
 
+        // Adds a BLOB field to the message. 
+        void addBLOB(const std::string& name, const ConstBLOBPtr& value);
+
     // Private functions...
     private:
         // Adds a field to the message, setting its value using the valueSetter function (lambda).

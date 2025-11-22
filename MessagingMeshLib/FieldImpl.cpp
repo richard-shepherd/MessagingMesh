@@ -151,6 +151,21 @@ void FieldImpl::setBool(bool value)
     m_dataBool = value;
 }
 
+// Gets the BLOB held by the field.
+// Throws a MessagingMesh::Exception  if the field does not hold this type.
+const ConstBLOBPtr& FieldImpl::getBLOB() const
+{
+    CHECK_DATA_TYPE(Field::BLOB);
+    return m_dataBLOB;
+}
+
+// Sets the field to hold a BLOB.
+void FieldImpl::setBLOB(const ConstBLOBPtr& value)
+{
+    m_dataType = Field::BLOB;
+    m_dataBLOB = value;
+}
+
 // Serializes the field to the current position of the buffer.
 void FieldImpl::serialize(Buffer& buffer) const
 {
@@ -193,6 +208,10 @@ void FieldImpl::serialize(Buffer& buffer) const
 
     case Field::BOOL:
         buffer.write_bool(m_dataBool);
+        break;
+
+    case Field::BLOB:
+        buffer.write_blob(m_dataBLOB);
         break;
 
     default:
@@ -242,6 +261,10 @@ void FieldImpl::deserialize(const Buffer& buffer)
 
     case Field::BOOL:
         m_dataBool = buffer.read_bool();
+        break;
+
+    case Field::BLOB:
+        m_dataBLOB = buffer.read_blob();
         break;
 
     default:

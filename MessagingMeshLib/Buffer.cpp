@@ -1,4 +1,5 @@
 #include "Buffer.h"
+#include "BLOB.h"
 #include "Field.h"
 #include "Message.h"
 #include "Exception.h"
@@ -230,9 +231,34 @@ void Buffer::write_bool(bool item)
     write_uint8(i);
 }
 
-//// Reads a BLOB from the buffer.
-//ConstBLOBPtr read_blob();
+// Reads a BLOB from the buffer.
+ConstBLOBPtr Buffer::read_blob() const
+{
+    // We read the length...
+    auto length = read_int32();
 
+    // We check that the buffer is large enough to read the bytes...
+    checkBufferSize_Read(length);
+
+    // We create a BLOB from the data in the buffer...
+    auto pBLOB = BLOB::create_fromBuffer(shared_from_this(), m_pBuffer + m_position, length, BLOB::Ownership::HOLD_REFERENCE);
+
+    // We update the position...
+    updatePosition_Read(length);
+
+    return pBLOB;
+}
+
+// Writes a BLOB to the buffer.
+void Buffer::write_blob(const ConstBLOBPtr& item)
+{
+    // We write the length...
+    auto length = item->getLength();
+    write_int32(length);
+
+    // We write the data...
+    write_bytes(item->getData(), length);
+}
 
 // Reads an item from the buffer using memcpy.
 template <typename T>

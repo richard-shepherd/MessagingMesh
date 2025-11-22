@@ -124,6 +124,19 @@ bool Message::getBool(const std::string& name) const
     return getField(name)->getBool();
 }
 
+// Adds a BLOB field to the message. 
+void Message::addBLOB(const std::string& name, const ConstBLOBPtr& value)
+{
+    m_pImpl->addBLOB(name, value);
+}
+
+// Gets the BLOB value for the field specified.
+// Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
+const ConstBLOBPtr& Message::getBLOB(const std::string& name) const
+{
+    return getField(name)->getBLOB();
+}
+
 // Serializes the message to the current position in the buffer.
 void Message::serialize(Buffer& buffer) const
 {

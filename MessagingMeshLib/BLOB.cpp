@@ -4,7 +4,7 @@ using namespace MessagingMesh;
 
 // Constructor: From data.
 // NOTE: The constructor is private. Use one of the static create() methods to create an instance.
-BLOB::BLOB(void* pData, size_t length, Ownership ownership) :
+BLOB::BLOB(void* pData, int32_t length, Ownership ownership) :
     m_length(length),
     m_ownership(ownership)
 {
@@ -24,7 +24,7 @@ BLOB::BLOB(void* pData, size_t length, Ownership ownership) :
 
 // Constructor: From a Buffer.
 // NOTE: The constructor is private. Use one of the static create() methods to create an instance.
-BLOB::BLOB(BufferPtr pBuffer, void* pData, size_t length, Ownership ownership) :
+BLOB::BLOB(ConstBufferPtr pBuffer, void* pData, int32_t length, Ownership ownership) :
     m_length(length),
     m_ownership(ownership)
 {
@@ -44,7 +44,6 @@ BLOB::BLOB(BufferPtr pBuffer, void* pData, size_t length, Ownership ownership) :
         throw Exception("TAKE_OWNERSHIP is not a valid option when creating a BLOB from a Buffer.");
     }
 }
-
 
 // Destructor.
 BLOB::~BLOB()

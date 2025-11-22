@@ -69,6 +69,12 @@ void MessageImpl::addBool(const std::string& name, bool value)
     addField(name, [&value](const FieldPtr& field) {field->setBool(value);});
 }
 
+// Adds a BLOB field to the message. 
+void MessageImpl::addBLOB(const std::string& name, const ConstBLOBPtr& value)
+{
+    addField(name, [&value](const FieldPtr& field) {field->setBLOB(value);});
+}
+
 /// <summary>
 /// Private addField helper used by the public addField methods to create
 /// and set up a field and add it to the message.

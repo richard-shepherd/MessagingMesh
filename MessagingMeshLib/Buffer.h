@@ -152,8 +152,8 @@ namespace MessagingMesh
         // Reads a bool from the buffer.
         bool read_bool() const;
 
-        //// Reads a BLOB from the buffer.
-        //ConstBLOBPtr read_blob();
+        // Reads a BLOB from the buffer.
+        ConstBLOBPtr read_blob() const;
 
     // write() method for various types...
     public:
@@ -190,8 +190,8 @@ namespace MessagingMesh
         // Writes a bool to the buffer.
         void write_bool(bool item);
 
-        //// Writes a BLOB to the buffer.
-        //void write_blob(const ConstBLOBPtr& item);
+        // Writes a BLOB to the buffer.
+        void write_blob(const ConstBLOBPtr& item);
 
     // Private functions...
     private:

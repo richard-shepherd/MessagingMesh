@@ -46,30 +46,36 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Creates a BLOB instance.
-        static BLOBPtr create_fromData(void* pData, size_t length, Ownership ownership) { return BLOBPtr(new BLOB(pData, length, ownership)); }
+        static BLOBPtr create_fromData(void* pData, int32_t length, Ownership ownership) { return BLOBPtr(new BLOB(pData, length, ownership)); }
 
         // Creates a BLOB instance.
-        static BLOBPtr create_fromBuffer(BufferPtr pBuffer, void* pData, size_t length, Ownership ownership) { return BLOBPtr(new BLOB(pBuffer, pData, length, ownership)); }
+        static BLOBPtr create_fromBuffer(ConstBufferPtr pBuffer, void* pData, int32_t length, Ownership ownership) { return BLOBPtr(new BLOB(pBuffer, pData, length, ownership)); }
 
         // Destructor.
         ~BLOB();
+
+        // Gets the pointer to the data.
+        void* getData() const { return m_pData; }
+
+        // Gets the length.
+        int32_t getLength() const { return m_length; }
 
     // Private functions...
     private:
         // Constructor.
         // NOTE: The constructor is private. Use one of the static create() methods to create an instance.
-        BLOB(void* pData, size_t length, Ownership ownership);
+        BLOB(void* pData, int32_t length, Ownership ownership);
 
         // Constructor.
         // NOTE: The constructor is private. Use one of the static create() methods to create an instance.
-        BLOB(BufferPtr pBuffer, void* pData, size_t length, Ownership ownership);
+        BLOB(ConstBufferPtr pBuffer, void* pData, int32_t length, Ownership ownership);
 
     // Private data...
     private:
         void* m_pData;
-        size_t m_length;
+        int32_t m_length;
         Ownership m_ownership;
-        BufferPtr m_pBuffer = nullptr;
+        ConstBufferPtr m_pBuffer = nullptr;
     };
 } // namespace
 
