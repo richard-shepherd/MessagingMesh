@@ -70,12 +70,12 @@ namespace MessagingMeshLib.NET.Tests
             // The BLOB...
             var blob2 = m2.getBLOB("blob");
             Assert.AreEqual(6, blob2.Length);
-            Assert.AreEqual(1, blob2[0]);
-            Assert.AreEqual(2, blob2[1]);
-            Assert.AreEqual(3, blob2[2]);
-            Assert.AreEqual(230, blob2[3]);
-            Assert.AreEqual(240, blob2[4]);
-            Assert.AreEqual(250, blob2[5]);
+            Assert.AreEqual(blob[0], blob2[0]);
+            Assert.AreEqual(blob[1], blob2[1]);
+            Assert.AreEqual(blob[2], blob2[2]);
+            Assert.AreEqual(blob[3], blob2[3]);
+            Assert.AreEqual(blob[4], blob2[4]);
+            Assert.AreEqual(blob[5], blob2[5]);
 
             // The sub-message...
             var sm2 = m2.getMessage("sm");

@@ -10,8 +10,7 @@ namespace MessagingMesh
     /// </summary><remarks>
     /// Ownership of the byte array
     /// ---------------------------
-    /// There are different options for the ownership of the byte array, depending on 
-    /// how you are using the BLOB.
+    /// There are different options for the ownership of the byte array.
     /// 
     /// - TAKE_OWNERSHIP
     ///   The BLOB will take ownership of the data and delete it in its destructor.

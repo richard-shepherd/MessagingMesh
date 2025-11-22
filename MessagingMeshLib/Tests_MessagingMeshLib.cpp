@@ -109,7 +109,7 @@ void Tests_MessagingMeshLib::messageSerialization(TestRun& testRun)
     bool b1 = true;
     bool b2 = false;
     unsigned char blob[6] = {1, 2, 3, 230, 240, 250 };
-    auto pBLOB = BLOB::create_fromData(blob, 6, BLOB::Ownership::TAKE_COPY);
+    auto pBLOB = BLOB::create_fromData(blob, 6, BLOB::Ownership::HOLD_REFERENCE);
 
     // We create a message holding all the types...
     auto m = Message::create();
@@ -156,12 +156,12 @@ void Tests_MessagingMeshLib::messageSerialization(TestRun& testRun)
     auto pBLOB2 = m2->getBLOB("blob");
     auto blob2 = (unsigned char*)pBLOB2->getData();
     assertEqual(testRun, pBLOB2->getLength(), 6);
-    assertEqual(testRun, blob2[0], 1);
-    assertEqual(testRun, blob2[1], 2);
-    assertEqual(testRun, blob2[2], 3);
-    assertEqual(testRun, blob2[3], 230);
-    assertEqual(testRun, blob2[4], 240);
-    assertEqual(testRun, blob2[5], 250);
+    assertEqual(testRun, blob2[0], blob[0]);
+    assertEqual(testRun, blob2[1], blob[1]);
+    assertEqual(testRun, blob2[2], blob[2]);
+    assertEqual(testRun, blob2[3], blob[3]);
+    assertEqual(testRun, blob2[4], blob[4]);
+    assertEqual(testRun, blob2[5], blob[5]);
 
     // The sub-message...
     auto sm2 = m2->getMessage("sm");
