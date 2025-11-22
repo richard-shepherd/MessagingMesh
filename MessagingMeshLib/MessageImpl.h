@@ -50,7 +50,10 @@ namespace MessagingMesh
 
         // Adds a message field to the message. 
         void addMessage(const std::string& name, const ConstMessagePtr& value);
-    
+
+        // Adds a bool field to the message. 
+        void addBool(const std::string& name, bool value);
+
     // Private functions...
     private:
         // Adds a field to the message, setting its value using the valueSetter function (lambda).

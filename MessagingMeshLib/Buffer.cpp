@@ -38,16 +38,16 @@ char* Buffer::getBuffer()
     return m_pBuffer;
 }
 
-// Reads an int8 from the buffer.
-int8_t Buffer::read_int8()
+// Reads a uint8 from the buffer.
+uint8_t Buffer::read_uint8()
 {
-    int8_t result;
+    uint8_t result;
     readCopyable(result);
     return result;
 }
 
-// Writes an int8 to the buffer.
-void Buffer::write_int8(int8_t item)
+// Writes a uint8 to the buffer.
+void Buffer::write_uint8(uint8_t item)
 {
     writeCopyable(item);
 }
@@ -214,6 +214,20 @@ void Buffer::write_message(const ConstMessagePtr& item)
     // We call the message's serialize() method. This calls back into the buffer
     // to write the data for the message and the fields it is managing...
     item->serialize(*this);
+}
+
+// Reads a bool from the buffer.
+bool Buffer::read_bool()
+{
+    auto i = read_uint8();
+    return i == 1;
+}
+
+// Writes a bool to the buffer.
+void Buffer::write_bool(bool item)
+{
+    auto i = item ? (uint8_t)1 : (uint8_t)0;
+    write_uint8(i);
 }
 
 // Reads an item from the buffer using memcpy.

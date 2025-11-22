@@ -83,6 +83,13 @@ namespace MessagingMesh
         // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
         const ConstMessagePtr& getMessage(const std::string& name) const;
 
+        // Adds a bool field to the message. 
+        void addBool(const std::string& name, bool value);
+
+        // Gets the bool value for the field specified.
+        // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
+        bool getBool(const std::string& name) const;
+
     // Private functions...
     private:
         // Constructor.

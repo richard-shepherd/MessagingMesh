@@ -136,6 +136,21 @@ void FieldImpl::setMessage(const ConstMessagePtr& value)
     m_dataMessage = value;
 }
 
+// Gets the bool held by the field.
+// Throws a MessagingMesh::Exception  if the field does not hold this type.
+bool FieldImpl::getBool() const
+{
+    CHECK_DATA_TYPE(Field::BOOL);
+    return m_dataBool;
+}
+
+// Sets the field to hold a bool.
+void FieldImpl::setBool(bool value)
+{
+    m_dataType = Field::BOOL;
+    m_dataBool = value;
+}
+
 // Serializes the field to the current position of the buffer.
 void FieldImpl::serialize(Buffer& buffer) const
 {
@@ -143,7 +158,7 @@ void FieldImpl::serialize(Buffer& buffer) const
     buffer.write_string(m_name);
 
     // We serialize the data type...
-    buffer.write_int8(static_cast<int8_t>(m_dataType));
+    buffer.write_uint8(static_cast<uint8_t>(m_dataType));
 
     // We serialize the data, depending on the type...
     switch (m_dataType)
@@ -176,6 +191,10 @@ void FieldImpl::serialize(Buffer& buffer) const
         buffer.write_message(m_dataMessage);
         break;
 
+    case Field::BOOL:
+        buffer.write_bool(m_dataBool);
+        break;
+
     default:
         throw Exception("Field::serialize data-type not handled");
     }
@@ -188,7 +207,7 @@ void FieldImpl::deserialize(Buffer& buffer)
     m_name = buffer.read_string();
 
     // We deserialize the data type...
-    m_dataType = static_cast<Field::DataType>(buffer.read_int8());
+    m_dataType = static_cast<Field::DataType>(buffer.read_uint8());
 
     // We deserialize the data, depending on the type...
     switch (m_dataType)
@@ -219,6 +238,10 @@ void FieldImpl::deserialize(Buffer& buffer)
 
     case Field::MESSAGE:
         m_dataMessage = buffer.read_message();
+        break;
+
+    case Field::BOOL:
+        m_dataBool = buffer.read_bool();
         break;
 
     default:

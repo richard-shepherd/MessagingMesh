@@ -111,6 +111,19 @@ const ConstMessagePtr& Message::getMessage(const std::string& name) const
     return getField(name)->getMessage();
 }
 
+// Adds a bool field to the message. 
+void Message::addBool(const std::string& name, bool value)
+{
+    m_pImpl->addBool(name, value);
+}
+
+// Gets the bool value for the field specified.
+// Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
+bool Message::getBool(const std::string& name) const
+{
+    return getField(name)->getBool();
+}
+
 // Serializes the message to the current position in the buffer.
 void Message::serialize(Buffer& buffer) const
 {

@@ -119,6 +119,19 @@ void Field::setMessage(const ConstMessagePtr& value)
     m_pImpl->setMessage(value);
 }
 
+// Gets the bool held by the field.
+// Throws a MessagingMesh::Exception  if the field does not hold this type.
+bool Field::getBool() const
+{
+    return m_pImpl->getBool();
+}
+
+// Sets the field to hold a bool.
+void Field::setBool(bool value)
+{
+    m_pImpl->setBool(value);
+}
+
 // Serializes the field to the current position of the buffer.
 void Field::serialize(Buffer& buffer) const
 {

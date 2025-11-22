@@ -20,7 +20,7 @@ void NetworkMessageHeader::serialize(Buffer& buffer) const
     buffer.write_string(m_replySubject);
 
     // Action...
-    buffer.write_int8(static_cast<int8_t>(m_action));
+    buffer.write_uint8(static_cast<uint8_t>(m_action));
 }
 
 // Deserializes the network message header from the current position in the buffer.
@@ -36,5 +36,5 @@ void NetworkMessageHeader::deserialize(Buffer& buffer)
     m_replySubject = buffer.read_string();
 
     // Action...
-    m_action = static_cast<Action>(buffer.read_int8());
+    m_action = static_cast<Action>(buffer.read_uint8());
 }

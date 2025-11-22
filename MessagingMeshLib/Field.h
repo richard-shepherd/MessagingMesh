@@ -22,7 +22,8 @@ namespace MessagingMesh
             SIGNED_INT64,
             UNSIGNED_INT64,
             DOUBLE,
-            MESSAGE
+            MESSAGE,
+            BOOL
         };
         
     // Public methods...
@@ -95,7 +96,14 @@ namespace MessagingMesh
 
         // Sets the field to hold a message.
         void setMessage(const ConstMessagePtr& value);
-        
+
+        // Gets the bool held by the field.
+        // Throws a MessagingMesh::Exception  if the field does not hold this type.
+        bool getBool() const;
+
+        // Sets the field to hold a bool.
+        void setBool(bool value);
+
     // Private functions...
     private:
         // Constructor.

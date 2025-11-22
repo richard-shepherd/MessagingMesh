@@ -63,6 +63,12 @@ void MessageImpl::addMessage(const std::string& name, const ConstMessagePtr& val
     addField(name, [&value](const FieldPtr& field) {field->setMessage(value);});
 }
 
+// Adds a bool field to the message. 
+void MessageImpl::addBool(const std::string& name, bool value)
+{
+    addField(name, [&value](const FieldPtr& field) {field->setBool(value);});
+}
+
 /// <summary>
 /// Private addField helper used by the public addField methods to create
 /// and set up a field and add it to the message.

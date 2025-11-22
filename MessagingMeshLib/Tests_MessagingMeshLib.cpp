@@ -22,7 +22,7 @@ void Tests_MessagingMeshLib::buffer(TestUtils::TestRun& testRun)
     TestUtils::log("Buffer int8...");
     {
         auto pBuffer = Buffer::create();
-        pBuffer->write_int8(0x2e);
+        pBuffer->write_uint8(0x2e);
         auto buffer = pBuffer->getBuffer();
         assertEqual(testRun, buffer[0], 0x05);
         assertEqual(testRun, buffer[1], 0x00);

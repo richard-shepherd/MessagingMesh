@@ -79,6 +79,13 @@ namespace MessagingMesh
         // Sets the field to hold a message.
         void setMessage(const ConstMessagePtr& value);
 
+        // Gets the bool held by the field.
+        // Throws a MessagingMesh::Exception  if the field does not hold this type.
+        bool getBool() const;
+
+        // Sets the field to hold a bool.
+        void setBool(bool value);
+
     // Private data...
     private:
         std::string m_name;
@@ -96,6 +103,7 @@ namespace MessagingMesh
         NumericDataUnion m_dataNumeric;
         std::string m_dataString;
         ConstMessagePtr m_dataMessage = nullptr;
+        bool m_dataBool = false;
     };
 } // namespace
 

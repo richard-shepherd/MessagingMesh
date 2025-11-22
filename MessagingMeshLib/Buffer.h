@@ -118,8 +118,8 @@ namespace MessagingMesh
 
     // read() method for various types...
     public:
-        // Reads an int8 from the buffer.
-        int8_t read_int8();
+        // Reads a uint8 from the buffer.
+        uint8_t read_uint8();
 
         // Reads an int32 from the buffer.
         int32_t read_int32();
@@ -149,10 +149,13 @@ namespace MessagingMesh
         // Reads a message from the buffer.
         ConstMessagePtr read_message();
 
+        // Reads a bool from the buffer.
+        bool read_bool();
+
     // write() method for various types...
     public:
-        // Writes an int8 to the buffer.
-        void write_int8(int8_t item);
+        // Writes a uint8 to the buffer.
+        void write_uint8(uint8_t item);
 
         // Writes a signed int32 to the buffer.
         void write_int32(int32_t item);
@@ -180,6 +183,9 @@ namespace MessagingMesh
 
         // Writes a message to the buffer.
         void write_message(const ConstMessagePtr& item);
+
+        // Writes a bool to the buffer.
+        void write_bool(bool item);
 
     // Private functions...
     private:
