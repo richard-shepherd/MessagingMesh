@@ -19,7 +19,7 @@ Buffer::~Buffer()
 }
 
 // Gets the buffer.
-char* Buffer::getBuffer()
+char* Buffer::getBuffer() const
 {
     // If the buffer has not yet been allocated we allocate a buffer to hold the
     // size, as client code is always expecting a buffer with at least a size at
@@ -39,7 +39,7 @@ char* Buffer::getBuffer()
 }
 
 // Reads a uint8 from the buffer.
-uint8_t Buffer::read_uint8()
+uint8_t Buffer::read_uint8() const
 {
     uint8_t result;
     readCopyable(result);
@@ -53,7 +53,7 @@ void Buffer::write_uint8(uint8_t item)
 }
 
 // Reads an int32 from the buffer.
-int32_t Buffer::read_int32()
+int32_t Buffer::read_int32() const
 {
     int32_t result;
     readCopyable(result);
@@ -67,7 +67,7 @@ void Buffer::write_int32(int32_t item)
 }
 
 // Reads a uint32 from the buffer.
-uint32_t Buffer::read_uint32()
+uint32_t Buffer::read_uint32() const
 {
     uint32_t result;
     readCopyable(result);
@@ -81,7 +81,7 @@ void Buffer::write_uint32(uint32_t item)
 }
 
 // Reads an int64 from the buffer.
-int64_t Buffer::read_int64()
+int64_t Buffer::read_int64() const
 {
     int64_t result;
     readCopyable(result);
@@ -95,7 +95,7 @@ void Buffer::write_int64(int64_t item)
 }
 
 // Reads a uint64 from the buffer.
-uint64_t Buffer::read_uint64()
+uint64_t Buffer::read_uint64() const
 {
     uint64_t result;
     readCopyable(result);
@@ -109,7 +109,7 @@ void Buffer::write_uint64(uint64_t item)
 }
 
 // Reads a double from the buffer.
-double Buffer::read_double()
+double Buffer::read_double() const
 {
     double result;
     readCopyable(result);
@@ -123,7 +123,7 @@ void Buffer::write_double(double item)
 }
 
 // Reads a string from the buffer.
-std::string Buffer::read_string()
+std::string Buffer::read_string() const
 {
     // Strings are serialized as [length][chars].
 
@@ -157,7 +157,7 @@ void Buffer::write_string(const std::string& item)
 
 // Reads bytes from the buffer to the pointer passed in.
 // NOTE: You must make sure that the memory pointed to is large enough.
-void Buffer::read_bytes(void* p, int32_t size)
+void Buffer::read_bytes(void* p, int32_t size) const
 {
     // We make sure that the buffer is large enough...
     checkBufferSize_Read(size);
@@ -183,7 +183,7 @@ void Buffer::write_bytes(const void* p, int32_t size)
 }
 
 // Reads a field from the buffer.
-ConstFieldPtr Buffer::read_field()
+ConstFieldPtr Buffer::read_field() const
 {
     // We create a new field and deserialize into it...
     auto field = Field::create();
@@ -200,7 +200,7 @@ void Buffer::write_field(const ConstFieldPtr& item)
 }
 
 // Reads a message from the buffer.
-ConstMessagePtr Buffer::read_message()
+ConstMessagePtr Buffer::read_message() const
 {
     // We create a new message and deserialize into it...
     auto message = Message::create();
@@ -217,7 +217,7 @@ void Buffer::write_message(const ConstMessagePtr& item)
 }
 
 // Reads a bool from the buffer.
-bool Buffer::read_bool()
+bool Buffer::read_bool() const
 {
     auto i = read_uint8();
     return i == 1;
@@ -230,9 +230,13 @@ void Buffer::write_bool(bool item)
     write_uint8(i);
 }
 
+//// Reads a BLOB from the buffer.
+//ConstBLOBPtr read_blob();
+
+
 // Reads an item from the buffer using memcpy.
 template <typename T>
-void Buffer::readCopyable(T& item)
+void Buffer::readCopyable(T& item) const
 {
     // We make sure that the buffer is large enough...
     size_t size = sizeof(T);
@@ -262,7 +266,7 @@ void Buffer::writeCopyable(const T& item)
 
 // Checks that the buffer is large enough to read the specified number of bytes.
 // Throws a MessagingMesh::Exception if the buffer is not large enough.
-void Buffer::checkBufferSize_Read(size_t bytesRequired)
+void Buffer::checkBufferSize_Read(size_t bytesRequired) const
 {
     if (m_position + bytesRequired > m_dataSize)
     {
@@ -320,7 +324,7 @@ void Buffer::expandBuffer()
 }
 
 // Updates the position to reflect bytes read from the buffer.
-void Buffer::updatePosition_Read(int32_t bytesRead)
+void Buffer::updatePosition_Read(int32_t bytesRead) const
 {
     // We update the position...
     m_position += bytesRead;

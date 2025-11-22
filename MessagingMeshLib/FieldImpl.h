@@ -26,7 +26,7 @@ namespace MessagingMesh
         void serialize(Buffer& buffer) const;
 
         // Deserializes the field from the current position in the buffer.
-        void deserialize(Buffer& buffer);
+        void deserialize(const Buffer& buffer);
 
     // Getters and setters for field types...
     public:

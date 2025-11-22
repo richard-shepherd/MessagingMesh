@@ -104,7 +104,7 @@ void MessageImpl::serialize(Buffer& buffer) const
 }
 
 // Deserializes the message from the current position in the buffer.
-void MessageImpl::deserialize(Buffer& buffer)
+void MessageImpl::deserialize(const Buffer& buffer)
 {
     // We find the number of fields...
     auto fieldCount = buffer.read_int32();

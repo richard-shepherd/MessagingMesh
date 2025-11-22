@@ -201,7 +201,7 @@ void FieldImpl::serialize(Buffer& buffer) const
 }
 
 // Deserializes the field from the current position in the buffer.
-void FieldImpl::deserialize(Buffer& buffer)
+void FieldImpl::deserialize(const Buffer& buffer)
 {
     // We deserialize the name...
     m_name = buffer.read_string();

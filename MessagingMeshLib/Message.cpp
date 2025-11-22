@@ -131,7 +131,7 @@ void Message::serialize(Buffer& buffer) const
 }
 
 // Deserializes the message from the current position in the buffer.
-void Message::deserialize(Buffer& buffer)
+void Message::deserialize(const Buffer& buffer)
 {
     m_pImpl->deserialize(buffer);
 }

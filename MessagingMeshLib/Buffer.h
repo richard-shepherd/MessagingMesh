@@ -76,7 +76,7 @@ namespace MessagingMesh
     /// 
     /// The size is added to the buffer when the getBuffer() method is called.
     /// </summary>
-    class Buffer
+    class Buffer : public std::enable_shared_from_this<Buffer>
     {
     // Public constants...
     public:
@@ -92,11 +92,11 @@ namespace MessagingMesh
         ~Buffer();
 
         // Gets the buffer.
-        char* getBuffer();
+        char* getBuffer() const;
 
         // Gets the size of the data stored in the buffer.
         // This includes the four bytes for the size plus the data.
-        int32_t getBufferSize() { return m_dataSize; }
+        int32_t getBufferSize() const { return m_dataSize; }
 
         // Resets the position to the initial position for reading data.
         // Note: This is the position after the size.
@@ -119,38 +119,41 @@ namespace MessagingMesh
     // read() method for various types...
     public:
         // Reads a uint8 from the buffer.
-        uint8_t read_uint8();
+        uint8_t read_uint8() const;
 
         // Reads an int32 from the buffer.
-        int32_t read_int32();
+        int32_t read_int32() const;
 
         // Reads a uint32 from the buffer.
-        uint32_t read_uint32();
+        uint32_t read_uint32() const;
 
         // Reads an int64 from the buffer.
-        int64_t read_int64();
+        int64_t read_int64() const;
 
         // Reads a uint64 from the buffer.
-        uint64_t read_uint64();
+        uint64_t read_uint64() const;
 
         // Reads a double from the buffer.
-        double read_double();
+        double read_double() const;
 
         // Reads a string from the buffer.
-        std::string read_string();
+        std::string read_string() const;
 
         // Reads bytes from the buffer to the pointer passed in.
         // NOTE: You must make sure that the memory pointed to is large enough.
-        void read_bytes(void* p, int32_t size);
+        void read_bytes(void* p, int32_t size) const;
 
         // Reads a field from the buffer.
-        ConstFieldPtr read_field();
+        ConstFieldPtr read_field() const;
 
         // Reads a message from the buffer.
-        ConstMessagePtr read_message();
+        ConstMessagePtr read_message() const;
 
         // Reads a bool from the buffer.
-        bool read_bool();
+        bool read_bool() const;
+
+        //// Reads a BLOB from the buffer.
+        //ConstBLOBPtr read_blob();
 
     // write() method for various types...
     public:
@@ -187,6 +190,9 @@ namespace MessagingMesh
         // Writes a bool to the buffer.
         void write_bool(bool item);
 
+        //// Writes a BLOB to the buffer.
+        //void write_blob(const ConstBLOBPtr& item);
+
     // Private functions...
     private:
         // Constructor.
@@ -194,14 +200,14 @@ namespace MessagingMesh
         Buffer();
 
         // Reads an item from the buffer using memcpy.
-        template <typename T> void readCopyable(T& item);
+        template <typename T> void readCopyable(T& item) const;
 
         // Writes an item to the buffer which can be written with memcpy.
         template <typename T> void writeCopyable(const T& item);
 
         // Checks that the buffer is large enough to read the specified number of bytes.
         // Throws a MessagingMesh::Exception if the buffer is not large enough.
-        void checkBufferSize_Read(size_t bytesRequired);
+        void checkBufferSize_Read(size_t bytesRequired) const;
 
         // Checks that the buffer has the capacity to hold the number of bytes specified
         // and expands it if it does not.
@@ -212,7 +218,7 @@ namespace MessagingMesh
         void expandBuffer();
 
         // Updates the position to reflect bytes read from the buffer.
-        void updatePosition_Read(int32_t bytesRead);
+        void updatePosition_Read(int32_t bytesRead) const;
 
         // Updates the position and data-size to reflect bytes written to the buffer.
         void updatePosition_Write(int32_t bytesWritten);
@@ -226,12 +232,12 @@ namespace MessagingMesh
         const int32_t INITIAL_SIZE = 8192;
 
         // The buffer...
-        char* m_pBuffer = nullptr;
-        int32_t m_bufferSize = 0;
+        mutable char* m_pBuffer = nullptr;
+        mutable int32_t m_bufferSize = 0;
 
-        // The current position at which data will be written.
+        // The current position at which data will be read or written.
         // This starts after the bytes reserved for the size.
-        int32_t m_position = SIZE_SIZE;
+        mutable int32_t m_position = SIZE_SIZE;
 
         // The size of all data written to the buffer.
         // Note: This includes the size held in the first four bytes.

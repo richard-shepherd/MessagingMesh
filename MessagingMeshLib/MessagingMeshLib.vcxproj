@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoResetEvent.h" />
+    <ClInclude Include="BLOB.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Callbacks.h" />
     <ClInclude Include="Connection.h" />
@@ -40,6 +41,7 @@
     <ClInclude Include="UVUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BLOB.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="ConnectionImpl.cpp" />

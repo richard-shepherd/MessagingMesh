@@ -139,7 +139,7 @@ void Field::serialize(Buffer& buffer) const
 }
 
 // Deserializes the field from the current position in the buffer.
-void Field::deserialize(Buffer& buffer)
+void Field::deserialize(const Buffer& buffer)
 {
     m_pImpl->deserialize(buffer);
 }
