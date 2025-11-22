@@ -24,19 +24,17 @@ void publish()
 
     // We send updates...
     MM::Logger::info("Sending data");
+    //const int BLOB_LENGTH = 10;
+    //char blob[BLOB_LENGTH];
+    //auto pBLOB = MM::BLOB::create_fromData(blob, BLOB_LENGTH, MM::BLOB::Ownership::HOLD_REFERENCE);
     for (int32_t i = 1; i <= 10000000; ++i)
     {
         {
             auto pMessage = MM::Message::create();
             pMessage->addSignedInt32("#", i);
+            //pMessage->addBLOB("#", pBLOB);
             connection.sendMessage("A.B", pMessage);
         }
-
-        //{
-        //    auto pMessage = MM::Message::create();
-        //    pMessage->addField("#", i + 10);
-        //    connection.sendMessage("C.D", pMessage);
-        //}
     }
 
     MM::Logger::info("Press Enter to exit");
@@ -46,12 +44,15 @@ void publish()
 // Called when we receive a message.
 void onMessage(MM::Connection& /*connection*/, const std::string& subject, const std::string& /*replySubject*/, MM::MessagePtr pMessage, void* /*tag*/)
 {
+    static int count = 0;
     try
     {
+        count++;
         auto value = pMessage->getSignedInt32("#");
-        if (value % 1000000 == 0)
+        if (count % 1000000 == 0)
         {
-            MM::Logger::info(std::format("Update to {}: {}", subject, value));
+            //MM::Logger::info(std::format("Messages received: {}", count));
+            MM::Logger::info(std::format("Update to {}: {}, count={}", subject, value, count));
         }
     }
     catch (const std::exception& ex)
