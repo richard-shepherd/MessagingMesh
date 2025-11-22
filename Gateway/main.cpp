@@ -15,20 +15,26 @@ void onMessageLogged(Logger::LogLevel logLevel, const std::string& message)
 }
 
 // Main.
-int main(int /*argc*/, char** /*argv*/)
+int main(int argc, char** argv)
 {
-    //Tests_Gateway::runAll();
+    if (argc >= 2 && strcmp("-test", argv[1]) == 0)
+    {
+        // We run tests...
+        Tests_Gateway::runAll();
+    }
+    else
+    {
+        // We set the thread name...
+        UVUtils::setThreadName("MAIN");
 
-    // We set the thread name...
-    UVUtils::setThreadName("MAIN");
+        // We set up logging...
+        Logger::registerCallback(onMessageLogged);
 
-    // We set up logging...
-    Logger::registerCallback(onMessageLogged);
+        // We run the gateway...
+        Gateway gateway(5050);
 
-    // We run the gateway...
-    Gateway gateway(5050);
-
-    Logger::info("Press Enter to exit");
-    std::cin.get();
+        Logger::info("Press Enter to exit");
+        std::cin.get();
+    }
 }
 
