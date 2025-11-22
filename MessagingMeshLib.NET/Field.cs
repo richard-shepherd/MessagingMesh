@@ -20,7 +20,8 @@
             UNSIGNED_INT64,
             DOUBLE,
             MESSAGE,
-            BOOL
+            BOOL,
+            BLOB
         };
 
         #endregion
@@ -206,6 +207,25 @@
             m_data = value;
         }
 
+        /// <summary>
+        /// Gets the BLOB held by the field.
+        /// Throws a MessagingMeshException if the field does not hold this type.
+        /// </summary>
+        public byte[] getBLOB()
+        {
+            checkDataType(DataType.BLOB);
+            return (byte[])m_data;
+        }
+
+        /// <summary>
+        /// Sets the field to hold a BLOB.
+        /// </summary>
+        public void setBLOB(byte[] value)
+        {
+            m_dataType = DataType.BLOB;
+            m_data = value;
+        }
+
         #endregion
 
         #region Serialization
@@ -254,6 +274,10 @@
 
                 case DataType.BOOL:
                     buffer.write_bool((bool)m_data);
+                    break;
+
+                case DataType.BLOB:
+                    buffer.write_blob((byte[])m_data);
                     break;
 
                 default:
@@ -305,6 +329,10 @@
 
                 case DataType.BOOL:
                     m_data = buffer.read_bool();
+                    break;
+
+                case DataType.BLOB:
+                    m_data = buffer.read_blob();
                     break;
 
                 default:

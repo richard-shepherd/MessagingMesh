@@ -183,6 +183,24 @@ namespace MessagingMeshLib.NET
             return getField(name).getBool();
         }
 
+        /// <summary>
+        /// Adds a BLOB field to the message.
+        /// </summary>
+        public void addBLOB(string name, byte[] value)
+        {
+            addField(name, (field) => field.setBLOB(value));
+        }
+
+        /// <summary>
+        /// Gets a BLOB from the named field.
+        /// Throws a MessagingMeshException if the message does not hold the field requested
+        /// or if the field is not the requested type.
+        /// </summary>
+        public byte[] getBLOB(string name)
+        {
+            return getField(name).getBLOB();
+        }
+
         #endregion
 
         #region Serialization

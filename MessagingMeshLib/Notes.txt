@@ -10,12 +10,13 @@ TODO
   - Add tests for all types
   - Test serializing between languages (via binary files)
   - BLOB (C++, C#):         Field (S,D), Message (Change read_bytes, write_bytes to encode the size as well? Or separate BLOB code?)
-  - BOOL (C++)              Field (S,D), Message
   - Make sure enums are lined up
 
 - Message::getAllField (C++, C#)
 
 - Message::getField() non-const, ie so that you can modify a field (C++, C#) 
+
+- Think about pimpl vs C++20 modules
 
 - Better disconnection handling
   - Not all cases of gateway and/or clients dying are handled well
@@ -55,6 +56,37 @@ dbghelp.lib
 
 
 
+
+How should BLOB work in C++?
+----------------------------
+- We could have a BLOB class holding
+  - void* data
+  - size_t length
+
+- How does ownership of the data work?
+
+- I think that sometimes the BLOB will own the data and sometime it will not
+  - When it is read from a buffer it will own the data
+
+- Can the BLOB be a view / slice into a Buffer?
+  - If so, it is only valid while the Buffer is alive
+  - But is a lot more efficient
+  - But: I think that the Buffer will often be out of scope while the message holding the BLOB still alive
+    - Unless the BLOB holds the BufferPtr, so keeps it alive
+
+- Let's say that BLOB *never* owns its data
+  - That sounds like it won't work
+
+- How is BLOB used?
+
+- Client code has a byte array
+  - Maybe from binary serialization
+  
+- BLOB blob(data, length);
+- pMessage->addBLOB("field-name", blob)
+
+- *** The BLOB should be a shared pointer: BLOBPtr ***
+  - So it can be passed in and out of messages and fields
 
 
 

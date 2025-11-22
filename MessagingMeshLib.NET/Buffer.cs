@@ -401,6 +401,24 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
+        /// Reads bytes from the buffer.
+        /// </summary>
+        public byte[] read_bytes(int length)
+        {
+            // We check the buffer size...
+            checkBufferSize_Read(length);
+
+            // We create a byte array of the right size and copy dat ainto it from the buffer...
+            var result = new byte[length];
+            System.Buffer.BlockCopy(m_buffer, m_position, result, 0, length);
+
+            // We update the position...
+            updatePosition_Read(length);
+
+            return result;
+        }
+
+        /// <summary>
         /// Writes bytes to the buffer from the array passed in.
         /// </summary>
         public void write_bytes(byte[] bytes)
@@ -474,6 +492,30 @@ namespace MessagingMeshLib.NET
         {
             var b = item ? (byte)1 : (byte)0;
             write_byte(b);
+        }
+
+        /// <summary>
+        /// Reads a BLOB from the buffer.
+        /// </summary>
+        public byte[] read_blob()
+        {
+            // We read the length...
+            var length = read_int32();
+
+            // We read the bytes...
+            return read_bytes(length);
+        }
+
+        /// <summary>
+        /// Writes a BLOB to the buffer.
+        /// </summary>
+        public void write_blob(byte[] item)
+        {
+            // We write the length...
+            write_int32(item.Length);
+
+            // We write the bytes...
+            write_bytes(item);
         }
 
         #endregion

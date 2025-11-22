@@ -9,51 +9,78 @@ namespace MessagingMeshLib.NET.Tests
     public class MessageTests
     {
         /// <summary>
-        /// Tests serializing a double.
+        /// Tests serializing a message holding all supported field types.
         /// </summary>
         [TestMethod]
-        public void messageSerialization()
+        public void messageSerialization_AllFieldTypes()
         {
-            string name = "Charles";
-            double age = 47.5;
-            bool hasDog = true;
-            bool hasCat = false;
-            int houseNumber = 3;
-            string street = "London Road";
-            string city = "Bristol";
+            string s = "hello, world!";
+            int i32_1 = 123456;
+            int i32_2 = -123456;
+            uint ui32 = 3123456789;
+            long i64_1 = 4123456789123456789;
+            long i64_2 = -4123456789123456789;
+            ulong ui64 = 11123456789123456789;
+            double d = 123.456;
+            bool b1 = true;
+            bool b2 = false;
+            byte[] blob = {1, 2, 3, 230, 240, 250 };
 
-            // We create a message...
-            var person = new Message();
-            person.addString("NAME", name);
-            person.addDouble("AGE", age);
-            person.addBool("HAS_DOG", hasDog);
-            person.addBool("HAS_CAT", hasCat);
+            // We create a message holding all the types...
+            var m = new Message();
+            m.addString("s", s);
+            m.addSignedInt32("i32_1", i32_1);
+            m.addSignedInt32("i32_2", i32_2);
+            m.addUnsignedInt32("ui32", ui32);
+            m.addSignedInt64("i64_1", i64_1);
+            m.addSignedInt64("i64_2", i64_2);
+            m.addUnsignedInt64("ui64", ui64);
+            m.addDouble("d", d);
+            m.addBool("b1", b1);
+            m.addBool("b2", b2);
+            m.addBLOB("blob", blob);
 
-            // We add a sub-message...
-            var address = new Message();
-            address.addSignedInt32("HOUSE-NUMBER", houseNumber);
-            address.addString("STREET", street);
-            address.addString("CITY", city);
-            person.addMessage("ADDRESS", address);
+            // We create a sub-message and add it...
+            var sm = new Message();
+            sm.addString("s", s);
+            sm.addDouble("d", d);
+            m.addMessage("sm", sm);
 
-            // We serialize the message...
+            // We serialize the message to a buffer...
             var buffer = new Buffer();
-            person.serialize(buffer);
+            m.serialize(buffer);
 
-            // We deserialize the message...
+            // We deserialize to a new message...
             buffer.resetPosition();
-            var result = new Message();
-            result.deserialize(buffer);
+            var m2 = new Message();
+            m2.deserialize(buffer);
 
-            Assert.AreEqual(name, result.getString("NAME"));
-            Assert.AreEqual(age, result.getDouble("AGE"));
-            Assert.AreEqual(hasDog, result.getBool("HAS_DOG"));
-            Assert.AreEqual(hasCat, result.getBool("HAS_CAT"));
+            // We check the values...
+            Assert.AreEqual(s, m2.getString("s"));
+            Assert.AreEqual(i32_1, m2.getSignedInt32("i32_1"));
+            Assert.AreEqual(i32_2, m2.getSignedInt32("i32_2"));
+            Assert.AreEqual(ui32, m2.getUnsignedInt32("ui32"));
+            Assert.AreEqual(i64_1, m2.getSignedInt64("i64_1"));
+            Assert.AreEqual(i64_2, m2.getSignedInt64("i64_2"));
+            Assert.AreEqual(ui64, m2.getUnsignedInt64("ui64"));
+            Assert.AreEqual(d, m2.getDouble("d"));
+            Assert.AreEqual(b1, m2.getBool("b1"));
+            Assert.AreEqual(b2, m2.getBool("b2"));
 
-            var addressResult = result.getMessage("ADDRESS");
-            Assert.AreEqual(houseNumber, addressResult.getSignedInt32("HOUSE-NUMBER"));
-            Assert.AreEqual(street, addressResult.getString("STREET"));
-            Assert.AreEqual(city, addressResult.getString("CITY"));
+            // The BLOB...
+            var blob2 = m2.getBLOB("blob");
+            Assert.AreEqual(6, blob2.Length);
+            Assert.AreEqual(1, blob2[0]);
+            Assert.AreEqual(2, blob2[1]);
+            Assert.AreEqual(3, blob2[2]);
+            Assert.AreEqual(230, blob2[3]);
+            Assert.AreEqual(240, blob2[4]);
+            Assert.AreEqual(250, blob2[5]);
+
+            // The sub-message...
+            var sm2 = m2.getMessage("sm");
+            Assert.AreEqual(s, sm2.getString("s"));
+            Assert.AreEqual(d, sm2.getDouble("d"));
         }
     }
 }
