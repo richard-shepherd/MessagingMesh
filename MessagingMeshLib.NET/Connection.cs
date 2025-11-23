@@ -85,7 +85,7 @@ namespace MessagingMeshLib.NET
         public Subscription subscribe(string subject, SubscriptionCallback callback, object tag = null)
         {
             // We create the subscription-callback-info for this subscription...
-            var subscriptionCallbackInfo = new Subscription.CallbackInfo
+            var callbackInfo = new Subscription.CallbackInfo
             {
                 Callback = callback,
                 Tag = tag
@@ -111,11 +111,11 @@ namespace MessagingMeshLib.NET
                 }
 
                 // We add our subscription...
-                subscriptionInfo.SubscriptionCallbackInfos.Add(subscriptionCallbackInfo);
+                subscriptionInfo.CallbackInfos.Add(callbackInfo);
             }
 
             // We subscribe to the gateway if needed... 
-            if(makeGatewaySubscription)
+            if (makeGatewaySubscription)
             {
                 // We send a SUBSCRIBE message...
                 var networkMessage = new NetworkMessage();
@@ -127,7 +127,7 @@ namespace MessagingMeshLib.NET
             }
 
             // We return a subscription object to manage the lifetime of the subscription...
-            return new Subscription(this, subject, subscriptionCallbackInfo, subscriptionInfo.SubscriptionID);
+            return new Subscription(this, subject, callbackInfo, subscriptionInfo.SubscriptionID);
         }
 
         /// <summary>
@@ -297,7 +297,7 @@ namespace MessagingMeshLib.NET
                 }
 
                 // We remove the callback info...
-                subscriptionInfo.SubscriptionCallbackInfos.Remove(callbackInfo);
+                subscriptionInfo.CallbackInfos.Remove(callbackInfo);
 
                 // If there are no subscriptions left we clean up the subscription and
                 // note that we need to unsubscribe on the gateway...
@@ -406,17 +406,20 @@ namespace MessagingMeshLib.NET
         private void processGatewayMessage(NetworkMessageHeader header, Buffer buffer)
         {
             // We check if we have a subscription for the subscription ID...
-            SubscriptionInfo subscriptionInfo = null;
+            List<Subscription.CallbackInfo> callbackInfos = null;
             lock (m_subscriptionsLocker)
             {
-                m_subscriptionsByID.TryGetValue(header.SubscriptionID, out subscriptionInfo);
+                if(m_subscriptionsByID.TryGetValue(header.SubscriptionID, out var subscriptionInfo))
+                {
+                    callbackInfos = new(subscriptionInfo.CallbackInfos);
+                }
             }
-            if (subscriptionInfo != null)
+            if (callbackInfos != null)
             {
                 // We have a subscription so we deserialize the message and call the callbacks...
                 var message = new Message();
                 message.deserialize(buffer);
-                foreach (var callbackInfo in subscriptionInfo.SubscriptionCallbackInfos)
+                foreach (var callbackInfo in callbackInfos)
                 {
                     callbackInfo.Callback(this, header.Subject, header.ReplySubject, message, callbackInfo.Tag);
                 }
@@ -450,7 +453,7 @@ namespace MessagingMeshLib.NET
         {
             public string Subject { get; set; } = "";
             public uint SubscriptionID { get; set; } = 0;
-            public List<Subscription.CallbackInfo> SubscriptionCallbackInfos { get; set; } = new();
+            public List<Subscription.CallbackInfo> CallbackInfos { get; set; } = new();
         }
 
         // Subscriptions keyed by subject and ID, and a locker for them...
