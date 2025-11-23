@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
+#include <vector>
 #include "SharedAliases.h"
 
 namespace MessagingMesh
@@ -37,6 +38,11 @@ namespace MessagingMesh
         // Gets a field by name.
         // Throws a MessagingMesh::Exception if the field is not in the message.
         FieldPtr getField(const std::string& name);
+
+        // Returns a list of all fields in the message.
+        // NOTE: This is a copy of the list held by the message, so changes to the returned list
+        //       will not change the fields held by the message.
+        std::vector<ConstFieldPtr> getAllFields() const;
 
         // Adds a string field to the message. 
         void addString(const std::string& name, const std::string& value);

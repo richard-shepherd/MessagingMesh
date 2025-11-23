@@ -33,6 +33,19 @@ FieldPtr MessageImpl::getField(const std::string& name)
     return it->second;
 }
 
+// Returns a list of all fields in the message.
+// NOTE: This is a copy of the list held by the message, so changes to the returned list
+//       will not change the fields held by the message.
+std::vector<ConstFieldPtr> MessageImpl::getAllFields() const
+{
+    std::vector<ConstFieldPtr> result;
+    for (auto field : m_fields)
+    {
+        result.push_back(field);
+    }
+    return result;
+}
+
 // Adds a string field to the message. 
 void MessageImpl::addString(const std::string& name, const std::string& value)
 {

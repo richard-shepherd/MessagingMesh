@@ -35,6 +35,16 @@ namespace MessagingMeshLib.NET
             throw new MessagingMeshException($"Field {name} not in message");
         }
 
+        /// <summary>
+        /// Returns a list of all fields in the message.
+        /// NOTE: This is a copy of the list held by the message, so changes to the returned list
+        ///       will not change the fields held by the message.
+        /// </summary>
+        public List<Field> getAllFields()
+        {
+            return new List<Field>(m_fields);
+        }
+
         #endregion
 
         #region Field add and get methods
