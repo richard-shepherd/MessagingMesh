@@ -151,51 +151,6 @@ void Tests_MessagingMeshLib::messageSerialization(TestRun& testRun)
     saveBuffer("..\\TestData\\SerializedBuffer-cpp.bin", buffer);
 }
 
-// Tests message fields for message serialization tests.
-void Tests_MessagingMeshLib::testMessageFields(TestUtils::TestRun& testRun, const ConstMessagePtr& m)
-{
-    std::string s = "hello, world!";
-    int32_t i32_1 = 123456;
-    int32_t i32_2 = -123456;
-    uint32_t ui32 = 3123456789;
-    int64_t i64_1 = 4123456789123456789;
-    int64_t i64_2 = -4123456789123456789;
-    uint64_t ui64 = 11123456789123456789;
-    double d = 123.456;
-    bool b1 = true;
-    bool b2 = false;
-    unsigned char blob[6] = { 1, 2, 3, 230, 240, 250 };
-    auto pBLOB = BLOB::create_fromData(blob, 6, BLOB::Ownership::HOLD_REFERENCE);
-
-    // We check the values...
-    assertEqual(testRun, m->getString("s"), s);
-    assertEqual(testRun, m->getSignedInt32("i32_1"), i32_1);
-    assertEqual(testRun, m->getSignedInt32("i32_2"), i32_2);
-    assertEqual(testRun, m->getUnsignedInt32("ui32"), ui32);
-    assertEqual(testRun, m->getSignedInt64("i64_1"), i64_1);
-    assertEqual(testRun, m->getSignedInt64("i64_2"), i64_2);
-    assertEqual(testRun, m->getUnsignedInt64("ui64"), ui64);
-    assertEqual(testRun, m->getDouble("d"), d);
-    assertEqual(testRun, m->getBool("b1"), b1);
-    assertEqual(testRun, m->getBool("b2"), b2);
-
-    // The BLOB...
-    auto pBLOB2 = m->getBLOB("blob");
-    auto blob2 = (unsigned char*)pBLOB2->getData();
-    assertEqual(testRun, pBLOB2->getLength(), 6);
-    assertEqual(testRun, blob2[0], blob[0]);
-    assertEqual(testRun, blob2[1], blob[1]);
-    assertEqual(testRun, blob2[2], blob[2]);
-    assertEqual(testRun, blob2[3], blob[3]);
-    assertEqual(testRun, blob2[4], blob[4]);
-    assertEqual(testRun, blob2[5], blob[5]);
-
-    // The sub-message...
-    auto sm = m->getMessage("sm");
-    assertEqual(testRun, sm->getString("s"), s);
-    assertEqual(testRun, sm->getDouble("d"), d);
-}
-
 // Tests deserializing messages from binary data (serialized from different languages).
 void Tests_MessagingMeshLib::deserializedMessages(TestUtils::TestRun& testRun)
 {
@@ -203,7 +158,17 @@ void Tests_MessagingMeshLib::deserializedMessages(TestUtils::TestRun& testRun)
     {
         // We load a buffer from data serialzied from C++ and deserialize into a message...
         auto buffer = loadBuffer("..\\TestData\\SerializedBuffer-cpp.bin");
-        buffer->resetPosition();
+        auto message = Message::create();
+        message->deserialize(*buffer);
+
+        // We test the message...
+        testMessageFields(testRun, message);
+    }
+
+    TestUtils::log("Deserialize from C# binary data");
+    {
+        // We load a buffer from data serialzied from C# and deserialize into a message...
+        auto buffer = loadBuffer("..\\TestData\\SerializedBuffer-cs.bin");
         auto message = Message::create();
         message->deserialize(*buffer);
 
@@ -276,17 +241,54 @@ void Tests_MessagingMeshLib::guids(TestUtils::TestRun& testRun)
     assertEqual(testRun, guid1 == guid2, false);
 }
 
+// Tests message fields for message serialization tests.
+void Tests_MessagingMeshLib::testMessageFields(TestUtils::TestRun& testRun, const ConstMessagePtr& m)
+{
+    std::string s = "hello, world!";
+    int32_t i32_1 = 123456;
+    int32_t i32_2 = -123456;
+    uint32_t ui32 = 3123456789;
+    int64_t i64_1 = 4123456789123456789;
+    int64_t i64_2 = -4123456789123456789;
+    uint64_t ui64 = 11123456789123456789;
+    double d = 123.456;
+    bool b1 = true;
+    bool b2 = false;
+    unsigned char blob[6] = { 1, 2, 3, 230, 240, 250 };
+    auto pBLOB = BLOB::create_fromData(blob, 6, BLOB::Ownership::HOLD_REFERENCE);
+
+    // We check the values...
+    assertEqual(testRun, m->getString("s"), s);
+    assertEqual(testRun, m->getSignedInt32("i32_1"), i32_1);
+    assertEqual(testRun, m->getSignedInt32("i32_2"), i32_2);
+    assertEqual(testRun, m->getUnsignedInt32("ui32"), ui32);
+    assertEqual(testRun, m->getSignedInt64("i64_1"), i64_1);
+    assertEqual(testRun, m->getSignedInt64("i64_2"), i64_2);
+    assertEqual(testRun, m->getUnsignedInt64("ui64"), ui64);
+    assertEqual(testRun, m->getDouble("d"), d);
+    assertEqual(testRun, m->getBool("b1"), b1);
+    assertEqual(testRun, m->getBool("b2"), b2);
+
+    // The BLOB...
+    auto pBLOB2 = m->getBLOB("blob");
+    auto blob2 = (unsigned char*)pBLOB2->getData();
+    assertEqual(testRun, pBLOB2->getLength(), 6);
+    assertEqual(testRun, blob2[0], blob[0]);
+    assertEqual(testRun, blob2[1], blob[1]);
+    assertEqual(testRun, blob2[2], blob[2]);
+    assertEqual(testRun, blob2[3], blob[3]);
+    assertEqual(testRun, blob2[4], blob[4]);
+    assertEqual(testRun, blob2[5], blob[5]);
+
+    // The sub-message...
+    auto sm = m->getMessage("sm");
+    assertEqual(testRun, sm->getString("s"), s);
+    assertEqual(testRun, sm->getDouble("d"), d);
+}
+
 // Saves a buffer to a file.
 void Tests_MessagingMeshLib::saveBuffer(const std::string& filename, const ConstBufferPtr& pBuffer)
 {
-    // We create the path...
-    std::filesystem::path p(filename);
-    std::filesystem::path dir = p.parent_path();
-    if (!dir.empty()) 
-    {
-        std::filesystem::create_directories(dir);
-    }
-
     // We write the file...
     std::ofstream file(filename, std::ios::binary);
     file.write(pBuffer->getBuffer(), pBuffer->getBufferSize());
@@ -307,5 +309,6 @@ ConstBufferPtr Tests_MessagingMeshLib::loadBuffer(const std::string& filename)
     // We create a buffer from the data...
     auto buffer = Buffer::create();
     buffer->readNetworkMessage(data.data(), size, 0);
+    buffer->resetPosition();
     return buffer;
 }

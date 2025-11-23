@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace MessagingMeshLib.NET.Tests
 {
@@ -56,19 +57,67 @@ namespace MessagingMeshLib.NET.Tests
             m2.deserialize(buffer);
 
             // We check the values...
-            Assert.AreEqual(s, m2.getString("s"));
-            Assert.AreEqual(i32_1, m2.getSignedInt32("i32_1"));
-            Assert.AreEqual(i32_2, m2.getSignedInt32("i32_2"));
-            Assert.AreEqual(ui32, m2.getUnsignedInt32("ui32"));
-            Assert.AreEqual(i64_1, m2.getSignedInt64("i64_1"));
-            Assert.AreEqual(i64_2, m2.getSignedInt64("i64_2"));
-            Assert.AreEqual(ui64, m2.getUnsignedInt64("ui64"));
-            Assert.AreEqual(d, m2.getDouble("d"));
-            Assert.AreEqual(b1, m2.getBool("b1"));
-            Assert.AreEqual(b2, m2.getBool("b2"));
+            testMessageFields(m2);
+
+            // We save the buffer for use with deserialization tests...
+            saveBuffer("..\\..\\..\\TestData\\SerializedBuffer-cs.bin", buffer);
+        }
+
+        /// <summary>
+        /// Tests deserializing a message from C++ data.
+        /// </summary>
+        [TestMethod]
+        public void messageDeserialize_CPP()
+        {
+            var buffer = loadBuffer("..\\..\\..\\TestData\\SerializedBuffer-cpp.bin");
+            var message = new Message();
+            message.deserialize(buffer);
+            testMessageFields(message);
+        }
+
+        /// <summary>
+        /// Tests deserializing a message from C# data.
+        /// </summary>
+        [TestMethod]
+        public void messageDeserialize_CS()
+        {
+            var buffer = loadBuffer("..\\..\\..\\TestData\\SerializedBuffer-cs.bin");
+            var message = new Message();
+            message.deserialize(buffer);
+            testMessageFields(message);
+        }
+
+        /// <summary>
+        /// Tests the the message has the expected fields.
+        /// </summary>
+        private void testMessageFields(Message m)
+        {
+            string s = "hello, world!";
+            int i32_1 = 123456;
+            int i32_2 = -123456;
+            uint ui32 = 3123456789;
+            long i64_1 = 4123456789123456789;
+            long i64_2 = -4123456789123456789;
+            ulong ui64 = 11123456789123456789;
+            double d = 123.456;
+            bool b1 = true;
+            bool b2 = false;
+            byte[] blob = { 1, 2, 3, 230, 240, 250 };
+
+            // We check the values...
+            Assert.AreEqual(s, m.getString("s"));
+            Assert.AreEqual(i32_1, m.getSignedInt32("i32_1"));
+            Assert.AreEqual(i32_2, m.getSignedInt32("i32_2"));
+            Assert.AreEqual(ui32, m.getUnsignedInt32("ui32"));
+            Assert.AreEqual(i64_1, m.getSignedInt64("i64_1"));
+            Assert.AreEqual(i64_2, m.getSignedInt64("i64_2"));
+            Assert.AreEqual(ui64, m.getUnsignedInt64("ui64"));
+            Assert.AreEqual(d, m.getDouble("d"));
+            Assert.AreEqual(b1, m.getBool("b1"));
+            Assert.AreEqual(b2, m.getBool("b2"));
 
             // The BLOB...
-            var blob2 = m2.getBLOB("blob");
+            var blob2 = m.getBLOB("blob");
             Assert.AreEqual(6, blob2.Length);
             Assert.AreEqual(blob[0], blob2[0]);
             Assert.AreEqual(blob[1], blob2[1]);
@@ -78,9 +127,32 @@ namespace MessagingMeshLib.NET.Tests
             Assert.AreEqual(blob[5], blob2[5]);
 
             // The sub-message...
-            var sm2 = m2.getMessage("sm");
-            Assert.AreEqual(s, sm2.getString("s"));
-            Assert.AreEqual(d, sm2.getDouble("d"));
+            var sm = m.getMessage("sm");
+            Assert.AreEqual(s, sm.getString("s"));
+            Assert.AreEqual(d, sm.getDouble("d"));
+        }
+
+        /// <summary>
+        /// Saves the buffer for use with deserialization tests.
+        /// </summary>
+        private void saveBuffer(string filename, Buffer buffer)
+        {
+            using (var fs = new FileStream(filename, FileMode.Create))
+            {
+                fs.Write(buffer.getBuffer(), 0, buffer.getBufferSize());
+            }
+        }
+
+        /// <summary>
+        /// Loads a buffer from the file.
+        /// </summary>
+        private Buffer loadBuffer(string filename)
+        {
+            var data = File.ReadAllBytes(filename);
+            var buffer = new Buffer();
+            buffer.readNetworkMessage(data, data.Length, 0);
+            buffer.resetPosition();
+            return buffer;
         }
     }
 }
