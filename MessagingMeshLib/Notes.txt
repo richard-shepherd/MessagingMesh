@@ -12,10 +12,9 @@ TODO
 
 - Do we need the wakeUp() thing? (A: Yes, when running in PMQ mode)
 
-- Support field types (and add tests): 
-  - Test serializing between languages (via binary files)
+- Do the client side subscription cache thing for C#
 
-- Message::getAllField (C++, C#)
+- Message::getAllFields (C++, C#)
 
 - Message::getField() non-const, ie so that you can modify a field (C++, C#) 
 
