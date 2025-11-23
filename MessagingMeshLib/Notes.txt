@@ -10,13 +10,11 @@ TODO
   - Can you send messages from multiple threads? (C#, C++)
   - Can you sendRequest from multiple threads? (C#, C++)
 
-- Do we need the wakeUp() thing? (A: Yes, when running in PMQ mode)
-
 - Do the client side subscription cache thing for C#
 
 - Message::getAllFields (C++, C#)
 
-- Message::getField() non-const, ie so that you can modify a field (C++, C#) 
+- Message::getField() non-const, ie so that you can modify a field (C++) 
 
 - Think about pimpl vs C++20 modules
 

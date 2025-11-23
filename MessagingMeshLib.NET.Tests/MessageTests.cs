@@ -9,6 +9,8 @@ namespace MessagingMeshLib.NET.Tests
     [TestClass]
     public class MessageTests
     {
+        #region Test methods
+
         /// <summary>
         /// Tests serializing a message holding all supported field types.
         /// </summary>
@@ -88,6 +90,46 @@ namespace MessagingMeshLib.NET.Tests
         }
 
         /// <summary>
+        /// Tests updating a field.
+        /// </summary>
+        [TestMethod]
+        public void updateField_SameType()
+        {
+            // We add a field to a message...
+            var message = new Message();
+            message.addSignedInt32("A", 123);
+
+            // We get the field and update the value...
+            var field = message.getField("A");
+            field.setSignedInt32(234);
+
+            // We check the value...
+            Assert.AreEqual(234, message.getSignedInt32("A"));
+        }
+
+        /// <summary>
+        /// Tests updating a field.
+        /// </summary>
+        [TestMethod]
+        public void updateField_DifferentType()
+        {
+            // We add a field to a message...
+            var message = new Message();
+            message.addSignedInt32("A", 123);
+
+            // We get the field and update the value...
+            var field = message.getField("A");
+            field.setDouble(234.567);
+
+            // We check the value...
+            Assert.AreEqual(234.567, message.getDouble("A"));
+        }
+
+        #endregion
+
+        #region Private functions
+
+        /// <summary>
         /// Tests the the message has the expected fields.
         /// </summary>
         private void testMessageFields(Message m)
@@ -154,5 +196,7 @@ namespace MessagingMeshLib.NET.Tests
             buffer.resetPosition();
             return buffer;
         }
+
+        #endregion
     }
 }
