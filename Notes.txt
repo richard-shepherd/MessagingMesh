@@ -27,7 +27,9 @@ TODO
 - Handle fast producers and slow consumers
   - What happens if a consumer is slow? Does it slow down publication from the Gateway to other clients?
 
-
+- Performance (C#)
+  - Sensitive to the initial Buffer size. The initial allocation is slow. 
+    - Use a shared pool of byte[]???
 
 
 Creating a messaging-mesh client
