@@ -657,7 +657,7 @@ namespace MessagingMeshLib.NET
         #region Private data
 
         // The initial size we allocate for the buffer...
-        private const int INITIAL_SIZE = 8192;
+        private const int INITIAL_SIZE = 1024;
 
         // The buffer...
         private byte[] m_buffer = null;
