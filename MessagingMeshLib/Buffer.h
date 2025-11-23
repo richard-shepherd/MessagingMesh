@@ -100,7 +100,7 @@ namespace MessagingMesh
 
         // Resets the position to the initial position for reading data.
         // Note: This is the position after the size.
-        void resetPosition() { m_position = SIZE_SIZE; }
+        void resetPosition() const { m_position = SIZE_SIZE; }
 
         // Gets the position in the buffer where data will be written.
         int32_t getPosition() const { return m_position; }
