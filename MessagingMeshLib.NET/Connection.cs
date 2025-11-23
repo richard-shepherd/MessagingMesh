@@ -33,6 +33,8 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public Connection(ConnectionParams connectionParams)
         {
+            m_connectionParams = connectionParams;
+
             // We create the socket connection to the gateway and listen for updates from it...
             m_clientSocket = new ClientSocket(connectionParams.GatewayHost, connectionParams.GatewayPort, connectionParams.Service);
             m_clientSocket.setCallback(this);
@@ -127,6 +129,19 @@ namespace MessagingMeshLib.NET
             return new Subscription(this, subject, subscriptionCallbackInfo);
         }
 
+        /// <summary>
+        /// Processes messages in the queue. Waits for the specified time for messages
+        /// to be available.
+        /// </summary>
+        public void processMessageQueue(int millisecondsTimeout)
+        {
+            var queuedMessages = m_queuedMessages.waitAndGetItems(millisecondsTimeout);
+            foreach(var queuedMessage in queuedMessages)
+            {
+                processGatewayMessage(queuedMessage.Header, queuedMessage.Buffer);
+            }
+        }
+
         #endregion
 
         #region IDisposable implementation
@@ -172,7 +187,7 @@ namespace MessagingMeshLib.NET
                         break;
 
                     case NetworkMessageHeader.ActionEnum.SEND_MESSAGE:
-                        onSendMessage(networkMessage.Header, buffer);
+                        onGatewayMessage(networkMessage.Header, buffer);
                         break;
                 }
             }
@@ -277,25 +292,27 @@ namespace MessagingMeshLib.NET
         /// Called when we see a SEND_MESSAGE message from the Gateway, ie when we
         /// receive a message for which we have a subscription.
         /// </summary>
-        private void onSendMessage(NetworkMessageHeader header, Buffer buffer)
+        private void onGatewayMessage(NetworkMessageHeader header, Buffer buffer)
         {
             try
             {
-                // We check if we have a subscription for the subscription ID...
-                SubscriptionInfo subscriptionInfo = null;
-                lock(m_subscriptionsLocker)
+                // We check how message dispatch is specified...
+                switch(m_connectionParams.MessageDispatch)
                 {
-                    m_subscriptionsByID.TryGetValue(header.SubscriptionID, out subscriptionInfo);
-                }
-                if(subscriptionInfo != null)
-                {
-                    // We have a subscription so we deserialize the message and call the callbacks...
-                    var message = new Message();
-                    message.deserialize(buffer);
-                    foreach(var callbackInfo in subscriptionInfo.SubscriptionCallbackInfos)
-                    {
-                        callbackInfo.Callback(this, header.Subject, header.ReplySubject, message, callbackInfo.Tag);
-                    }
+                    case ConnectionParams.MessageDispatchEnum.CALLBACK_ON_MESSAGING_MESH_THREAD:
+                        // We call back to client code straight away on from this thread...
+                        processGatewayMessage(header, buffer);
+                        break;
+
+                    case ConnectionParams.MessageDispatchEnum.PROCESS_MESSAGE_QUEUE:
+                        // We queue the message to be dispatched when processMessageQueue() is called.
+                        var queuedMessage = new QueuedMessage
+                        {
+                            Header = header,
+                            Buffer = buffer
+                        };
+                        m_queuedMessages.add(queuedMessage);
+                        break;
                 }
             }
             catch(Exception ex)
@@ -304,9 +321,36 @@ namespace MessagingMeshLib.NET
             }
         }
 
+        /// <summary>
+        /// Processes a message from the gateway, calling client callbacks if we have
+        /// subscriptions set up for it.
+        /// </summary>
+        private void processGatewayMessage(NetworkMessageHeader header, Buffer buffer)
+        {
+            // We check if we have a subscription for the subscription ID...
+            SubscriptionInfo subscriptionInfo = null;
+            lock (m_subscriptionsLocker)
+            {
+                m_subscriptionsByID.TryGetValue(header.SubscriptionID, out subscriptionInfo);
+            }
+            if (subscriptionInfo != null)
+            {
+                // We have a subscription so we deserialize the message and call the callbacks...
+                var message = new Message();
+                message.deserialize(buffer);
+                foreach (var callbackInfo in subscriptionInfo.SubscriptionCallbackInfos)
+                {
+                    callbackInfo.Callback(this, header.Subject, header.ReplySubject, message, callbackInfo.Tag);
+                }
+            }
+        }
+
         #endregion
 
         #region Private data
+
+        // Connection params...
+        private readonly ConnectionParams m_connectionParams;
 
         // Manages the client socket connecting to the gateway...
         private readonly ClientSocket m_clientSocket;
@@ -331,6 +375,14 @@ namespace MessagingMeshLib.NET
         //         The value will be incremented before being used. So subscription IDs will start at one.
         // Note 2: This is accessed via the Interlocked class to ensure thread safety.
         private int m_subscriptionID = 0;
+
+        // A message received from the gateway.
+        private class QueuedMessage
+        {
+            public NetworkMessageHeader Header { get; set; }
+            public Buffer Buffer { get; set; }
+        }
+        private ThreadsafeConsumableList<QueuedMessage> m_queuedMessages = new();
 
         #endregion
     }

@@ -54,14 +54,27 @@ namespace TestClient.NET
             // We make subscriptions...
             var s1 = connection.subscribe("A.X", onMessage);
             var s2 = connection.subscribe("A.A", onMessage);
-            var s3 = connection.subscribe("A.B", onMessage, "A.B 1");
-            var s4 = connection.subscribe("A.B", onMessage, "A.B 2");
-            var s5 = connection.subscribe("A.*", onMessage, "*");
-            var s6 = connection.subscribe("A.>", onMessage, ">");
+            var s3 = connection.subscribe("A.B", onMessage);
             var s7 = connection.subscribe("C.D", onMessage);
 
-            MM.Logger.info("Press Enter to exit");
-            Console.ReadLine();
+            // We process incoming messages...
+            Console.WriteLine("Press Enter to exit");
+            for(; ; )
+            {
+                // We process messages...
+                connection.processMessageQueue(millisecondsTimeout: 10);
+
+                // We check for Enter...
+                if(Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(intercept: true);
+                    if(key.Key == ConsoleKey.Enter)
+                    {
+                        break;
+                    }
+                }
+            }
+
             connection.Dispose();
         }
 

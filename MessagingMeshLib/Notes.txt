@@ -57,38 +57,18 @@ dbghelp.lib
 
 
 
+How does processMessageQueue (PMQ) work?
+----------------------------------------
+- sendRequest will need to work differently
+  - It will need its own collection of callbacks
 
-How should BLOB work in C++?
-----------------------------
-- We could have a BLOB class holding
-  - void* data
-  - size_t length
+- Should we decode messages on the socket thread? 
+  - Or when PMQ is called?
 
-- How does ownership of the data work?
+- I think it could be better in PMQ itself
+  - That way the socket thread blocks for less time receiving messages
 
-- I think that sometimes the BLOB will own the data and sometime it will not
-  - When it is read from a buffer it will own the data
-
-- Can the BLOB be a view / slice into a Buffer?
-  - If so, it is only valid while the Buffer is alive
-  - But is a lot more efficient
-  - But: I think that the Buffer will often be out of scope while the message holding the BLOB still alive
-    - Unless the BLOB holds the BufferPtr, so keeps it alive
-
-- Let's say that BLOB *never* owns its data
-  - That sounds like it won't work
-
-- How is BLOB used?
-
-- Client code has a byte array
-  - Maybe from binary serialization
-  
-- BLOB blob(data, length);
-- pMessage->addBLOB("field-name", blob)
-
-- *** The BLOB should be a shared pointer: BLOBPtr ***
-  - So it can be passed in and out of messages and fields
-
+- 
 
 
 
