@@ -1,7 +1,5 @@
 ﻿using MessagingMeshLib.NET;
 using System;
-using System.Runtime.Remoting.Messaging;
-using System.Security.Policy;
 using System.Threading;
 using MM = MessagingMeshLib.NET;
 
@@ -16,6 +14,26 @@ namespace TestClient.NET
         private static void onMessagingMeshLogMessage(MM.Logger.LogLevel logLevel, string message)
         {
             Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss.fff} ({logLevel}): {message}");
+        }
+
+        /// <summary>
+        /// Processes messages until Enter is pressed.
+        /// </summary>
+        private static void processMessages(Connection connection)
+        {
+            MM.Logger.info("Press Enter to exit");
+            for (; ; )
+            {
+                // We process messages...
+                connection.processMessageQueue(millisecondsTimeout: 10);
+
+                // We check for Enter...
+                if (Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(intercept: true);
+                    if (key.Key == ConsoleKey.Enter) break;
+                }
+            }
         }
 
         /// <summary>
@@ -55,26 +73,10 @@ namespace TestClient.NET
             var s1 = connection.subscribe("A.X", onMessage);
             var s2 = connection.subscribe("A.A", onMessage);
             var s3 = connection.subscribe("A.B", onMessage);
-            var s7 = connection.subscribe("C.D", onMessage);
+            var s4 = connection.subscribe("C.D", onMessage);
 
-            // We process incoming messages...
-            Console.WriteLine("Press Enter to exit");
-            for(; ; )
-            {
-                // We process messages...
-                connection.processMessageQueue(millisecondsTimeout: 10);
-
-                // We check for Enter...
-                if(Console.KeyAvailable)
-                {
-                    var key = Console.ReadKey(intercept: true);
-                    if(key.Key == ConsoleKey.Enter)
-                    {
-                        break;
-                    }
-                }
-            }
-
+            // We process incoming messages until Enter is pressed...
+            processMessages(connection);
             connection.Dispose();
         }
 
@@ -103,8 +105,8 @@ namespace TestClient.NET
                 }
             }
 
-            MM.Logger.info("Press Enter to exit");
-            Console.ReadLine();
+            // We process incoming messages until Enter is pressed...
+            processMessages(connection);
             connection.Dispose();
         }
 

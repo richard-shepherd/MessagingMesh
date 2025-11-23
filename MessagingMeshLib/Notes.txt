@@ -12,6 +12,8 @@ TODO
 
 - Do we need the wakeUp() thing? (A: Yes, when running in PMQ mode)
 
+- Add -client / -server to .NET test client
+
 - Do the client side subscription cache thing for C#
 
 - Message::getAllFields (C++, C#)
