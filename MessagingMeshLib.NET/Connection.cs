@@ -201,6 +201,14 @@ namespace MessagingMeshLib.NET
             return resultMessage;
         }
 
+        /// <summary>
+        /// Unblock the current processMessageQueue() call without waiting for its timeout to elapse.
+        /// </summary>
+        public void wakeUp()
+        {
+            m_queuedMessages.wakeUp();
+        }
+
         #endregion
 
         #region IDisposable implementation

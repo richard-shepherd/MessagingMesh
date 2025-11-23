@@ -40,6 +40,9 @@ namespace MessagingMesh
 
         // Processes messages in the queue. Waits for the specified time for messages to be available.
         void processMessageQueue(int millisecondsTimeout);
+
+        // Unblock the current processMessageQueue() call without waiting for its timeout to elapse.
+        void wakeUp();
         
     // Private data...
     private:

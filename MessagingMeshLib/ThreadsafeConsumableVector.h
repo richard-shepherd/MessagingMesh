@@ -81,6 +81,12 @@ namespace MessagingMesh
             return getItems();
         }
 
+        // Sets the auto-reset event so that a waitAndGetItems() call will complete before the timeout has elapsed.
+        void wakeUp()
+        {
+            m_autoResetEvent.set();
+        }
+
     // Private data...
     private:
         // Vector of items.

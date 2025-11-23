@@ -42,3 +42,9 @@ void Connection::processMessageQueue(int millisecondsTimeout)
 {
     m_pImpl->processMessageQueue(millisecondsTimeout);
 }
+
+// Unblock the current processMessageQueue() call without waiting for its timeout to elapse.
+void Connection::wakeUp()
+{
+    m_pImpl->wakeUp();
+}

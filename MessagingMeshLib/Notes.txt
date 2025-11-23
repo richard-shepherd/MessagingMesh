@@ -23,9 +23,6 @@ TODO
 - Better disconnection handling
   - Not all cases of gateway and/or clients dying are handled well
 
-- ConnectionParams class (C++, C#)
-  - Include whether to call back on the connection's thread or to need manual dispatch (PMQ)
-
 - Clean up removed subscriptions from the interest-graph
 
 - ConnectionImpl::m_subscriptions needs to be thread safe
@@ -56,19 +53,6 @@ dbghelp.lib
 
 
 
-
-How does processMessageQueue (PMQ) work?
-----------------------------------------
-- sendRequest will need to work differently
-  - It will need its own collection of callbacks
-
-- Should we decode messages on the socket thread? 
-  - Or when PMQ is called?
-
-- I think it could be better in PMQ itself
-  - That way the socket thread blocks for less time receiving messages
-
-- 
 
 
 

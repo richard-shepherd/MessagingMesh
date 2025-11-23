@@ -56,6 +56,14 @@ namespace MessagingMeshLib.NET
             return getItems();
         }
 
+        /// <summary>
+        /// Sets the auto-reset event so that a waitAndGetItems() call will complete before the timeout has elapsed.
+        /// </summary>
+        public void wakeUp()
+        {
+            m_autoResetEvent.Set();
+        }
+
         #endregion
 
         #region Private data

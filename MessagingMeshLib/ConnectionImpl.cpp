@@ -206,6 +206,12 @@ void ConnectionImpl::processMessageQueue(int millisecondsTimeout)
     }
 }
 
+// Unblock the current processMessageQueue() call without waiting for its timeout to elapse.
+void ConnectionImpl::wakeUp()
+{
+    m_queuedMessages.wakeUp();
+}
+
 // Unsubscribes from the subscription ID specified.
 void ConnectionImpl::unsubscribe(uint32_t subscriptionID)
 {
