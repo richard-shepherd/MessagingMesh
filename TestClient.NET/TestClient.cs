@@ -1,5 +1,6 @@
 ﻿using MessagingMeshLib.NET;
 using System;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using MM = MessagingMeshLib.NET;
 
@@ -110,6 +111,71 @@ namespace TestClient.NET
             connection.Dispose();
         }
 
+        // Makes blocking requests to the server...
+        static void client()
+        {
+            // We connect to the gateway...
+            var connectionParams = new MM.ConnectionParams
+            {
+                GatewayHost = "localhost",
+                GatewayPort = 5050,
+                Service = "VULCAN"
+            };
+            var connection = new MM.Connection(connectionParams);
+
+            // We make requests to add two numbers...
+            MM.Logger.info("Sending Service.Add requests");
+            var total = 0.0;
+            for (var i = 1; i <= 1000; ++i)
+            {
+                var message =  new Message();
+                message.addDouble("A", i * 0.5);
+                message.addDouble("B", i * 0.5);
+                var result = connection.sendRequest("Service.Add", message, 30.0);
+                var sum = result.getDouble("SUM");
+                total += sum;
+            }
+            MM.Logger.info($"Total={total}");
+
+            // We process incoming messages until Enter is pressed...
+            processMessages(connection);
+            connection.Dispose();
+        }
+
+        // Responds to Service.Add requests...
+        static void server()
+        {
+            // We connect to the gateway...
+            var connectionParams = new MM.ConnectionParams
+            {
+                GatewayHost = "localhost",
+                GatewayPort = 5050,
+                Service = "VULCAN"
+            };
+            var connection = new MM.Connection(connectionParams);
+
+            // We subscribe to requests...
+            var s1 = connection.subscribe(
+                "Service.Add",
+                (c, s, rs, m, t) =>
+                {
+                    // We get the values from the request and add them...
+                    var a = m.getDouble("A");
+                    var b = m.getDouble("B");
+                    var sum = a + b;
+
+                    // We reply with a message holding the sum...
+                    var reply = new Message();
+                    reply.addDouble("SUM", sum);
+                    connection.sendMessage(rs, reply);
+                }
+            );
+
+            // We process incoming messages until Enter is pressed...
+            processMessages(connection);
+            connection.Dispose();
+        }
+
         /// <summary>
         /// Main.
         /// </summary>
@@ -128,6 +194,14 @@ namespace TestClient.NET
             else if(args.Length > 0 && args[0] == "-pub")
             {
                 publish();
+            }
+            else if(args.Length > 0 && args[0] == "-client")
+            {
+                client();
+            }
+            else if(args.Length > 0 && args[0] == "-server")
+            {
+                server();
             }
             else
             {

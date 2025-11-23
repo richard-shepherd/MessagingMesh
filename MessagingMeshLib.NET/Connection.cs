@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 
 namespace MessagingMeshLib.NET
@@ -126,7 +127,7 @@ namespace MessagingMeshLib.NET
             }
 
             // We return a subscription object to manage the lifetime of the subscription...
-            return new Subscription(this, subject, subscriptionCallbackInfo);
+            return new Subscription(this, subject, subscriptionCallbackInfo, subscriptionInfo.SubscriptionID);
         }
 
         /// <summary>
@@ -140,6 +141,66 @@ namespace MessagingMeshLib.NET
             {
                 processGatewayMessage(queuedMessage.Header, queuedMessage.Buffer);
             }
+        }
+
+        /// <summary>
+        /// Sends a blocking request to the subject specified. 
+        /// Returns the reply or null if the request times out.
+        /// </summary>
+        public Message sendRequest(string subject, Message message, double timeoutSeconds)
+        {
+            Message resultMessage = null;
+
+            // We create a unique inbox for the reply...
+            var inbox = createInbox();
+
+            // We create an auto reset event to block while waiting for the reply...
+            var autoResetEvent = new AutoResetEvent(false);
+
+            // We subscribe to the inbox...
+            var subscription = subscribe(
+                inbox,
+                (c, s, rs, m, t) =>
+                {
+                    // Called on the UV thread when we receive a reply.
+                    // We note the result and signal that we have received it.
+                    resultMessage = m;
+                    autoResetEvent.Set();
+                }
+            );
+
+            // We note the subscription ID is being used for a sendRequest...
+            lock(m_requestSubscriptionIDsLocker)
+            {
+                m_requestSubscriptionIDs.Add(subscription.SubscriptionID);
+            }
+
+            // We create a NetworkMessage to send the request...
+            var networkMessage = new NetworkMessage();
+            var header = networkMessage.Header;
+            header.Action = NetworkMessageHeader.ActionEnum.SEND_MESSAGE;
+            header.Subject = subject;
+            header.ReplySubject = inbox;
+            networkMessage.Message = message;
+
+            // We send the message...
+            sendNetworkMessage(networkMessage);
+
+            // We block on the auto reset event, waiting for the result...
+            var timeoutMilliseconds = (int)(timeoutSeconds * 1000);
+            autoResetEvent.WaitOne(timeoutMilliseconds);
+
+            // We remove the subscription ID from the colleection being managed for sendRequests
+            // and we dispose the subscription itself...
+            lock (m_requestSubscriptionIDsLocker)
+            {
+                m_requestSubscriptionIDs.Remove(subscription.SubscriptionID);
+            }
+            subscription.Dispose();
+
+            // We return the result message. This will be null if the request timed out
+            // or the request's result if it did not...
+            return resultMessage;
         }
 
         #endregion
@@ -296,6 +357,23 @@ namespace MessagingMeshLib.NET
         {
             try
             {
+                // We check if we have a response for a sendRequest.
+                // If it is, we call back straight away (even if other maessages are
+                // being dispatched by processMessageQueue.)
+                bool isRequestResponse = false;
+                lock(m_requestSubscriptionIDsLocker)
+                {
+                    if(m_requestSubscriptionIDs.Contains(header.SubscriptionID))
+                    {
+                        isRequestResponse = true;
+                    }
+                }
+                if(isRequestResponse)
+                {
+                    processGatewayMessage(header, buffer);
+                    return;
+                }
+
                 // We check how message dispatch is specified...
                 switch(m_connectionParams.MessageDispatch)
                 {
@@ -345,6 +423,15 @@ namespace MessagingMeshLib.NET
             }
         }
 
+        /// <summary>
+        /// Returns a unique inbox name.
+        /// </summary>
+        private string createInbox()
+        {
+            var guid = Guid.NewGuid().ToString("N");
+            return $"_INBOX.{guid}";
+        }
+
         #endregion
 
         #region Private data
@@ -375,6 +462,10 @@ namespace MessagingMeshLib.NET
         //         The value will be incremented before being used. So subscription IDs will start at one.
         // Note 2: This is accessed via the Interlocked class to ensure thread safety.
         private int m_subscriptionID = 0;
+
+        // Subscription IDs used by blocking sendRequest() and a locker for them...
+        private HashSet<uint> m_requestSubscriptionIDs = new();
+        private object m_requestSubscriptionIDsLocker = new();
 
         // A message received from the gateway.
         private class QueuedMessage

@@ -31,16 +31,26 @@ namespace MessagingMeshLib.NET
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Gets the subscription ID.
+        /// </summary>
+        public uint SubscriptionID => m_subscriptionID;
+
+        #endregion
+
         #region Public methods
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Subscription(Connection connection, string subject, CallbackInfo callbackInfo)
+        public Subscription(Connection connection, string subject, CallbackInfo callbackInfo, uint subscriptionID)
         {
             m_connection = connection;
             m_subject = subject;
             m_callbackInfo = callbackInfo;
+            m_subscriptionID = subscriptionID;
         }
 
         #endregion
@@ -67,6 +77,7 @@ namespace MessagingMeshLib.NET
         private readonly Connection m_connection;
         private readonly string m_subject;
         private readonly CallbackInfo m_callbackInfo;
+        private readonly uint m_subscriptionID;
 
         #endregion
     }
