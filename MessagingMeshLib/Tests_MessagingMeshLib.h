@@ -23,6 +23,9 @@ namespace MessagingMesh
         // Tests deserializing messages from binary data (serialized from different languages).
         static void deserializedMessages(TestUtils::TestRun& testRun);
 
+        // Tests updating fields in messages.
+        static void updateFields(TestUtils::TestRun& testRun);
+
         // Tests tokenizing strings.
         static void tokenize(TestUtils::TestRun& testRun);
 

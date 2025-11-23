@@ -14,8 +14,6 @@ TODO
 
 - Message::getAllFields (C++, C#)
 
-- Message::getField() non-const, ie so that you can modify a field (C++) 
-
 - Think about pimpl vs C++20 modules
 
 - Better disconnection handling

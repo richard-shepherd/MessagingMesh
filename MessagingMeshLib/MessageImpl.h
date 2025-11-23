@@ -28,7 +28,11 @@ namespace MessagingMesh
     public:
         // Gets a field by name.
         // Throws a MessagingMesh::Exception if the field is not in the message.
-        const ConstFieldPtr& getField(const std::string& name) const;
+        ConstFieldPtr getConstField(const std::string& name) const;
+
+        // Gets a field by name.
+        // Throws a MessagingMesh::Exception if the field is not in the message.
+        FieldPtr getField(const std::string& name);
 
         // Adds a string field to the message. 
         void addString(const std::string& name, const std::string& value);
@@ -65,10 +69,10 @@ namespace MessagingMesh
     // Private data...
     private:
         // Vector of fields in the message, in the order they were added...
-        std::vector<ConstFieldPtr> m_fields;
+        std::vector<FieldPtr> m_fields;
 
         // Map of field name to the first field with that name...
-        std::unordered_map<std::string, ConstFieldPtr> m_mapNameToField;
+        std::unordered_map<std::string, FieldPtr> m_mapNameToField;
     };
 } // namespace
 

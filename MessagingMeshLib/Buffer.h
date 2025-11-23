@@ -144,7 +144,7 @@ namespace MessagingMesh
         void read_bytes(void* p, int32_t size) const;
 
         // Reads a field from the buffer.
-        ConstFieldPtr read_field() const;
+        FieldPtr read_field() const;
 
         // Reads a message from the buffer.
         ConstMessagePtr read_message() const;

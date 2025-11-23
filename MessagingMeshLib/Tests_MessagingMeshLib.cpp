@@ -17,6 +17,7 @@ void Tests_MessagingMeshLib::runAll(TestUtils::TestRun& testRun)
     buffer(testRun);
     messageSerialization(testRun);
     deserializedMessages(testRun);
+    updateFields(testRun);
     tokenize(testRun);
     guids(testRun);
 }
@@ -174,6 +175,28 @@ void Tests_MessagingMeshLib::deserializedMessages(TestUtils::TestRun& testRun)
 
         // We test the message...
         testMessageFields(testRun, message);
+    }
+}
+
+// Tests updating fields in messages.
+void Tests_MessagingMeshLib::updateFields(TestUtils::TestRun& testRun)
+{
+    TestUtils::log("Update field - same type");
+    {
+        auto pMessage = Message::create();
+        pMessage->addSignedInt32("A", 123);
+        auto pField = pMessage->getField("A");
+        pField->setSignedInt32(234);
+        assertEqual(testRun, pMessage->getSignedInt32("A"), 234);
+    }
+
+    TestUtils::log("Update field - different type");
+    {
+        auto pMessage = Message::create();
+        pMessage->addSignedInt32("A", 123);
+        auto pField = pMessage->getField("A");
+        pField->setDouble(234.567);
+        assertEqual(testRun, pMessage->getDouble("A"), 234.567);
     }
 }
 

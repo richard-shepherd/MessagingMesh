@@ -184,7 +184,7 @@ void Buffer::write_bytes(const void* p, int32_t size)
 }
 
 // Reads a field from the buffer.
-ConstFieldPtr Buffer::read_field() const
+FieldPtr Buffer::read_field() const
 {
     // We create a new field and deserialize into it...
     auto field = Field::create();

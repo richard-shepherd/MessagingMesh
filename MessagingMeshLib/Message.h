@@ -32,7 +32,11 @@ namespace MessagingMesh
     public:
         // Gets a field by name.
         // Throws a MessagingMesh::Exception if the field is not in the message.
-        const ConstFieldPtr& getField(const std::string& name) const;
+        ConstFieldPtr getConstField(const std::string& name) const;
+
+        // Gets a field by name.
+        // Throws a MessagingMesh::Exception if the field is not in the message.
+        FieldPtr getField(const std::string& name);
 
         // Adds a string field to the message. 
         void addString(const std::string& name, const std::string& value);

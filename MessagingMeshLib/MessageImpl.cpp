@@ -11,7 +11,19 @@ MessageImpl::MessageImpl()
 
 // Gets a field by name.
 // Throws a MessagingMesh::Exception if the field is not in the message.
-const ConstFieldPtr& MessageImpl::getField(const std::string& name) const
+ConstFieldPtr MessageImpl::getConstField(const std::string& name) const
+{
+    auto it = m_mapNameToField.find(name);
+    if (it == m_mapNameToField.end())
+    {
+        throw Exception("Field " + name + " not in message");
+    }
+    return it->second;
+}
+
+// Gets a field by name.
+// Throws a MessagingMesh::Exception if the field is not in the message.
+FieldPtr MessageImpl::getField(const std::string& name)
 {
     auto it = m_mapNameToField.find(name);
     if (it == m_mapNameToField.end())
