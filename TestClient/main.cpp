@@ -1,5 +1,6 @@
 #include <iostream>
 #include <format>
+#include <conio.h>
 #include "MessagingMesh.h"
 namespace MM = MessagingMesh;
 
@@ -10,6 +11,24 @@ void onMessageLogged(MM::Logger::LogLevel logLevel, const std::string& message)
     auto time = MM::Utils::getTimeString();
     auto& strLogLevel = MM::Logger::toString(logLevel);
     std::cout << time << ": " << strLogLevel << ": " << message << std::endl;
+}
+
+// Processes messages until Enter is pressed.
+static void processMessages(MM::Connection& connection)
+{
+    MM::Logger::info("Press Enter to exit");
+    for (; ; )
+    {
+        // We process messages...
+        connection.processMessageQueue(10);
+
+        // We check for Enter...
+        if (_kbhit()) 
+        {
+            auto key = _getch();
+            if (key == 13) break;
+        }
+    }
 }
 
 // Publishes data...
@@ -37,8 +56,8 @@ void publish()
         }
     }
 
-    MM::Logger::info("Press Enter to exit");
-    std::cin.get();
+    // We process incoming messages until Enter is pressed...
+    processMessages(connection);
 }
 
 // Called when we receive a message.
@@ -77,8 +96,8 @@ void subscribe()
     auto s3 = connection.subscribe("A.B", onMessage);
     auto s4 = connection.subscribe("C.D", onMessage);
 
-    MM::Logger::info("Press Enter to exit");
-    std::cin.get();
+    // We process incoming messages until Enter is pressed...
+    processMessages(connection);
 }
 
 // Makes blocking requests to the server...
@@ -105,8 +124,8 @@ void client()
     }
     MM::Logger::info(std::format("Total={}", total));
 
-    MM::Logger::info("Press Enter to exit");
-    std::cin.get();
+    // We process incoming messages until Enter is pressed...
+    processMessages(connection);
 }
 
 // Responds to Service.Add requests...
@@ -136,8 +155,8 @@ void server()
         }
     );
 
-    MM::Logger::info("Press Enter to exit");
-    std::cin.get();
+    // We process incoming messages until Enter is pressed...
+    processMessages(connection);
 }
 
 // Main.

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 
 namespace MessagingMeshLib.NET
@@ -131,8 +130,7 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Processes messages in the queue. Waits for the specified time for messages
-        /// to be available.
+        /// Processes messages in the queue. Waits for the specified time for messages to be available.
         /// </summary>
         public void processMessageQueue(int millisecondsTimeout)
         {
@@ -190,7 +188,7 @@ namespace MessagingMeshLib.NET
             var timeoutMilliseconds = (int)(timeoutSeconds * 1000);
             autoResetEvent.WaitOne(timeoutMilliseconds);
 
-            // We remove the subscription ID from the colleection being managed for sendRequests
+            // We remove the subscription ID from the collection being managed for sendRequests
             // and we dispose the subscription itself...
             lock (m_requestSubscriptionIDsLocker)
             {
@@ -355,47 +353,40 @@ namespace MessagingMeshLib.NET
         /// </summary>
         private void onGatewayMessage(NetworkMessageHeader header, Buffer buffer)
         {
-            try
+            // We check if we have a response for a sendRequest.
+            // If it is, we call back straight away (even if other messages are
+            // being dispatched by processMessageQueue.)
+            bool isRequestResponse = false;
+            lock (m_requestSubscriptionIDsLocker)
             {
-                // We check if we have a response for a sendRequest.
-                // If it is, we call back straight away (even if other maessages are
-                // being dispatched by processMessageQueue.)
-                bool isRequestResponse = false;
-                lock(m_requestSubscriptionIDsLocker)
+                if (m_requestSubscriptionIDs.Contains(header.SubscriptionID))
                 {
-                    if(m_requestSubscriptionIDs.Contains(header.SubscriptionID))
-                    {
-                        isRequestResponse = true;
-                    }
-                }
-                if(isRequestResponse)
-                {
-                    processGatewayMessage(header, buffer);
-                    return;
-                }
-
-                // We check how message dispatch is specified...
-                switch(m_connectionParams.MessageDispatch)
-                {
-                    case ConnectionParams.MessageDispatchEnum.CALLBACK_ON_MESSAGING_MESH_THREAD:
-                        // We call back to client code straight away on from this thread...
-                        processGatewayMessage(header, buffer);
-                        break;
-
-                    case ConnectionParams.MessageDispatchEnum.PROCESS_MESSAGE_QUEUE:
-                        // We queue the message to be dispatched when processMessageQueue() is called.
-                        var queuedMessage = new QueuedMessage
-                        {
-                            Header = header,
-                            Buffer = buffer
-                        };
-                        m_queuedMessages.add(queuedMessage);
-                        break;
+                    isRequestResponse = true;
                 }
             }
-            catch(Exception ex)
+            if (isRequestResponse)
             {
-                Logger.error(ex.Message);
+                processGatewayMessage(header, buffer);
+                return;
+            }
+
+            // We check how message dispatch is specified...
+            switch (m_connectionParams.MessageDispatch)
+            {
+                case ConnectionParams.MessageDispatchEnum.CALLBACK_ON_MESSAGING_MESH_THREAD:
+                    // We call back to client code straight away on from this thread...
+                    processGatewayMessage(header, buffer);
+                    break;
+
+                case ConnectionParams.MessageDispatchEnum.PROCESS_MESSAGE_QUEUE:
+                    // We queue the message to be dispatched when processMessageQueue() is called.
+                    var queuedMessage = new QueuedMessage
+                    {
+                        Header = header,
+                        Buffer = buffer
+                    };
+                    m_queuedMessages.add(queuedMessage);
+                    break;
             }
         }
 
@@ -470,7 +461,7 @@ namespace MessagingMeshLib.NET
         private HashSet<uint> m_requestSubscriptionIDs = new();
         private object m_requestSubscriptionIDsLocker = new();
 
-        // A message received from the gateway.
+        // Messages received from the gateway, queued for processMessageQueue.
         private class QueuedMessage
         {
             public NetworkMessageHeader Header { get; set; }

@@ -53,12 +53,7 @@ namespace MessagingMeshLib.NET
         public List<ItemType> waitAndGetItems(int millisecondsTimeout)
         {
             m_autoResetEvent.WaitOne(millisecondsTimeout);
-            lock (m_locker)
-            {
-                var result = m_items;
-                m_items = new();
-                return result;
-            }
+            return getItems();
         }
 
         #endregion

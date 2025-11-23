@@ -14,6 +14,7 @@ using namespace MessagingMesh;
 
 // Constructor.
 ConnectionImpl::ConnectionImpl(const ConnectionParams& connectionParams, Connection& connection) :
+    m_connectionParams(connectionParams),
     m_connection(connection)
 {
     // We create the UV loop for client messaging...
@@ -108,6 +109,12 @@ MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const Message
         }
     );
 
+    // We note the subscription ID is being used for a sendRequest...
+    {
+        std::scoped_lock lock(m_requestSubscriptionIDsMutex);
+        m_requestSubscriptionIDs.insert(pSubscription->getSubscriptionID());
+    }
+
     // We create a NetworkMessage to send the request...
     NetworkMessage networkMessage;
     auto& header = networkMessage.getHeader();
@@ -121,6 +128,13 @@ MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const Message
 
     // We block on the auto reset event, waiting for the result...
     autoResetEvent.waitOne(timeoutSeconds);
+
+    // We remove the subscription ID from the collection being managed for sendRequests...
+    {
+        std::scoped_lock lock(m_requestSubscriptionIDsMutex);
+        m_requestSubscriptionIDs.erase(pSubscription->getSubscriptionID());
+    }
+
 
     // We return the result message. This will be nullptr if the request timed out
     // or the request's result if it did not...
@@ -180,7 +194,16 @@ SubscriptionPtr ConnectionImpl::subscribe(const std::string& subject, Subscripti
     }
 
     // We return a subscription object to manage the lifetime of the subscription...
-    return Subscription::create(this, subject, pCallbackInfo);
+    return Subscription::create(this, subject, pCallbackInfo, subscriptionID);
+}
+// Processes messages in the queue. Waits for the specified time for messages to be available.
+void ConnectionImpl::processMessageQueue(int millisecondsTimeout)
+{
+    auto queuedMessages = m_queuedMessages.waitAndGetItems(millisecondsTimeout);
+    for(auto& queuedMessage : *queuedMessages)
+    {
+        processGatewayMessage(queuedMessage.Header, queuedMessage.pBuffer);
+    }
 }
 
 // Unsubscribes from the subscription ID specified.
@@ -254,7 +277,7 @@ void ConnectionImpl::onDataReceived(Socket* /*pSocket*/, BufferPtr pBuffer)
             break;
 
         case NetworkMessageHeader::Action::SEND_MESSAGE:
-            onSendMessage(header, pBuffer);
+            onGatewayMessage(header, pBuffer);
             break;
         }
     }
@@ -293,7 +316,43 @@ void ConnectionImpl::onAck()
 }
 
 // Called when we see a SEND_MESSAGE message from the Gateway.
-void ConnectionImpl::onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer)
+void ConnectionImpl::onGatewayMessage(const NetworkMessageHeader& header, BufferPtr pBuffer)
+{
+    // We check if we have a response for a sendRequest.
+    // If it is, we call back straight away (even if other messages are
+    // being dispatched by processMessageQueue.)
+    bool isRequestResponse = false;
+    {
+        std::scoped_lock lock(m_requestSubscriptionIDsMutex);
+        if (m_requestSubscriptionIDs.contains(header.getSubscriptionID()))
+        {
+            isRequestResponse = true;
+        }
+    }
+    if (isRequestResponse)
+    {
+        processGatewayMessage(header, pBuffer);
+        return;
+    }
+
+    // We check how message dispatch is specified...
+    switch (m_connectionParams.MessageDispatch)
+    {
+    case ConnectionParams::MessageDispatch::CALLBACK_ON_MESSAGING_MESH_THREAD:
+        // We call back to client code straight away on from this thread...
+        processGatewayMessage(header, pBuffer);
+        break;
+
+    case ConnectionParams::MessageDispatch::PROCESS_MESSAGE_QUEUE:
+        // We queue the message to be dispatched when processMessageQueue() is called.
+        QueuedMessage queuedMessage(header, pBuffer);
+        m_queuedMessages.add(queuedMessage);
+        break;
+    }
+}
+
+// Processes a message from the gateway, calling client callbacks if we have subscriptions set up for it.
+void ConnectionImpl::processGatewayMessage(const NetworkMessageHeader& header, BufferPtr pBuffer)
 {
     // We check if subscriptions have changed, which will invalidate our cache of subscription-infos...
     auto cacheInvalidated = m_onSendMessageCacheInvalidated.exchange(false);

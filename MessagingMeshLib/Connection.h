@@ -37,6 +37,9 @@ namespace MessagingMesh
         // Subscribes to a subject.
         // The lifetime of the subscription is the lifetime of the object returned.
         SubscriptionPtr subscribe(const std::string& subject, SubscriptionCallback callback, void* tag=nullptr);
+
+        // Processes messages in the queue. Waits for the specified time for messages to be available.
+        void processMessageQueue(int millisecondsTimeout);
         
     // Private data...
     private:

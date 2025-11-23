@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <set>
 #include <unordered_map>
 #include <atomic>
 #include "SharedAliases.h"
@@ -8,12 +9,13 @@
 #include "Callbacks.h"
 #include "ConnectionParams.h"
 #include "Subscription.h"
+#include "ThreadsafeConsumableVector.h"
+#include "NetworkMessageHeader.h"
 
 namespace MessagingMesh
 {
     // Forward declarations...
     class NetworkMessage;
-    class NetworkMessageHeader;
 
     /// <summary>
     /// Implementation of the Connection class, ie a client connection
@@ -46,6 +48,8 @@ namespace MessagingMesh
         // Releases a subscription.
         void releaseSubscription(const std::string& subject, const Subscription::CallbackInfo* pCallbackInfo);
 
+        // Processes messages in the queue. Waits for the specified time for messages to be available.
+        void processMessageQueue(int millisecondsTimeout);
 
     // Socket::ICallback implementation
     private:
@@ -73,7 +77,10 @@ namespace MessagingMesh
         void onAck();
 
         // Called when we see a SEND_MESSAGE message from the Gateway.
-        void onSendMessage(const NetworkMessageHeader& header, BufferPtr pBuffer);
+        void onGatewayMessage(const NetworkMessageHeader& header, BufferPtr pBuffer);
+
+        // Processes a message from the gateway, calling client callbacks if we have subscriptions set up for it.
+        void processGatewayMessage(const NetworkMessageHeader& header, BufferPtr pBuffer);
 
         // Unsubscribes from the subscription ID specified.
         void unsubscribe(uint32_t subscriptionID);
@@ -83,6 +90,9 @@ namespace MessagingMesh
 
     // Private data...
     private:
+        // Connection params...
+        ConnectionParams m_connectionParams;
+
         // The (non-impl) Connection. Sent to subscription callbacks.
         Connection& m_connection;
 
@@ -119,6 +129,19 @@ namespace MessagingMesh
 
         // A mutex for subscriptions...
         std::mutex m_subscriptionsMutex;
+
+        // Subscription IDs used by blocking sendRequest() and a mutex for them...
+        std::set<uint32_t> m_requestSubscriptionIDs;
+        std::mutex m_requestSubscriptionIDsMutex;
+
+        // Messages received from the gateway, queued for processMessageQueue.
+        struct QueuedMessage
+        {
+            QueuedMessage(const NetworkMessageHeader& header, BufferPtr& buffer) : Header(header), pBuffer(buffer) {}
+            NetworkMessageHeader Header;
+            BufferPtr pBuffer;
+        };
+        ThreadsafeConsumableVector<QueuedMessage> m_queuedMessages;
     };
 } // namespace
 

@@ -3,6 +3,7 @@
 #include <set>
 #include <memory>
 #include <mutex>
+#include "AutoResetEvent.h"
 
 namespace MessagingMesh
 {
@@ -38,6 +39,7 @@ namespace MessagingMesh
         {
             std::scoped_lock lock(m_mutex);
             m_items->push_back(item);
+            m_autoResetEvent.set();
         }
 
         // Adds an item to the vector if the key has not already been registered.
@@ -55,6 +57,7 @@ namespace MessagingMesh
                 // The name has not been registered, so we add the item...
                 m_items->push_back(item);
                 m_uniqueKeys.insert(key);
+                m_autoResetEvent.set();
                 return true;
             }
         }
@@ -69,6 +72,15 @@ namespace MessagingMesh
             return result;
         }
 
+        // Waits for data to be available and gets the current contents of the vector, 
+        // and clears the data being held.
+        VecItemTypePtr waitAndGetItems(int millisecondsTimeout)
+        {
+            auto secondsTimeout = millisecondsTimeout / 1000.0;
+            m_autoResetEvent.waitOne(secondsTimeout);
+            return getItems();
+        }
+
     // Private data...
     private:
         // Vector of items.
@@ -80,6 +92,9 @@ namespace MessagingMesh
 
         // Mutex.
         std::mutex m_mutex;
+
+        // Signals when new data is available...
+        AutoResetEvent m_autoResetEvent;
     };
 } // namespace
 

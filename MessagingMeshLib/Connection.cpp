@@ -36,3 +36,9 @@ SubscriptionPtr Connection::subscribe(const std::string& subject, SubscriptionCa
 {
     return m_pImpl->subscribe(subject, callback, tag);
 }
+
+// Processes messages in the queue. Waits for the specified time for messages to be available.
+void Connection::processMessageQueue(int millisecondsTimeout)
+{
+    m_pImpl->processMessageQueue(millisecondsTimeout);
+}

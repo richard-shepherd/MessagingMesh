@@ -3,10 +3,11 @@
 using namespace MessagingMesh;
 
 // Constructor.
-Subscription::Subscription(ConnectionImpl* pConnection, const std::string& subject, const CallbackInfo* pCallbackInfo) :
+Subscription::Subscription(ConnectionImpl* pConnection, const std::string& subject, const CallbackInfo* pCallbackInfo, uint32_t subscriptionID) :
     m_pConnection(pConnection),
     m_subject(subject),
-    m_pCallbackInfo(pCallbackInfo)
+    m_pCallbackInfo(pCallbackInfo),
+    m_subscriptionID(subscriptionID)
 {
 }
 
