@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Threading;
 
 namespace MessagingMeshLib.NET
@@ -10,14 +10,14 @@ namespace MessagingMeshLib.NET
     /// When you retrieve data you are given a copy of all the data currently 
     /// available, and the internal data is cleared.
     /// </summary>
-    internal class ThreadsafeConsumableList<ItemType> where ItemType : class
+    internal class ThreadsafeConsumableQueue<ItemType> where ItemType : class
     {
         #region Public methods
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ThreadsafeConsumableList()
+        public ThreadsafeConsumableQueue()
         {
         }
 
@@ -26,31 +26,25 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public void add(ItemType item)
         {
-            lock (m_locker)
-            {
-                m_items.Add(item);
-                m_autoResetEvent.Set();
-            }
+            m_queue.Enqueue(item);
+            m_autoResetEvent.Set();
         }
 
         /// <summary>
         /// Gets the current contents of the list, and clears the data being held.
         /// </summary>
-        public List<ItemType> getItems()
+        public ConcurrentQueue<ItemType> getItems()
         {
-            lock (m_locker)
-            {
-                var result = m_items;
-                m_items = new();
-                return result;
-            }
+            var newQueue = new ConcurrentQueue<ItemType>();
+            var oldQueue = Interlocked.Exchange(ref m_queue, newQueue);
+            return oldQueue;
         }
 
         /// <summary>
         /// Waits for data to be available and gets the current contents of the vector, 
         /// and clears the data being held.
         /// </summary>
-        public List<ItemType> waitAndGetItems(int millisecondsTimeout)
+        public ConcurrentQueue<ItemType> waitAndGetItems(int millisecondsTimeout)
         {
             m_autoResetEvent.WaitOne(millisecondsTimeout);
             return getItems();
@@ -68,9 +62,7 @@ namespace MessagingMeshLib.NET
 
         #region Private data
 
-        // List of items and a locker for them...
-        private List<ItemType> m_items = new();
-        private readonly object m_locker = new();
+        private ConcurrentQueue<ItemType> m_queue = new();
 
         // Signals when new data is available...
         private readonly AutoResetEvent m_autoResetEvent = new(false);

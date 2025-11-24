@@ -485,7 +485,7 @@ namespace MessagingMeshLib.NET
             public NetworkMessageHeader Header { get; set; }
             public Buffer Buffer { get; set; }
         }
-        private ThreadsafeConsumableList<QueuedMessage> m_queuedMessages = new();
+        private ThreadsafeConsumableQueue<QueuedMessage> m_queuedMessages = new();
 
         #endregion
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
@@ -161,7 +162,7 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Returns an enumberable of all bytes from the buffers.
         /// </summary>
-        private IEnumerable<byte> getBytesToSend(List<Buffer> buffers)
+        private IEnumerable<byte> getBytesToSend(ConcurrentQueue<Buffer> buffers)
         {
             foreach(var buffer in buffers)
             {
@@ -303,7 +304,7 @@ namespace MessagingMeshLib.NET
         private volatile bool m_stopThreads = false;
 
         // Messages queued for writing...
-        private readonly ThreadsafeConsumableList<Buffer> m_writeQueue = new();
+        private readonly ThreadsafeConsumableQueue<Buffer> m_writeQueue = new();
 
         // A buffer for the message being actively read from the socket...
         private Buffer m_currentMessage = null;
