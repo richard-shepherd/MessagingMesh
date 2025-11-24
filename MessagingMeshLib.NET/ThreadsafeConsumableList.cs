@@ -26,7 +26,7 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public void add(ItemType item)
         {
-            lock(m_locker)
+            lock (m_locker)
             {
                 m_items.Add(item);
                 m_autoResetEvent.Set();
