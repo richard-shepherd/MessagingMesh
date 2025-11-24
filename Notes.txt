@@ -32,6 +32,7 @@ TODO
 - Return the buffer size from Connection.sendMessage()  (C++)
 
 - Performance (C#)
+  - write_int32: 4.94%
   - Sensitive to the initial Buffer size. The initial allocation is slow. 
     - Use a shared pool of byte[]???
 

@@ -269,8 +269,10 @@ namespace MessagingMeshLib.NET
         {
             var size = sizeof(int);
             checkBufferSize_Write(size);
-            var bytes = BitConverter.GetBytes(item);
-            System.Buffer.BlockCopy(bytes, 0, m_buffer, m_position, size);
+            m_buffer[m_position + 0] = (byte)item;
+            m_buffer[m_position + 1] = (byte)(item >> 8);
+            m_buffer[m_position + 2] = (byte)(item >> 16);
+            m_buffer[m_position + 3] = (byte)(item >> 24);
             updatePosition_Write(size);
         }
 
@@ -293,8 +295,10 @@ namespace MessagingMeshLib.NET
         {
             var size = sizeof(uint);
             checkBufferSize_Write(size);
-            var bytes = BitConverter.GetBytes(item);
-            System.Buffer.BlockCopy(bytes, 0, m_buffer, m_position, size);
+            m_buffer[m_position + 0] = (byte)item;
+            m_buffer[m_position + 1] = (byte)(item >> 8);
+            m_buffer[m_position + 2] = (byte)(item >> 16);
+            m_buffer[m_position + 3] = (byte)(item >> 24);
             updatePosition_Write(size);
         }
 
@@ -317,8 +321,14 @@ namespace MessagingMeshLib.NET
         {
             var size = sizeof(long);
             checkBufferSize_Write(size);
-            var bytes = BitConverter.GetBytes(item);
-            System.Buffer.BlockCopy(bytes, 0, m_buffer, m_position, size);
+            m_buffer[m_position + 0] = (byte)item;
+            m_buffer[m_position + 1] = (byte)(item >> 8);
+            m_buffer[m_position + 2] = (byte)(item >> 16);
+            m_buffer[m_position + 3] = (byte)(item >> 24);
+            m_buffer[m_position + 4] = (byte)(item >> 32);
+            m_buffer[m_position + 5] = (byte)(item >> 40);
+            m_buffer[m_position + 6] = (byte)(item >> 48);
+            m_buffer[m_position + 7] = (byte)(item >> 56);
             updatePosition_Write(size);
         }
 
@@ -341,8 +351,14 @@ namespace MessagingMeshLib.NET
         {
             var size = sizeof(ulong);
             checkBufferSize_Write(size);
-            var bytes = BitConverter.GetBytes(item);
-            System.Buffer.BlockCopy(bytes, 0, m_buffer, m_position, size);
+            m_buffer[m_position + 0] = (byte)item;
+            m_buffer[m_position + 1] = (byte)(item >> 8);
+            m_buffer[m_position + 2] = (byte)(item >> 16);
+            m_buffer[m_position + 3] = (byte)(item >> 24);
+            m_buffer[m_position + 4] = (byte)(item >> 32);
+            m_buffer[m_position + 5] = (byte)(item >> 40);
+            m_buffer[m_position + 6] = (byte)(item >> 48);
+            m_buffer[m_position + 7] = (byte)(item >> 56);
             updatePosition_Write(size);
         }
 
