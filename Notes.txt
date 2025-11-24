@@ -1,5 +1,7 @@
 TODO
 ----
+- Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
+
 - C++ -pub with C# -sub works weirdly
   - Buffers lots of memory in the publisher
   - Doesn't work properly if the publisher or subscriber are restarted (with the same gateway)
@@ -32,7 +34,6 @@ TODO
 - Return the buffer size from Connection.sendMessage()  (C++)
 
 - Performance (C#)
-  - write_int32: 4.94%
   - Sensitive to the initial Buffer size. The initial allocation is slow. 
     - Use a shared pool of byte[]???
 

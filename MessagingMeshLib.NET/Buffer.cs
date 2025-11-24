@@ -1,6 +1,4 @@
-﻿using MessagingMeshLib.NET;
-using System;
-using System.Linq;
+﻿using System;
 using System.Text;
 
 namespace MessagingMeshLib.NET
@@ -415,14 +413,16 @@ namespace MessagingMeshLib.NET
         {
             // Strings are serialized as [length][chars].
 
-            // We convert the string to UTF-8...
-            var utf8Bytes = Encoding.UTF8.GetBytes(item);
-
             // We write the length...
-            write_int32(utf8Bytes.Length);
+            var size = Encoding.UTF8.GetByteCount(item);
+            write_int32(size);
 
             // We write the characters...
-            write_bytes(utf8Bytes);
+            checkBufferSize_Write(size);
+            Encoding.UTF8.GetBytes(item, 0, size, m_buffer, m_position);
+
+            // We update the position and data size... 
+            updatePosition_Write(size);
         }
 
         /// <summary>

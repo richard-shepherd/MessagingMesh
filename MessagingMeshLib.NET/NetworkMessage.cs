@@ -26,7 +26,18 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Message payload.
         /// </summary>
-        public Message Message { get; set; } = new();
+        public Message Message 
+        { 
+            get
+            {
+                m_message ??= new();
+                return m_message;
+            }
+            set
+            {
+                m_message = value;
+            }
+        }
 
         #endregion
 
@@ -79,6 +90,13 @@ namespace MessagingMeshLib.NET
         {
             Message.deserialize(buffer);
         }
+
+        #endregion
+
+        #region Private data
+
+        // The message we hold...
+        private Message m_message = null;
 
         #endregion
     }

@@ -160,7 +160,7 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Returns an enumberable of all bytes from the buffers.
+        /// Returns an enumerable of all bytes from the buffers.
         /// </summary>
         private IEnumerable<byte> getBytesToSend(ConcurrentQueue<Buffer> buffers)
         {
