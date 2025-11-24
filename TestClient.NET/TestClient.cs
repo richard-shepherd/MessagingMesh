@@ -57,6 +57,27 @@ namespace TestClient.NET
         }
 
         /// <summary>
+        /// Called when we receive a message with a BLOB.
+        /// </summary>
+        static int blobCount = 0;
+        private static void onMessageBLOB(Connection connection, string subject, string replySubject, Message message, object tag)
+        {
+            try
+            {
+                blobCount++;
+                var blob = message.getBLOB("#");
+                if (blobCount % 1 == 0)
+                {
+                    MM.Logger.info($"Update to {subject}: BLOB-size={blob.Length}, tag:{tag}");
+                }
+            }
+            catch (Exception ex)
+            {
+                MM.Logger.error($"Exception: {ex.Message}");
+            }
+        }
+
+        /// <summary>
         /// Subscribes to messages.
         /// </summary>
         private static void subscribe()
@@ -75,6 +96,31 @@ namespace TestClient.NET
             var s2 = connection.subscribe("A.A", onMessage);
             var s3 = connection.subscribe("A.B", onMessage);
             var s4 = connection.subscribe("C.D", onMessage);
+
+            // We process incoming messages until Enter is pressed...
+            processMessages(connection);
+            connection.Dispose();
+        }
+
+        /// <summary>
+        /// Subscribes to messages holding BLOBs.
+        /// </summary>
+        private static void subscribeBLOB()
+        {
+            // We connect to the gateway...
+            var connectionParams = new MM.ConnectionParams
+            {
+                GatewayHost = "localhost",
+                GatewayPort = 5050,
+                Service = "VULCAN"
+            };
+            var connection = new MM.Connection(connectionParams);
+
+            // We make subscriptions...
+            var s1 = connection.subscribe("A.X", onMessageBLOB);
+            var s2 = connection.subscribe("A.A", onMessageBLOB);
+            var s3 = connection.subscribe("A.B", onMessageBLOB);
+            var s4 = connection.subscribe("C.D", onMessageBLOB);
 
             // We process incoming messages until Enter is pressed...
             processMessages(connection);
@@ -103,6 +149,42 @@ namespace TestClient.NET
                     var message = new MM.Message();
                     message.addSignedInt32("#", i);
                     connection.sendMessage("A.B", message);
+                }
+            }
+
+            // We process incoming messages until Enter is pressed...
+            processMessages(connection);
+            connection.Dispose();
+        }
+
+        /// <summary>
+        /// Publishes messages holding BLOBs.
+        /// </summary>
+        private static void publishBLOB()
+        {
+            // We connect to the gateway...
+            var connectionParams = new MM.ConnectionParams
+            {
+                GatewayHost = "localhost",
+                GatewayPort = 5050,
+                Service = "VULCAN"
+            };
+            var connection = new MM.Connection(connectionParams);
+
+            // We send updates...
+            MM.Logger.info("Sending data");
+            const int BLOB_SIZE = 20000000;
+            var blob = new byte[BLOB_SIZE];
+            for (int i = 1; i <= 10000000; ++i)
+            {
+                {
+                    var message = new MM.Message();
+                    message.addBLOB("#", blob);
+                    connection.sendMessage("A.B", message);
+                    if(i % 1 == 0)
+                    {
+                        Thread.Sleep(1000);
+                    }
                 }
             }
 
@@ -194,6 +276,14 @@ namespace TestClient.NET
             else if(args.Length > 0 && args[0] == "-pub")
             {
                 publish();
+            }
+            else if (args.Length > 0 && args[0] == "-sub-blob")
+            {
+                subscribeBLOB();
+            }
+            else if(args.Length > 0 && args[0] == "-pub-blob")
+            {
+                publishBLOB();
             }
             else if(args.Length > 0 && args[0] == "-client")
             {
