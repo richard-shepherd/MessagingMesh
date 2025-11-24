@@ -34,6 +34,8 @@ TODO
 - Return the buffer size from Connection.sendMessage()  (C++)
 
 - Performance (C#)
+  - AutoResetEvent.Set() looks slow.
+  - Is the Dictionary in Message slow? For small numbers of fields would checking the List be faster?
   - Sensitive to the initial Buffer size. The initial allocation is slow. 
     - Use a shared pool of byte[]???
 

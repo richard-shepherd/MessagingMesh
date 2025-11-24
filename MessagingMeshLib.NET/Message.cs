@@ -264,9 +264,9 @@ namespace MessagingMeshLib.NET
                 var field = buffer.read_field();
                 m_fields.Add(field);
                 var name = field.getName();
-                if (!m_mapNameToField.ContainsKey(name))
+                if (!m_mapNameToField.TryGetValue(name, out var existingField))
                 {
-                    m_mapNameToField.Add(name, field);
+                    m_mapNameToField[name] = field;
                 }
             }
         }
@@ -292,9 +292,9 @@ namespace MessagingMeshLib.NET
             m_fields.Add(field);
 
             // We add the field to the map of name->first-field-for-name...
-            if (!m_mapNameToField.ContainsKey(name))
+            if (!m_mapNameToField.TryGetValue(name, out var existingField))
             {
-                m_mapNameToField.Add(name, field);
+                m_mapNameToField[name] = field;
             }
         }
 
