@@ -1,10 +1,21 @@
-﻿namespace MessagingMeshLib.NET
+﻿using System;
+
+namespace MessagingMeshLib.NET
 {
     /// <summary>
     /// Holds one field in a message.
     /// </summary>
     public class Field
     {
+        #region Properties
+
+        /// <summary>
+        /// Gets the (approximate) size of the field when serialized.
+        /// </summary>
+        public int Size => getSize();
+
+        #endregion
+
         #region Public types
 
         /// <summary>
@@ -281,7 +292,7 @@
                     break;
 
                 default:
-                    throw new MessagingMeshException($"Field.serialize data-type {m_dataType} not handled");
+                    throw new MessagingMeshException($"Field.serialize() data-type {m_dataType} not handled");
             }
         }
 
@@ -336,7 +347,7 @@
                     break;
 
                 default:
-                    throw new MessagingMeshException($"Field.deserialize data-type {m_dataType} not handled");
+                    throw new MessagingMeshException($"Field.deserialize() data-type {m_dataType} not handled");
             }
         }
 
@@ -353,6 +364,61 @@
             if (m_dataType != dataType)
             {
                 throw new MessagingMeshException($"Field {m_name} is not a {dataType}");
+            }
+        }
+
+        /// <summary>
+        /// Returns the (approximate) size of the field when serialized.
+        /// </summary>
+        private int getSize()
+        {
+            return getSize_NameAndType() + getSize_Field();
+        }
+
+        /// <summary>
+        /// Returns the (approximate) size of the type and name when serialized.
+        /// </summary>
+        private int getSize_NameAndType()
+        {
+            return sizeof(int) + m_name.Length + sizeof(byte);
+        }
+
+        /// <summary>
+        /// Returns the (approximate) size of the field when serialized.
+        /// </summary>
+        private int getSize_Field()
+        {
+            switch (m_dataType)
+            {
+                case DataType.STRING:
+                    return sizeof(int) + ((string)m_data).Length;
+
+                case DataType.SIGNED_INT32:
+                    return sizeof(int);
+
+                case DataType.UNSIGNED_INT32:
+                    return sizeof(uint);
+
+                case DataType.SIGNED_INT64:
+                    return sizeof(long);
+
+                case DataType.UNSIGNED_INT64:
+                    return sizeof(ulong);
+
+                case DataType.DOUBLE:
+                    return sizeof(double);
+
+                case DataType.MESSAGE:
+                    return ((Message)m_data).Size; ;
+
+                case DataType.BOOL:
+                    return sizeof(bool);
+
+                case DataType.BLOB:
+                    return sizeof(int) + ((byte[])m_data).Length;
+
+                default:
+                    throw new MessagingMeshException($"Field.getSize() data-type {m_dataType} not handled");
             }
         }
 

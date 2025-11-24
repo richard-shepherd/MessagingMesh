@@ -105,6 +105,15 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
+        /// Constructor.
+        /// </summary>
+        public Buffer(int initialSize)
+        {
+            m_buffer = new byte[initialSize];
+            m_bufferSize = initialSize;
+        }
+
+        /// <summary>
         /// Gets the buffer.
         /// </summary>
         public byte[] getBuffer()
@@ -603,6 +612,8 @@ namespace MessagingMeshLib.NET
         /// </summary>
         private void expandBuffer()
         {
+            Logger.warn("RSSTODO: EXPAND BUFFER!!!!!");
+
             if (m_bufferSize >= Int32.MaxValue)
             {
                 throw new MessagingMeshException("Buffer is at max capacity");

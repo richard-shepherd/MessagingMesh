@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 
 namespace MessagingMeshLib.NET
 {
@@ -26,6 +27,11 @@ namespace MessagingMeshLib.NET
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets the (approximate) size of the header when serialized.
+        /// </summary>
+        public int Size => sizeof(uint) + sizeof(int) + Subject.Length + sizeof(int) + ReplySubject.Length + sizeof(byte);
 
         /// <summary>
         /// Gets or sets the client ID for a subscription. Helps match subscriptions to callbacks.

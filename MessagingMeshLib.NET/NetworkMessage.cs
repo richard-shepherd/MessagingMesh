@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Remoting.Messaging;
+using System.Xml.Linq;
 
 namespace MessagingMeshLib.NET
 {
@@ -11,6 +12,11 @@ namespace MessagingMeshLib.NET
     internal class NetworkMessage
     {
         #region Properties
+
+        /// <summary>
+        /// Gets the (approximate) size of the header when serialized.
+        /// </summary>
+        public int Size => Header.Size + Message.Size;
 
         /// <summary>
         /// Gets or sets the header.

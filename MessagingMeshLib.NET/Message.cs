@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 
 namespace MessagingMeshLib.NET
 {
@@ -13,6 +11,29 @@ namespace MessagingMeshLib.NET
     /// </summary>
     public class Message
     {
+        #region Properties
+
+        /// <summary>
+        /// Gets the (approximate) size of the message when serialized.
+        /// </summary>
+        public int Size
+        {
+            get 
+            {
+                // The message size is: 
+                // - sizeof(int): The number of fields
+                // - Size of each field
+                var size = sizeof(int);
+                foreach (var field in m_fields)
+                {
+                    size += field.Size;
+                }
+                return size;
+            }
+        }
+
+        #endregion
+
         #region Public methods
 
         /// <summary>
