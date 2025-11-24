@@ -30,6 +30,7 @@ TODO
 - Performance (C#)
   - Sensitive to the initial Buffer size. The initial allocation is slow. 
     - Use a shared pool of byte[]???
+    - Add Message::getSize() and use that (or something close) as intial buffer estimate.
 
 
 Creating a messaging-mesh client
