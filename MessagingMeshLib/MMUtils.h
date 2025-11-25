@@ -23,11 +23,13 @@ namespace MessagingMesh
     {
     // Public functions...
     public:
-        // Sends a network-message to the socket.
-        static void sendNetworkMessage(const NetworkMessage& networkMessage, SocketPtr pSocket);
+        // Sends a network-message to the socket. 
+        // Returns the number of bytes sent on the network.
+        static int32_t sendNetworkMessage(const NetworkMessage& networkMessage, SocketPtr pSocket);
 
         // Sends a network-message to the socket.
-        static void sendNetworkMessage(const NetworkMessage& networkMessage, Socket* pSocket);
+        // Returns the number of bytes sent on the network.
+        static int32_t sendNetworkMessage(const NetworkMessage& networkMessage, Socket* pSocket);
 
         // Splits the input string on the delimiter and returns a vector of tokens.
         static VecToken tokenize(std::string_view, char delimiter);

@@ -2,6 +2,9 @@ TODO
 ----
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
 
+- Think about send and receive buffer sizes in libuv
+  - Might this make the Gateway work better with large volumes of data?
+
 - C++ -pub with C# -sub works weirdly
   - Buffers lots of memory in the publisher
   - Doesn't work properly if the publisher or subscriber are restarted (with the same gateway)
@@ -14,7 +17,7 @@ TODO
 
 - Do the client side subscription cache thing for C#
 
-- Message::getAllFields (C++, C#)
+- Message::getAllFields (C++)
 
 - Think about pimpl vs C++20 modules
 

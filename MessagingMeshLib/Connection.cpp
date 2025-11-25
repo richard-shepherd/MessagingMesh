@@ -18,9 +18,10 @@ std::string Connection::createInbox()
 }
 
 // Sends a message to the specified subject.
-void Connection::sendMessage(const std::string& subject, const MessagePtr& pMessage)
+// Returns the number of bytes sent on the network.
+int32_t Connection::sendMessage(const std::string& subject, const MessagePtr& pMessage)
 {
-    m_pImpl->sendMessage(subject, pMessage);
+    return m_pImpl->sendMessage(subject, pMessage);
 }
 
 // Sends a blocking request to the subject specified. Returns the reply or 

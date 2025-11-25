@@ -72,7 +72,8 @@ ConnectionImpl::~ConnectionImpl()
 }
 
 // Sends a message to the specified subject.
-void ConnectionImpl::sendMessage(const std::string& subject, const MessagePtr& pMessage) const
+// Returns the number of bytes sent on the network.
+int32_t ConnectionImpl::sendMessage(const std::string& subject, const MessagePtr& pMessage) const
 {
     // We create a NetworkMessage to send the message...
     NetworkMessage networkMessage;
@@ -82,7 +83,7 @@ void ConnectionImpl::sendMessage(const std::string& subject, const MessagePtr& p
     networkMessage.setMessage(pMessage);
 
     // We send the message...
-    MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
+    return MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 }
 
 // Sends a blocking request to the subject specified. 

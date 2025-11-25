@@ -5,18 +5,21 @@
 using namespace MessagingMesh;
 
 // Sends a network-message to the socket.
-void MMUtils::sendNetworkMessage(const NetworkMessage& networkMessage, SocketPtr pSocket)
+// Returns the number of bytes sent on the network.
+int32_t MMUtils::sendNetworkMessage(const NetworkMessage& networkMessage, SocketPtr pSocket)
 {
-    sendNetworkMessage(networkMessage, pSocket.get());
+    return sendNetworkMessage(networkMessage, pSocket.get());
 }
 
 // Sends a network-message to the socket.
-void MMUtils::sendNetworkMessage(const NetworkMessage& networkMessage, Socket* pSocket)
+// Returns the number of bytes sent on the network.
+int32_t MMUtils::sendNetworkMessage(const NetworkMessage& networkMessage, Socket* pSocket)
 {
     // We serialize the message and send it...
     auto pBuffer = Buffer::create();
     networkMessage.serialize(*pBuffer);
     pSocket->write(pBuffer);
+    return pBuffer->getBufferSize();
 }
 
 // Splits the input string on the delimiter and returns a vector of tokens.

@@ -35,7 +35,8 @@ namespace MessagingMesh
         std::string createInbox();
 
         // Sends a message to the specified subject.
-        void sendMessage(const std::string& subject, const MessagePtr& pMessage) const;
+        // Returns the number of bytes sent on the network.
+        int32_t sendMessage(const std::string& subject, const MessagePtr& pMessage) const;
 
         // Sends a blocking request to the subject specified. 
         // Returns the reply or nullptr if the request times out.

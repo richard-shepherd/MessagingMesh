@@ -28,7 +28,8 @@ namespace MessagingMesh
         std::string createInbox();
 
         // Sends a message to the specified subject.
-        void sendMessage(const std::string& subject, const MessagePtr& pMessage);
+        // Returns the number of bytes sent on the network.
+        int32_t sendMessage(const std::string& subject, const MessagePtr& pMessage);
 
         // Sends a blocking request to the subject specified. Returns the reply or 
         // nullptr if the request times out.
@@ -36,7 +37,7 @@ namespace MessagingMesh
 
         // Subscribes to a subject.
         // The lifetime of the subscription is the lifetime of the object returned.
-        SubscriptionPtr subscribe(const std::string& subject, SubscriptionCallback callback, void* tag=nullptr);
+        [[nodiscard]] SubscriptionPtr subscribe(const std::string& subject, SubscriptionCallback callback, void* tag=nullptr);
 
         // Processes messages in the queue. Waits for the specified time for messages to be available.
         void processMessageQueue(int millisecondsTimeout);

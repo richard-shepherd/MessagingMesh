@@ -61,7 +61,7 @@ namespace MessagingMeshLib.NET
 
         /// <summary>
         /// Sends a message to the specified subject.
-        /// Returns the size of the data sent on the network.
+        /// Returns the number of bytes sent on the network.
         /// </summary>
         public int sendMessage(string subject, Message message)
         {
@@ -332,7 +332,7 @@ namespace MessagingMeshLib.NET
 
         /// <summary>
         /// Sends a network message to the gateway.
-        /// Returns the size of the data sent on the network.
+        /// Returns the number of bytes sent on the network.
         /// </summary>
         private int sendNetworkMessage(NetworkMessage networkMessage)
         {
