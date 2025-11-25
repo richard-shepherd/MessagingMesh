@@ -17,8 +17,6 @@ TODO
 
 - Do the client side subscription cache thing for C#
 
-- Message::getAllFields (C++)
-
 - Think about pimpl vs C++20 modules
 
 - Better disconnection handling
