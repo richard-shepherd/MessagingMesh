@@ -183,7 +183,7 @@ namespace TestClient.NET
                     message.addBLOB("#", blob);
                     message.addSignedInt32("A", i);
                     connection.sendMessage("A.B", message);
-                    if(i % 10 == 0)
+                    if(i % 20 == 0)
                     {
                         Thread.Sleep(1);
                     }
