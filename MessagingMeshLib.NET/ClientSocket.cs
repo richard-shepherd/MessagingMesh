@@ -123,22 +123,12 @@ namespace MessagingMeshLib.NET
                         continue;
                     }
 
-                    // We get an enumerable of all bytes to send, and send the data in fixed size chunks...
-                    var bufferIndex = 0;
-                    foreach(var b in getBytesToSend(buffers))
+                    // We create send-buffers from the buffers (including merging multiple small messages into
+                    // single items) and send them...
+                    foreach(var sendBufferInfo in getSendBufferInfos(buffers))
                     {
-                        // We fill in the buffer...
-                        m_sendBuffer[bufferIndex++] = b;
-                        if(bufferIndex == SEND_BUFFER_SIZE)
-                        {
-                            // We have a chunk, so we sent it...
-                            send(m_sendBuffer, SEND_BUFFER_SIZE);
-                            bufferIndex = 0;
-                        }
+                        send(sendBufferInfo);
                     }
-
-                    // We send any remaining data...
-                    send(m_sendBuffer, bufferIndex);
                 }
             }
             catch(Exception ex)
@@ -150,35 +140,96 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Sends data to the socket.
         /// </summary>
-        private void send(byte[] data, int dataSize)
+        private void send(SendBufferInfo sendBufferInfo)
         {
             // We check if there's anything to send...
-            if(dataSize == 0)
+            if(sendBufferInfo.length == 0)
             {
                 return;
             }
 
             // We send the data...
             int bytesSent = 0;
-            while (bytesSent < dataSize)
+            while (bytesSent < sendBufferInfo.length)
             {
-                bytesSent += m_socket.Send(data, bytesSent, dataSize - bytesSent, SocketFlags.None);
+                bytesSent += m_socket.Send(sendBufferInfo.data, bytesSent, sendBufferInfo.length - bytesSent, SocketFlags.None);
             }
         }
 
         /// <summary>
-        /// Returns an enumerable of all bytes from the buffers.
+        /// Returns an enumerable of all send-buffers to write to the socket, holding the 
+        /// data from the buffers passed in.
         /// </summary>
-        private IEnumerable<byte> getBytesToSend(ConcurrentQueue<Buffer> buffers)
+        private IEnumerable<SendBufferInfo> getSendBufferInfos(ConcurrentQueue<Buffer> buffers)
         {
+            // How we fill in the send-buffers depends on the size of the buffers in the queue.
+            // 
+            // Small buffers
+            // -------------
+            // If we have a lot of small buffers it is more efficient to combine them into one
+            // larger buffer before sending, to reduce the number of sends on the socket.
+            //
+            // Large buffers
+            // -------------
+            // For large buffers it is better to send them in one go.
+            //
+            // What we do
+            // ----------
+            // - We hold m_smallMessageSendBuffer for aggregating smaller messages. 
+            //
+            // - If a buffer is small (<= the small message send buffer size) we add it to the
+            //   small message send buffer. If it does not fit, we add what we can, and add the remainder
+            //   to the next small message buffer.
+            //   
+            // - If a buffer is large (> small message send buffer size) then we send the buffer as it is.
+            //   NOTE: We make sure that we have sent any partially filled small buffer first.
+            var smallMessageSendBufferPosition = 0;
             foreach(var buffer in buffers)
             {
-                var data = buffer.getBuffer();
-                var dataSize = buffer.getBufferSize();
-                for(var i=0; i< dataSize; ++i)
+                // We check if the buffer is small or large...
+                var bufferSize = buffer.getBufferSize();
+                var bufferData = buffer.getBuffer();
+                if(bufferSize <= SMALL_MESSAGE_SEND_BUFFER_SIZE)
                 {
-                    yield return data[i];
+                    // We have a small message, so we add it to the small message send buffer...
+                    var bufferPosition = 0;
+                    while(bufferPosition < bufferSize)
+                    {
+                        // We add as much as we can to the small message send buffer.
+                        var sizeRemaining_smallMessageSendBuffer = SMALL_MESSAGE_SEND_BUFFER_SIZE - smallMessageSendBufferPosition;
+                        var sizeRemaining_buffer = bufferSize - bufferPosition;
+                        var sizeToCopy = Math.Min(sizeRemaining_buffer, sizeRemaining_smallMessageSendBuffer);
+                        System.Buffer.BlockCopy(bufferData, bufferPosition, m_smallMessageSendBuffer, smallMessageSendBufferPosition, sizeToCopy);
+                        smallMessageSendBufferPosition += sizeToCopy;
+                        bufferPosition += sizeToCopy;
+
+                        // If we have filled the small message buffer we send it...
+                        if (smallMessageSendBufferPosition == SMALL_MESSAGE_SEND_BUFFER_SIZE)
+                        {
+                            yield return new SendBufferInfo(m_smallMessageSendBuffer, smallMessageSendBufferPosition);
+                            smallMessageSendBufferPosition = 0;
+                        }
+                    }
                 }
+                else
+                {
+                    // We have a large message.
+                    // We make sure that any partially filled small buffer has been sent.
+                    if(smallMessageSendBufferPosition != 0)
+                    {
+                        yield return new SendBufferInfo(m_smallMessageSendBuffer, smallMessageSendBufferPosition);
+                        smallMessageSendBufferPosition = 0;
+                    }
+
+                    // We send the large buffer...
+                    yield return new SendBufferInfo(buffer.getBuffer(), bufferSize);
+                }
+            }
+
+            // We send any remaining small message buffer...
+            if (smallMessageSendBufferPosition != 0)
+            {
+                yield return new SendBufferInfo(m_smallMessageSendBuffer, smallMessageSendBufferPosition);
             }
         }
 
@@ -316,9 +367,17 @@ namespace MessagingMeshLib.NET
         // A buffer for the message being actively read from the socket...
         private Buffer m_currentMessage = null;
 
-        // Fixed sized buffer for sending data to the socket...
-        private const int SEND_BUFFER_SIZE = 8192;
-        private byte[] m_sendBuffer = new byte[SEND_BUFFER_SIZE];
+        // Fixed sized buffer for sending aggregated data for small messages to the socket...
+        private const int SMALL_MESSAGE_SEND_BUFFER_SIZE = 8192;
+        private byte[] m_smallMessageSendBuffer = new byte[SMALL_MESSAGE_SEND_BUFFER_SIZE];
+
+        // A buffer to send to the socket, with the length of data to send.
+        private readonly struct SendBufferInfo
+        {
+            public SendBufferInfo(byte[] data, int length) { this.data  = data; this.length = length; }
+            public readonly byte[] data;
+            public readonly int length;
+        }
 
         #endregion
     }
