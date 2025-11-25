@@ -131,6 +131,11 @@ void Socket::accept(uv_stream_t* pServer)
     // We accept the connection...
     if (uv_accept(pServer, (uv_stream_t*)m_pSocket) == 0)
     {
+        // We set buffer sizes...
+        int size = 1024 * 1024; // 1MB
+        uv_send_buffer_size((uv_handle_t*)m_pSocket, &size);
+        uv_recv_buffer_size((uv_handle_t*)m_pSocket, &size);
+
         // We find the name of the client...
         auto peerInfo = UVUtils::getPeerIPInfo(m_pSocket);
         m_name = std::format("{}:{}", peerInfo.Hostname, peerInfo.Service);

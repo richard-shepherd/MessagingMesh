@@ -65,10 +65,11 @@ namespace TestClient.NET
             try
             {
                 blobCount++;
-                var blob = message.getBLOB("#");
-                if (blobCount % 1 == 0)
+                if (blobCount % 10 == 0)
                 {
-                    MM.Logger.info($"Update to {subject}: BLOB-size={blob.Length}, tag:{tag}");
+                    var blob = message.getBLOB("#");
+                    var a = message.getSignedInt32("A");
+                    MM.Logger.info($"Update to {subject}: A={a}, BLOB-size={blob.Length}, tag:{tag}");
                 }
             }
             catch (Exception ex)
@@ -173,17 +174,18 @@ namespace TestClient.NET
 
             // We send updates...
             MM.Logger.info("Sending data");
-            const int BLOB_SIZE = 20000000;
+            const int BLOB_SIZE = 2000000;
             var blob = new byte[BLOB_SIZE];
-            for (int i = 1; i <= 10000000; ++i)
+            for (int i = 1; i <= 1000; ++i)
             {
                 {
                     var message = new MM.Message();
                     message.addBLOB("#", blob);
+                    message.addSignedInt32("A", i);
                     connection.sendMessage("A.B", message);
-                    if(i % 1 == 0)
+                    if(i % 3 == 0)
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(1);
                     }
                 }
             }

@@ -152,6 +152,13 @@ namespace MessagingMeshLib.NET
         /// </summary>
         private void send(byte[] data, int dataSize)
         {
+            // We check if there's anything to send...
+            if(dataSize == 0)
+            {
+                return;
+            }
+
+            // We send the data...
             int bytesSent = 0;
             while (bytesSent < dataSize)
             {

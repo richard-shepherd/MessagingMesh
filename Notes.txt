@@ -1,5 +1,9 @@
 TODO
 ----
+- BUG: onDataReceived: Unknown system error 0
+  - Happens when the gateway is under high load
+  - Only seems to happen when we have a consumer attached
+
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
 
 - Think about send and receive buffer sizes in libuv
