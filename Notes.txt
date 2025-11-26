@@ -1,13 +1,6 @@
 TODO
 ----
-- BUG: onDataReceived: Unknown system error 0
-  - Happens when the gateway is under high load
-  - Only seems to happen when we have a consumer attached
-
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
-
-- Think about send and receive buffer sizes in libuv
-  - Might this make the Gateway work better with large volumes of data?
 
 - C++ -pub with C# -sub works weirdly
   - Buffers lots of memory in the publisher
@@ -33,10 +26,6 @@ TODO
 
 - Handle fast producers and slow consumers
   - What happens if a consumer is slow? Does it slow down publication from the Gateway to other clients?
-
-- Add Message::getSize() and use that (or something close) as intial buffer estimate.  (C++)
-
-- Return the buffer size from Connection.sendMessage()  (C++)
 
 - Performance (C#)
   - AutoResetEvent.Set() looks slow.
