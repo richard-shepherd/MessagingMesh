@@ -65,7 +65,7 @@ namespace TestClient.NET
             try
             {
                 blobCount++;
-                if (blobCount % 10 == 0)
+                if (blobCount % 100 == 0)
                 {
                     var blob = message.getBLOB("#");
                     var a = message.getSignedInt32("A");
@@ -176,14 +176,14 @@ namespace TestClient.NET
             MM.Logger.info("Sending data");
             const int BLOB_SIZE = 2000000;
             var blob = new byte[BLOB_SIZE];
-            for (int i = 1; i <= 1000; ++i)
+            for (int i = 1; i <= 10000; ++i)
             {
                 {
                     var message = new MM.Message();
                     message.addBLOB("#", blob);
                     message.addSignedInt32("A", i);
                     connection.sendMessage("A.B", message);
-                    if(i % 20 == 0)
+                    if(i % 3 == 0)
                     {
                         Thread.Sleep(1);
                     }

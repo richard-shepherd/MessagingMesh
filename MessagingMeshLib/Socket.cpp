@@ -409,32 +409,12 @@ void Socket::processQueuedWrites()
             return;
         }
 
-        // We write the queued data in chunks...
-        const int SEND_BUFFER_SIZE = 8192;
-        auto pWriteRequest_Chunk = UVUtils::allocateWriteRequest(SEND_BUFFER_SIZE, this);
-
-        // We process the bytes in the queued buffers...
+        // We convert the queued writes into UV write-requests and send them...
         auto queuedWrites = m_queuedWrites.getItems();
-        int sendBufferIndex = 0;
-        getBytesToSend(*queuedWrites, [&](char c)
+        getWriteRequests(*queuedWrites, [&](UVUtils::WriteRequest* pWriteRequest)
             {
-                // We add each byte to the chunk, and if we have a full chunk we send it...
-                pWriteRequest_Chunk->buffer.base[sendBufferIndex++] = c;
-                if (sendBufferIndex == SEND_BUFFER_SIZE)
-                {
-                    // We send the chunk...
-                    send(pWriteRequest_Chunk);
-
-                    // We create a write request for the next chunk...
-                    sendBufferIndex = 0;
-                    pWriteRequest_Chunk = UVUtils::allocateWriteRequest(SEND_BUFFER_SIZE, this);
-                }
-            }
-        );
-
-        // We send any remaining data...
-        pWriteRequest_Chunk->buffer.len = sendBufferIndex;
-        send(pWriteRequest_Chunk);
+                send(pWriteRequest);
+            });
     }
     catch (const std::exception& ex)
     {
@@ -458,43 +438,138 @@ void Socket::send(UVUtils::WriteRequest* pWriteRequest)
     );
 }
 
-// Calls back with each byte (char) to send for queued data to write.
-void Socket::getBytesToSend(const std::vector<BufferInfo>& bufferInfos, std::function<void(char)> callback)
+// Calls back with UV write requests to send for the queued data.
+void Socket::getWriteRequests(const std::vector<BufferInfo>& bufferInfos, std::function<void(UVUtils::WriteRequest*)> callback)
 {
-    // Used by the subscription ID override...
-    char subscriptionIDBuffer[sizeof(uint32_t)];
-    const int subscriptionIDStartIndex = Buffer::SIZE_SIZE;
-    const int subscriptionIDEndIndex = Buffer::SIZE_SIZE + sizeof(uint32_t) - 1;
+    // How we fill in the write requests depends on the size of the buffers in the queue.
+    // 
+    // Small buffers
+    // -------------
+    // If we have a lot of small buffers it is more efficient to combine them into one
+    // larger buffer before sending, to reduce the number of sends on the socket.
+    //
+    // Large buffers
+    // -------------
+    // For large buffers it is better to send them in one go.
+    //
+    // What we do
+    // ----------
+    // - We have pSmallMessagesWriteRequest for aggregating smaller messages. 
+    //
+    // - If a buffer is small (<= the small message send buffer size) we add it to the
+    //   small message write request. If it does not fit, we add what we can, and add the remainder
+    //   to the next small message write request.
+    //   
+    // - If a buffer is large (> small message send buffer size) then we send the buffer as it is.
+    //   NOTE: We make sure that we have sent any partially filled small write request first.
+    //
+    // Subscription ID override
+    // ------------------------
+    // When sending messages from the Gateway to clients buffer-infos may have a subscription ID
+    // override. This is the client-specific subscription ID for its subscription to the message.
+    // We need to make sure that this is 'pasted-in' to the appropriate position in the data we 
+    // send, ie just after the Size at the start of the buffer.
 
-    // We loop through the buffers...
-    for (auto& bufferInfo : bufferInfos)
+    // Size in a buffer of the Size + Subscription ID...
+    const int SIZE_PLUS_SUBSCRIPTION_ID = Buffer::SIZE_SIZE + sizeof(uint32_t);
+
+    // The small buffer write request...
+    const int SMALL_MESSAGE_SEND_BUFFER_SIZE = 8192;
+    UVUtils::WriteRequest* pSmallMessagesWriteRequest = nullptr;
+    auto smallMessageSendBufferPosition = 0;
+
+    // We process each buffer...
+    for(const auto& bufferInfo : bufferInfos)
     {
-        // We get the buffer data...
-        auto dataSize = bufferInfo.pBuffer->getBufferSize();
-        auto data = bufferInfo.pBuffer->getBuffer();
-
-        // We check if we have a subscription ID override. If we do, we get it as bytes.
-        bool hasSubscriptionIDOverride = false;
-        if (bufferInfo.subscriptionIDOverride != 0 && dataSize >= Buffer::SIZE_SIZE + sizeof(uint32_t))
+        // We check if the buffer is small or large...
+        auto bufferSize = bufferInfo.pBuffer->getBufferSize();
+        auto bufferData = bufferInfo.pBuffer->getBuffer();
+        if (bufferSize < SIZE_PLUS_SUBSCRIPTION_ID)
         {
-            std::memcpy(subscriptionIDBuffer, &bufferInfo.subscriptionIDOverride, sizeof(uint32_t));
-            hasSubscriptionIDOverride = true;
+            // This does not look like a Messaging Mesh buffer.
+            continue;
         }
-
-        // We loop through the bytes in the buffer...
-        for (int i = 0; i < dataSize; ++i)
+        if (bufferSize <= SMALL_MESSAGE_SEND_BUFFER_SIZE)
         {
-            if (hasSubscriptionIDOverride && i >= subscriptionIDStartIndex && i <= subscriptionIDEndIndex)
+            // We have a small message, so we add it to the small message write request...
+            auto bufferPosition = 0;
+            while (bufferPosition < bufferSize)
             {
-                // We have a byte from the subscription ID...
-                callback(subscriptionIDBuffer[i - subscriptionIDStartIndex]);
-            }
-            else
-            {
-                // We have a byte from the buffer...
-                callback(data[i]);
+                // We add as much as we can to the small message send buffer.
+                auto sizeRemaining_smallMessageSendBuffer = SMALL_MESSAGE_SEND_BUFFER_SIZE - smallMessageSendBufferPosition;
+                auto sizeRemaining_buffer = bufferSize - bufferPosition;
+                auto sizeToCopy = std::min(sizeRemaining_buffer, sizeRemaining_smallMessageSendBuffer);
+
+                // If we are writing from the start of the buffer we want the size-to-copy to be at least 
+                // eight bytes (for the Size and Subscription ID). If we do not have enough space we send
+                // the small message write request and create a new one...
+                if (bufferPosition == 0 && sizeToCopy < SIZE_PLUS_SUBSCRIPTION_ID && pSmallMessagesWriteRequest != nullptr)
+                {
+                    pSmallMessagesWriteRequest->buffer.len = smallMessageSendBufferPosition;
+                    callback(pSmallMessagesWriteRequest);
+                    pSmallMessagesWriteRequest = nullptr;
+                    smallMessageSendBufferPosition = 0;
+                    continue;
+                }
+                // We copy the data to the write request...
+                if (pSmallMessagesWriteRequest == nullptr)
+                {
+                    pSmallMessagesWriteRequest = UVUtils::allocateWriteRequest(SMALL_MESSAGE_SEND_BUFFER_SIZE, this);
+                }
+                std::memcpy(pSmallMessagesWriteRequest->buffer.base + smallMessageSendBufferPosition, bufferData + bufferPosition, sizeToCopy);
+
+                // If we are writing the first part of the buffer and we have an overridden subscription ID
+                // we override it in the write request...
+                if (bufferPosition == 0 && bufferInfo.subscriptionIDOverride != 0)
+                {
+                    std::memcpy(pSmallMessagesWriteRequest->buffer.base + smallMessageSendBufferPosition + Buffer::SIZE_SIZE, &bufferInfo.subscriptionIDOverride, sizeof(uint32_t));
+                }
+
+                // We update the buffer positions...
+                smallMessageSendBufferPosition += sizeToCopy;
+                bufferPosition += sizeToCopy;
+
+                // If we have filled the small message buffer we send it...
+                if (smallMessageSendBufferPosition == SMALL_MESSAGE_SEND_BUFFER_SIZE)
+                {
+                    pSmallMessagesWriteRequest->buffer.len = smallMessageSendBufferPosition;
+                    callback(pSmallMessagesWriteRequest);
+                    pSmallMessagesWriteRequest = nullptr;
+                    smallMessageSendBufferPosition = 0;
+                }
             }
         }
+        else
+        {
+            // We have a large message.
+            // We make sure that any partially filled small buffer has been sent.
+            if (pSmallMessagesWriteRequest != nullptr)
+            {
+                pSmallMessagesWriteRequest->buffer.len = smallMessageSendBufferPosition;
+                callback(pSmallMessagesWriteRequest);
+                pSmallMessagesWriteRequest = nullptr;
+                smallMessageSendBufferPosition = 0;
+            }
+
+            // We send the large buffer...
+            auto pLargeWriteRequest = UVUtils::allocateWriteRequest(bufferSize, this);
+            std::memcpy(pLargeWriteRequest->buffer.base, bufferData, bufferSize);
+
+            // We override the subscription ID if needed...
+            if (bufferInfo.subscriptionIDOverride != 0)
+            {
+                std::memcpy(pLargeWriteRequest->buffer.base + Buffer::SIZE_SIZE, &bufferInfo.subscriptionIDOverride, sizeof(uint32_t));
+            }
+
+            callback(pLargeWriteRequest);
+        }
+    }
+
+    // We send any remaining small message buffer...
+    if (pSmallMessagesWriteRequest != nullptr)
+    {
+        pSmallMessagesWriteRequest->buffer.len = smallMessageSendBufferPosition;
+        callback(pSmallMessagesWriteRequest);
     }
 }
 

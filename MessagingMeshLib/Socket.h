@@ -139,8 +139,8 @@ namespace MessagingMesh
         // Sends network messages for all queued writes.
         void processQueuedWrites();
 
-        // Calls back with each byte (char) to send for queued data to write.
-        void getBytesToSend(const std::vector<BufferInfo>& bufferInfos, std::function<void(char)> callback);
+        // Calls back with UV write requests to send for the queued data.
+        void getWriteRequests(const std::vector<BufferInfo>& bufferInfos, std::function<void(UVUtils::WriteRequest*)> callback);
 
         // Sends data to the socket.
         void send(UVUtils::WriteRequest* pWriteRequest);
