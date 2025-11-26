@@ -5,6 +5,9 @@ TODO
 - Optionally hold BufferPtr in UVUtilsWriteRequest
   - Use this for large messages
   - Avoid copying the buffer
+  - Note: This cannot be used when we need to override the subscription ID
+          ie, it can be used in client-side code but not in the gateway
+          (at least, not for sending messages back to clients)
 
 - C++ -pub with C# -sub works weirdly
   - Buffers lots of memory in the publisher
