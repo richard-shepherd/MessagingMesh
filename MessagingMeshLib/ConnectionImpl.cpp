@@ -207,7 +207,7 @@ void ConnectionImpl::processMessageQueue(int millisecondsTimeout)
     }
 }
 
-// Unblock the current processMessageQueue() call without waiting for its timeout to elapse.
+// Unblocks the current processMessageQueue() call without waiting for its timeout to elapse.
 void ConnectionImpl::wakeUp()
 {
     m_queuedMessages.wakeUp();

@@ -204,7 +204,7 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Unblock the current processMessageQueue() call without waiting for its timeout to elapse.
+        /// Unblocks the current processMessageQueue() call without waiting for its timeout to elapse.
         /// </summary>
         public void wakeUp()
         {
