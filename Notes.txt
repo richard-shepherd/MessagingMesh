@@ -2,6 +2,10 @@ TODO
 ----
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
 
+- Optionally hold BufferPtr in UVUtilsWriteRequest
+  - Use this for large messages
+  - Avoid copying the buffer
+
 - C++ -pub with C# -sub works weirdly
   - Buffers lots of memory in the publisher
   - Doesn't work properly if the publisher or subscriber are restarted (with the same gateway)
@@ -53,6 +57,40 @@ dbghelp.lib
 
 
 
+
+How does the mesh work?
+-----------------------
+- Initially managed with config
+  - List of all gateways in the mesh with their connection params, ie (host, port)
+
+- Each gateway connects to each other gateway
+  - Though not to themselves!
+
+- Q: Should the connection to other gateways use the standard client connection?
+  - A: I think No.
+  - The standard client gets deserialized messages
+  - Gateways do not need to do this to forward messages to other gateways
+
+- How do subscriptions work?
+
+- IMPORTANT: We need to avoid multiple updates when there are wildcard subscriptions
+  - Example:
+  - Client A subscribes to A.B, A.* via Gateway A
+  - The subscriptions are forwarded to Gateway B
+  - Client B connected to Gateway B publishes A.B
+  - This matches both subscriptions: A.B and A.*
+  - BUT: If we send both updates to Gateway A, it might then match them
+         against its subscriptions and send each update to Client A.
+         So Client A would get *four* updates instead of two.
+
+- RULE: If a Gateway has multiple client subscriptions for a subject, the
+        subscription is only sent once to other Gateways. So:
+        - We send a subscription to other gateways when we get the *first* subscription for a subject
+        - We send an unsubscribe when there are no subscriptnios remaining
+
+- RULE: All updates are only sent between gateways once
+  - Even if they match multiple subscriptions rules
+  - The fan out for multiple subscriptions will be done by the 
 
 
 
