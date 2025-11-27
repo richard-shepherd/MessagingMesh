@@ -2,6 +2,8 @@ TODO
 ----
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
 
+- Add blob tests to the C++ TestClient
+
 - Optionally hold BufferPtr in UVUtilsWriteRequest
   - Use this for large messages
   - Avoid copying the buffer
@@ -33,6 +35,11 @@ TODO
 
 - Handle fast producers and slow consumers
   - What happens if a consumer is slow? Does it slow down publication from the Gateway to other clients?
+
+- Profiling:
+  - C# subscriber
+  - C++ publisher
+  - C++ subscriber
 
 - Performance (C#)
   - AutoResetEvent.Set() looks slow.
@@ -94,6 +101,58 @@ How does the mesh work?
 - RULE: All updates are only sent between gateways once
   - Even if they match multiple subscriptions rules
   - The fan out for multiple subscriptions will be done by the 
+
+- Other gateways may not be up when a gateway wants to connect to them
+  - Even if they all start "at the same time" they will not all start at exactly the same time
+
+- Other gateways may become not available while the mesh is running
+  - For example they may be restarted
+  - Or the server they are on is restarted
+  - Or they may be (semi) permanently unavailable, eg server failure
+
+- So the gateway needs to cope with other gateways in the mesh coming and going
+  - We need to make sure that subscriptions are up to date when gateways connect
+
+- IDEA: Have a GatewayConnection class
+  - Like the client Connection but for gateway-to-gateway connections
+  - In particular it does not deserialize Buffers to Messages
+  - It retries creating the connection to the peer gateway
+  - It helps us to know that an update came from another gateway rather than from a real client
+
+- IDEA: Have a GatewayConnectionManager
+  - This reads the config
+  - Creates one GatewayConnection for each peer gateway
+
+- What is the relationship between the mesh and the Services?
+  - The mesh config specifies the collection of gateways *per service*
+  - There may be different gateways per service
+    - eg, VULCAN running on one set of servers/gateways, RAMP on another set of servers/gateways
+  - But: Different services may also be sharing servers/gateways
+    - There could be some overlap
+    - ie, not all services connect to the same gateways
+      - But some different services do connect to the same gateways as other services
+
+- So: Should the GatewayConnection be service-specific? Or gateway specific?
+
+- The client Connection is both service and gateway specific
+  - It connects to one gateway for one service
+  - The socket for it is managed by the service UV loop at the gateway end
+
+- QUESTION: What do we do when gateways connect? (Including reconnect.)
+  - Q1: A gateway connects to a remote gateway
+  - Q2: A gateway receives a connection from a remote gateway
+
+- HANG ON A MOMENT: Do we really have two connections between each pair of gateways?
+  - Does G1 connect to G2 *and* G2 connect to G1?
+  - That seems sort of odd
+  - Or does it make things simpler?
+
+
+
+
+
+
+
 
 
 
