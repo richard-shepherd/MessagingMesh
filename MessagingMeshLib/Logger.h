@@ -64,8 +64,7 @@ namespace MessagingMesh
     // Private data...
     private:
         // Vector of registered callbacks and a mutex for it.
-        // This uses the copy-on-write pattern to avoid locking and copying the vector when logging.
-        static std::atomic<std::shared_ptr<const VecCallback>> m_callbacks;
+        static VecCallback m_callbacks;
         static std::mutex m_mutex;
 
         // Log levels as strings...

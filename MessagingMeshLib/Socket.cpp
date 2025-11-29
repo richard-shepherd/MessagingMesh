@@ -349,7 +349,6 @@ void Socket::moveToLoop_registerDuplicatedSocket(UVLoopPtr pUVLoop, OSSocketHold
     try
     {
         auto socket = pOSSocket->getSocket();
-        Logger::info(std::format("Connecting to duplicated socket {}", socket));
 
         // We switch to the new UV loop...
         m_pUVLoop = pUVLoop;
@@ -601,7 +600,6 @@ void Socket::onNewConnection(uv_stream_t* pServer, int status)
     try
     {
         // We check that the connection has succeeded...
-        Logger::info("onNewConnection");
         if (status < 0)
         {
             Logger::error(std::format("Connection error: {}", uv_strerror(status)));

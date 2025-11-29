@@ -25,6 +25,8 @@ TODO
 
 - Do the client side subscription cache thing for C#
 
+- Maybe have a pool of inboxes on the client side?
+
 - Think about pimpl vs C++20 modules
 
 - Better disconnection handling
@@ -203,6 +205,27 @@ No relay
   - Only *client subscriptions* should be propagated to peer gateways
 
 
+How do we initially create the mesh?
+------------------------------------
+- What happens when a gateway is started?
+  - With regard to connecting to a mesh?
+
+- At the moment, the gateway will only create a ServiceManager (and thus the mesh)
+  when we get the first client connection for the Service
+
+- We should create the mesh when the gateway starts up
+
+- The MeshManager should work at *gateway level* 
+  - Not just at Service level
+
+- It reads the config 
+  - (Or in a later version talks to a central service)
+  - It works out which meshes the gateway is part of
+    - (Maybe by converting hostnames to IP addresses and comparing with "our" IP address?)
+  - It starts 
+
+
+
 Mesh config
 -----------
 - For the moment this will be a JSON text file.
@@ -241,10 +264,18 @@ Mesh config
   - Later it could dynamically add and remove items from meshes
 
 
+MeshManager
+-----------
+- Reads the config
+
+- Creates one MeshGatewayConnection for each peer gateway
+  - ie, each gateway in the mesh that is not "us"
+
+
 MeshGatewayConnection
 ---------------------
-
-
+- Connects to one peer gateway
+  - Retries the connection at some interval
 
 
 

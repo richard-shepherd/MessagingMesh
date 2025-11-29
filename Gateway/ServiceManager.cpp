@@ -14,6 +14,7 @@ ServiceManager::ServiceManager(const std::string& serviceName) :
     m_serviceName(serviceName),
     m_pUVLoop(UVLoop::create(serviceName))
 {
+    Logger::info(std::format("Created ServiceManager for {}", serviceName));
 }
 
 // Registers a client socket to be managed for this service.

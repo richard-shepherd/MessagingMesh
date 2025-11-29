@@ -7,7 +7,7 @@
 using namespace MessagingMesh;
 
 // Static fields...
-std::atomic<std::shared_ptr<const Logger::VecCallback>> Logger::m_callbacks;
+Logger::VecCallback Logger::m_callbacks;
 std::mutex Logger::m_mutex;
 
 // Log levels as strings...
@@ -23,21 +23,16 @@ const std::string Logger::UNKNOWN_LOG_LEVEL_STRING = "[UNKNOWN-LOG-LEVEL]";
 void Logger::registerCallback(Callback callback)
 {
     std::scoped_lock lock(m_mutex);
-
-    // Copy-on-write pattern...
-    auto oldCallbacks = m_callbacks.load();
-    auto newCallbacks = std::make_shared<VecCallback>(oldCallbacks ? *oldCallbacks : VecCallback{});
-    newCallbacks->push_back(callback);
-    m_callbacks.store(newCallbacks);
+    m_callbacks.push_back(callback);
 }
 
 // Logs a message at the level specified.
 void Logger::log(LogLevel logLevel, const std::string& message)
 {
-    // Note that we do not use the mutex here. Instead we atomically load the callbacks shared pointer
-    // giving us a reference to the immutable collection of callbacks currently in effect.
-    auto pCallbacks = m_callbacks.load();
-    if (!pCallbacks || pCallbacks->empty())
+    std::scoped_lock lock(m_mutex);
+
+    // We check that we have at least one registered callback...
+    if (m_callbacks.empty())
     {
         return;
     }
@@ -47,7 +42,7 @@ void Logger::log(LogLevel logLevel, const std::string& message)
     auto messageToLog = std::format("MessagingMesh ({}): {}", threadName, message);
 
     // We notify the registered callbacks...
-    for (auto& callback : *pCallbacks)
+    for (auto& callback : m_callbacks)
     {
         try
         {
