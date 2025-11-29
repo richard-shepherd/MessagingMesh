@@ -2,6 +2,8 @@ TODO
 ----
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
 
+- Compile for multiple .NET versions
+
 - Add blob tests to the C++ TestClient
 
 - Optionally hold BufferPtr in UVUtilsWriteRequest
@@ -100,7 +102,7 @@ How does the mesh work?
 
 - RULE: All updates are only sent between gateways once
   - Even if they match multiple subscriptions rules
-  - The fan out for multiple subscriptions will be done by the 
+  - The fan out for multiple subscriptions will be done by the receiving gateway
 
 - Other gateways may not be up when a gateway wants to connect to them
   - Even if they all start "at the same time" they will not all start at exactly the same time
@@ -147,11 +149,100 @@ How does the mesh work?
   - That seems sort of odd
   - Or does it make things simpler?
 
+- Let's say that it makes things simpler...
+  - For a start it means that each gateway can connect to each other one
+  - If there was only one connection between each pair, there would need to be a way
+    to work out which one would initiate it. (Though maybe not that hard.)
+  - It will make connecting to a Service easier
+    - Especially if the connection is similar to a client connection
+    - The socket at the 'server' end will be assigned to the right UV loop
+
+- GatewayConnection and UV loops / threading
+  - Which loop / thread should the client end of the connection work on?
+  - We want to receive updates for a service on the service's own UV loop
+  - This could be done with the processMessageQueue mechanism
+  - To do this we would want to PMQ all connections for a Service from the service's own loop
+
+- IDEA: ServiceManager manages the mesh for that service
+  - Instead of GatewayConnectionManager
+  - Each ServiceManager reads the config (or whatever) and finds the mesh for that service
+  - It then creates the GatewayConnections and processes them on that loop thread
+  - BUT: How do we do this without blocking the thread?
+    - We can do PMQ with a zero timeout
+    - Or observe updates on the socket's thread and only then call PMQ?
+    - Via a marshalled event?
+  - This might need a sort of hybrid PMQ and threaded thing
+    - ie, We get a callback on the socket thread that data is available
+    - But *not* the data itself
+    - This is the trigger to marshall the event
+    - We call PMQ in the event
+
+- OR simpler: We create the mesh sockets on the ServiceManager UV loop
+  - But we don't get the benefit of write queuing / threading
+
+- IDEA: GatewayConnection can just be ConnectionImpl
+  - We don't need the pimpl abstraction of Connection
+  - ConnectionImpl can be enhanced with 'internal' features for GatewayConnection
+  - THOUGHT: I think this might not be a good idea
+    - There is a bunch of stuff in ConnectionImpl not relevant to the GatewayConnection
+    - And stuff that doesn't really work, like the reference to the parent Connection
+    - If we need to share stuff, it could go into utility classes / functions
+
+- Does sendRequest() work through the mesh?
+  - Answer: Yes, I think so!
+  - As long as everything is propagated in order
+  - eg, the request inbox subscription before the subscription request
+  - And they are all processed in order
+
+No relay
+--------
+- RULE: We *do not* relay messages from peer gateways to (other) peer gateways
+  - Gateways only relay *client messages* to peer gateways
+
+- What does this mean for subscription propagation?
+  - Only *client subscriptions* should be propagated to peer gateways
 
 
+Mesh config
+-----------
+- For the moment this will be a JSON text file.
+  - Filename: mesh.config
+  - Located in the same folder as Gateway.exe
+  - Later it could itself be looked up from a service
+
+"Meshes":
+{
+  "VULCAN": [
+    {
+      "Hostname": "ABC.net.intra",
+      "Port": 12345
+    },
+    {
+      "Hostname": "DEF.net.intra",
+      "Port": 23456
+    }
+  ],
+  "RAMP": [
+    {
+      "Hostname": "GHI.net.intra",
+      "Port": 12346
+    },
+    {
+      "Hostname": "JKL.net.intra",
+      "Port": 23457
+    }
+  ]
+}
+
+- Parse with https://github.com/nlohmann/json
+
+- We could have a MeshConfigProvider class which provides the config to code that needs it
+  - Later this could read the data from a service
+  - Later it could dynamically add and remove items from meshes
 
 
-
+MeshGatewayConnection
+---------------------
 
 
 
