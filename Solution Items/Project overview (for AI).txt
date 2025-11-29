@@ -1,0 +1,162 @@
+Messaging Mesh
+--------------
+The project is called "Messaging Mesh": https://github.com/richard-shepherd/MessagingMesh.
+
+It is pub/sub messaging system with semantics and client APIs similar to TIBRV (RV). 
+
+Initially it will support:
+- Publish and subscribe on named subscriptions.
+  - Subscription subjects use the same dot delimited format as RV subjects.
+  - Subscription subjects support the * and > wildcards in the same way as RV.
+  - Subscriptions are called back asynchronously.
+- Blocking sendRequest which send a request and blocks waiting for a reply (or a timeout).
+
+The initial version will not support:
+- Certified messaging / guaranteed delivery.
+- Distributed queues.
+- Message routing between different sites / networks.
+These features may be added to later iterations.
+
+Messages and Fields
+-------------------
+The message format is very similar (though not 100% identical) to the RV message format.
+
+Messages hold a collection of named fields.
+
+Fields can be of various types, including:
+- Integer (32-bit, 64-bit, signed and unsigned)
+- Double
+- Bool
+- BLOB
+- Message
+
+In particular, the ability to hold a (sub) message as a field in a message means that
+a variety of complex structures can be managed by these messages.
+
+In practice, I expect that many clients will serialize data to a binary format such as
+a protobuf and send that in a BLOB field, perhaps along with a few meta-data fields as
+their own custom 'header'.
+
+Serialization
+-------------
+Serialization for sending on the network is done using a Buffer class. This is a binary
+buffer managing a byte array:
+- Size: unsigned 32-bit integer, the size of the buffer (including the size itself)
+- bytes[Size - 4]: serialized data
+
+The serialization is a custom protocol for Messaging Mesh. Some features are:
+- Integer types are serialized little-endian.
+- Strings must be provided by clients as UTF-8
+
+Messaging broker ("Gateway")
+----------------------------
+The messaging broker for Messaging Mesh is called the "Gateway". The reason for this will
+become clearer below with discussion of the mesh itself.
+
+The gateway can act in two ways:
+- A single central instance acting as a traditional messaging broker.
+- Multiple instances working together as a mesh (see below).
+
+The gateway can support multiple Services. When a client connects to the gateway it specifies
+a named service to connect to. This acts as a 'namespace' of messaging. All messages send and
+subscribed to are scoped by the service namespace. This means that a gateway can support
+multiple services where the same subject names are used in different services. 
+
+In addition to namespacing, each service is managed in a different thread in the gateway.
+
+The gateway:
+- Allows clients to connect to a named service.
+- Clients can subscribe to subjects, and unsubscribe from them.
+- Clients can publish messages to subjects.
+- The gateway routes published messages to clients subscribed to them.
+- The gateway routing includes managing the * and > wildcards.
+
+Clients connect to the gateway with a TCP socket. Data is sent to the gateway and received
+from the gateway over that socket. There is no use of UDP (as there is with RV).
+
+Client libraries
+----------------
+The initial version of Messaging Mesh has client libraries in:
+- C++
+- C# (.NET)
+Other languages will likely be supported later.
+
+Client libraries expose these classes:
+- Connection: To connect to a gateway.
+- Message: Holds a collection of Fields.
+- Field: Holds one field of the supported types.
+- Subscription: Returned from Connection.subscribe() and manages the lifetime of a subscription.
+- Logger: A log-broker to allow client code to hook into Messaging Mesh logging.
+
+Client libraries are responsible for serializing Messages to the Messaging Mesh binary
+protocol and then sending these to the gateway. And equally for receiving updates from
+the gateway and deserializing them to Messages to provide to client code.
+
+Use of libuv
+------------
+The gateway is written in C++ using libuv.
+
+The aim of using libuv is to provide efficient socket management, especially with
+a large number of clients connected to a gateway.
+
+The gateway has:
+- A main UV loop for listening for new connections.
+- A UV loop to manage each Service.
+
+When a client connects and specifies the Service which it wants to join, the client socket
+is marshalled (duplicated and reconnected) on the UV loop for the Service. All subsequent 
+interaction with that client is managed on the service-specific UV loop.
+
+In addition to the gateway, the C++ client library also uses libuv for its socket management.
+(The C# library uses standard, built-in .NET socket classes.)
+
+Mesh
+----
+The 'clever part' of the Messaging Mesh is the mesh!
+
+Instead of running one central gateway / broker, you can configure Messaging Mesh with one
+gateway on each server.
+
+Clients connect to the gateway running on their own machine. 
+
+The gateways for a given Service are aware of each other (via config or via a central mesh
+registration service). Each gateway for the service connects to each other one. This is 
+the mesh.
+
+Client subscriptions to a local gateway are propagated to the other gateways in the mesh. If
+a message for the subscription is published from a client on another machine, it is sent to its 
+local gateway. That gateway forwards the message to the subscribing client's gateway, which 
+then sends it to the client.
+
+This means that we (almost) get the best of both worlds between TCP and UDP messaging. 
+- Messages between clients on the same machine is very fast.
+- Messages only go across the network once between any machine and any other.
+- All fan-out for multiple subscibers on a given machine is handled locally by that
+  server's gateway, without the message being send across the network multiple times.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
