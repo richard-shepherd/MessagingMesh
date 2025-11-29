@@ -129,7 +129,7 @@ local gateway. That gateway forwards the message to the subscribing client's gat
 then sends it to the client.
 
 This means that we (almost) get the best of both worlds between TCP and UDP messaging. 
-- Messages between clients on the same machine is very fast.
+- Messages between clients on the same machine are very fast.
 - Messages only go across the network once between any machine and any other.
 - All fan-out for multiple subscibers on a given machine is handled locally by that
   server's gateway, without the message being send across the network multiple times.
