@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <mutex>
-#include "uv.h"
+#include <libuv/uv.h>
 #include "SharedAliases.h"
 
 namespace MessagingMesh

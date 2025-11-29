@@ -5,8 +5,8 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
+#include <MMUtils.h>
 #include "GatewaySharedPointers.h"
-#include "MMUtils.h"
 
 namespace MessagingMesh
 {

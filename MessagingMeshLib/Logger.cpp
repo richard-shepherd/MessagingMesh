@@ -1,7 +1,7 @@
 #include "Logger.h"
 #include <memory>
 #include <format>
-#include "uv.h"
+#include <libuv/uv.h>
 #include "Utils.h"
 #include "UVUtils.h"
 using namespace MessagingMesh;

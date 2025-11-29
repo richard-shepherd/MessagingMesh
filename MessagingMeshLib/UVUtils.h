@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
-#include "uv.h"
+#include <libuv/uv.h>
 #include "Buffer.h"
 
 namespace MessagingMesh

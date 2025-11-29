@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
+#include <TestUtils.h>
 #include "GatewaySharedPointers.h"
-#include "TestUtils.h"
 
 namespace MessagingMesh
 {

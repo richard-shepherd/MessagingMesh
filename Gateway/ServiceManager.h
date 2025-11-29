@@ -1,8 +1,8 @@
 #pragma once
 #include <unordered_map>
 #include <string>
-#include "SharedAliases.h"
-#include "Socket.h"
+#include <SharedAliases.h>
+#include <Socket.h>
 #include "SubjectMatchingEngine.h"
 
 namespace MessagingMesh

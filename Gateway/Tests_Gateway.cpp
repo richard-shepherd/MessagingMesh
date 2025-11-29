@@ -1,8 +1,8 @@
 #include "Tests_Gateway.h"
-#include "Tests_MessagingMeshLib.h"
+#include <Tests_MessagingMeshLib.h>
+#include <TestUtils.h>
 #include "SubjectMatchingEngine.h"
 #include "SubscriptionInfo.h"
-#include "TestUtils.h"
 using namespace MessagingMesh;
 using namespace MessagingMesh::TestUtils;
 

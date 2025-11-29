@@ -1,8 +1,8 @@
 #include <iostream>
-#include "Logger.h"
+#include <Logger.h>
+#include <Utils.h>
+#include <UVUtils.h>
 #include "Gateway.h"
-#include "Utils.h"
-#include "UVUtils.h"
 #include "Tests_Gateway.h"
 using namespace MessagingMesh;
 

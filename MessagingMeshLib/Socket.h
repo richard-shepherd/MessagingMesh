@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <functional>
-#include "uv.h"
+#include <libuv/uv.h>
 #include "SharedAliases.h"
 #include "ThreadsafeConsumableVector.h"
 #include "UVUtils.h"
