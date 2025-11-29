@@ -222,8 +222,9 @@ How do we initially create the mesh?
   - (Or in a later version talks to a central service)
   - It works out which meshes the gateway is part of
     - (Maybe by converting hostnames to IP addresses and comparing with "our" IP address?)
-  - It starts 
+  - It (pre-)starts the ServiceManager for each service
 
+- The ServiceManager creates the MeshGatewayConnections for each peer in the mesh
 
 
 Mesh config
