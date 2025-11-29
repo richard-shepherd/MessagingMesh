@@ -234,29 +234,7 @@ Mesh config
   - Located in the same folder as Gateway.exe
   - Later it could itself be looked up from a service
 
-"Meshes":
-{
-  "VULCAN": [
-    {
-      "Hostname": "ABC.net.intra",
-      "Port": 12345
-    },
-    {
-      "Hostname": "DEF.net.intra",
-      "Port": 23456
-    }
-  ],
-  "RAMP": [
-    {
-      "Hostname": "GHI.net.intra",
-      "Port": 12346
-    },
-    {
-      "Hostname": "JKL.net.intra",
-      "Port": 23457
-    }
-  ]
-}
+- See example in Solution Items/mesh-config.json
 
 - Parse with https://github.com/nlohmann/json
 

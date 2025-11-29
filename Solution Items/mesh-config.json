@@ -1,0 +1,22 @@
+{
+    "VULCAN": [
+        {
+            "Hostname": "RSS-XPS17",
+            "Port": 5050
+        },
+        {
+            "Hostname": "RSS-XPS17",
+            "Port": 5051
+        }
+    ],
+    "APOLLO": [
+        {
+            "Hostname": "RSS-XPS17",
+            "Port": 5060
+        },
+        {
+            "Hostname": "RSS-XPS17",
+            "Port": 5061
+        }
+    ]
+}
