@@ -1,6 +1,7 @@
 #include "MeshManager.h"
-#include <nlohmann/json.hpp>
 #include <fstream>
+#include <ranges>
+#include <nlohmann/json.hpp>
 #include <MMUtils.h>
 #include <Logger.h>
 #include "Gateway.h"
@@ -16,6 +17,7 @@ MeshManager::MeshManager(Gateway& gateway) :
     enrichConfig();
 
     // We pre-create service managers for meshes to which we belong...
+    createServiceManagers();
 }
 
 // Destructor.
@@ -51,7 +53,7 @@ void MeshManager::parseMeshConfig()
 // Enriches the config, resolving IP addresses and working out which gateways are 'us' and which are peers.
 void MeshManager::enrichConfig()
 {
-    Logger::info("Enriching mesh config");
+    Logger::info("Enriching mesh config (resolving peer IP addresses)");
 
     // We find the IP address of the running process. This helps us check which gateways are 'us'...
     auto gatewayIPAddress = MMUtils::getIPAddress();
@@ -87,6 +89,16 @@ void MeshManager::enrichConfig()
 // Creates service-managers for meshes to which we belong.
 void MeshManager::createServiceManagers()
 {
-
+    // We iterate through the services in the config...
+    for (auto& [serviceName, gatewayInfos] : m_meshConfig.Services)
+    {
+        // We check if any of the gateways for the service is SELF...
+        if (std::ranges::any_of(gatewayInfos, [](const auto& g) {return g.PeerType == ParsedMeshConfig::PeerType::SELF;}))
+        {
+            // We are a member of the mesh for this service so we create the service manager...
+            Logger::info(std::format("We are a member of the {} mesh", serviceName));
+            m_gateway.getOrCreateServiceManager(serviceName);
+        }
+    }
 }
 
