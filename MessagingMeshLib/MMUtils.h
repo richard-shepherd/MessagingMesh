@@ -42,7 +42,8 @@ namespace MessagingMesh
         static std::string getHostname();
 
         // Gets the IPV4 address for the hostname specified.
-        static std::string getIPAddress(const std::string& hostname);
+        // If the hostname is empty we return the IP address of the running process.
+        static std::string getIPAddress(const std::string& hostname = "");
     };
 } // namespace
 

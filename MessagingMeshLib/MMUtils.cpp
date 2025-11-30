@@ -93,8 +93,17 @@ std::string MMUtils::getHostname()
 }
 
 // Gets the IPV4 address for the hostname specified.
+// If the hostname is empty we return the IP address of the running process.
 std::string MMUtils::getIPAddress(const std::string& hostname)
 {
+    // If the hostname is empty we find the hostname of the running process...
+    auto resolvedHostname = hostname;
+    if (resolvedHostname.empty())
+    {
+        resolvedHostname = getHostname();
+    }
+
+    // We look up the IP address...
     struct addrinfo *results;
     struct addrinfo hints;
     memset(&hints, 0, sizeof(hints));
@@ -102,7 +111,7 @@ std::string MMUtils::getIPAddress(const std::string& hostname)
     hints.ai_socktype = SOCK_STREAM;
 
     std::string ipAddress;
-    auto status = getaddrinfo(hostname.c_str(), nullptr, &hints, &results);
+    auto status = getaddrinfo(resolvedHostname.c_str(), nullptr, &hints, &results);
     if (status == 0)
     {
         char ip[17];

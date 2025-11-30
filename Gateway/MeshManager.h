@@ -11,7 +11,7 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        MeshManager();
+        MeshManager(int gatewayPort);
 
         // Destructor.
         ~MeshManager();
@@ -21,8 +21,15 @@ namespace MessagingMesh
         // Parses the mesh config from mesh-config.json.
         void parseMeshConfig();
 
+        // Enriches the config, resolving IP addresses and working out which gateways are 'us' and which are peers.
+        void enrichConfig();
+
     // Private data...
     private:
+        // The port on which the hosting gateway is listening.
+        // This helps us determine which mesh gateways are 'us' and which are peers.
+        int m_gatewayPort;
+
         // Mesh config...
         ParsedMeshConfig m_meshConfig;
     };

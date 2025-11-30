@@ -40,7 +40,7 @@ void Gateway::initialize()
         m_listeningSocket->listen(m_port);
 
         // We create the mesh manager...
-        m_pMeshManager = std::make_unique<MeshManager>();
+        m_pMeshManager = std::make_unique<MeshManager>(m_port);
     }
     catch (const std::exception& ex)
     {
