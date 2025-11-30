@@ -13,7 +13,8 @@ using namespace MessagingMesh;
 // Constructor.
 Gateway::Gateway(int port) :
     m_port(port),
-    m_pUVLoop(UVLoop::create("GATEWAY"))
+    m_pUVLoop(UVLoop::create("GATEWAY")),
+    m_meshManager(*this)
 {
     // We initialize the gateway in the context of the UV loop...
     m_pUVLoop->marshallEvent(
@@ -39,8 +40,9 @@ void Gateway::initialize()
         m_listeningSocket->setCallback(this);
         m_listeningSocket->listen(m_port);
 
-        // We create the mesh manager...
-        m_pMeshManager = std::make_unique<MeshManager>(*this);
+        // We initialize the mesh manager.
+        // NOTE: We need to do this here, as we want UV (and the socket library) to be ready.
+        m_meshManager.initialize();
     }
     catch (const std::exception& ex)
     {
@@ -142,6 +144,6 @@ void Gateway::onConnect(const std::string& socketName, const NetworkMessageHeade
 // Gets or creates a service-manager for the specified service.
 ServiceManager& Gateway::getOrCreateServiceManager(const std::string& service)
 {
-    auto [it, inserted] = m_serviceManagers.try_emplace(service, service);
+    auto [it, inserted] = m_serviceManagers.try_emplace(service, service, m_meshManager);
     return it->second;
 }

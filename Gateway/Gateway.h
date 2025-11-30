@@ -5,6 +5,7 @@
 #include <Socket.h>
 #include <SharedAliases.h>
 #include "ServiceManager.h"
+#include "MeshManager.h"
 
 namespace MessagingMesh
 {
@@ -108,7 +109,7 @@ namespace MessagingMesh
         std::unordered_map<std::string, ServiceManager> m_serviceManagers;
 
         // The mesh manager...
-        std::unique_ptr<MeshManager> m_pMeshManager = nullptr;
+        MeshManager m_meshManager;
     };
 } // namespace
 

@@ -7,11 +7,13 @@
 #include <Utils.h>
 #include <NetworkMessage.h>
 #include "SubscriptionInfo.h"
+#include "MeshManager.h"
 using namespace MessagingMesh;
 
 // Constructor.
-ServiceManager::ServiceManager(const std::string& serviceName) :
+ServiceManager::ServiceManager(const std::string& serviceName, const MeshManager& meshManager) :
     m_serviceName(serviceName),
+    m_meshManager(meshManager),
     m_pUVLoop(UVLoop::create(serviceName))
 {
     // We initialize the service manager in the context of the UV loop...
@@ -32,6 +34,10 @@ ServiceManager::~ServiceManager()
 void ServiceManager::initialize()
 {
     Logger::info(std::format("Initializing ServiceManager for {}", m_serviceName));
+
+    // We create mesh gateway connections to each peer gateway in the mesh...
+    auto peerGatewayInfos = m_meshManager.getPeerGatewayInfos(m_serviceName);
+
 }
 
 // Registers a client socket to be managed for this service.

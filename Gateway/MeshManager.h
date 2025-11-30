@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include "ParsedMeshConfig.h"
 
 namespace MessagingMesh
@@ -18,6 +19,14 @@ namespace MessagingMesh
 
         // Destructor.
         ~MeshManager();
+
+        // Initializes the mesh-manager.
+        // NOTE: Initialization is not done in the constructor, as it needs to be done at a later point when the
+        //       parent Gateway's UV loop is running.
+        void initialize();
+
+        // Returns a vector of gateway-info for peer-gateways in the mesh for the service-name specified.
+        ParsedMeshConfig::VecGatewayInfo getPeerGatewayInfos(const std::string& serviceName) const;
 
     // Private functions...
     private:

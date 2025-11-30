@@ -12,6 +12,18 @@ using json = nlohmann::json;
 MeshManager::MeshManager(Gateway& gateway) :
     m_gateway(gateway)
 {
+}
+
+// Destructor.
+MeshManager::~MeshManager()
+{
+}
+
+// Initializes the mesh-manager.
+// NOTE: Initialization is not done in the constructor, as it needs to be done at a later point when the
+//       parent Gateway's UV loop is running.
+void MeshManager::initialize()
+{
     // We parse and enrich the mesh config...
     parseMeshConfig();
     enrichConfig();
@@ -20,9 +32,29 @@ MeshManager::MeshManager(Gateway& gateway) :
     createServiceManagers();
 }
 
-// Destructor.
-MeshManager::~MeshManager()
+// Returns a vector of gateway-info for peer-gateways in the mesh for the service-name specified.
+ParsedMeshConfig::VecGatewayInfo MeshManager::getPeerGatewayInfos(const std::string& serviceName) const
 {
+    ParsedMeshConfig::VecGatewayInfo result;
+
+    // We find the gateway-infos for the service...
+    auto it = m_meshConfig.Services.find(serviceName);
+    if (it == m_meshConfig.Services.end())
+    {
+        // We do not know about this service, so we return an empty collection...
+        return result;
+    }
+
+    // We have the service, so we look through the gateway-infos, returning all that are peers...
+    const auto& gatewayInfos = it->second;
+    for (const auto& gatewayInfo : gatewayInfos)
+    {
+        if (gatewayInfo.PeerType == ParsedMeshConfig::PeerType::PEER)
+        {
+            result.push_back(gatewayInfo);
+        }
+    }
+    return result;
 }
 
 // Parses the mesh config from mesh-config.json.

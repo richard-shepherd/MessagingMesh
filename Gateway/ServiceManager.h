@@ -9,6 +9,7 @@ namespace MessagingMesh
 {
     // Forward declarations...
     class NetworkMessageHeader;
+    class MeshManager;
 
     /// <summary>
     /// Manages a messaging-mesh service. 
@@ -29,7 +30,7 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        ServiceManager(const std::string& serviceName);
+        ServiceManager(const std::string& serviceName, const MeshManager& meshManager);
 
         // Destructor.
         ~ServiceManager();
@@ -72,6 +73,9 @@ namespace MessagingMesh
     private:
         // The service name...
         std::string m_serviceName;
+
+        // Tells us about peer gateways in the mesh...
+        const MeshManager& m_meshManager;
 
         // UV loop for processing client messages...
         UVLoopPtr m_pUVLoop;
