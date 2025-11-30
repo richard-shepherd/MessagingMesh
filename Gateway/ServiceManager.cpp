@@ -14,7 +14,24 @@ ServiceManager::ServiceManager(const std::string& serviceName) :
     m_serviceName(serviceName),
     m_pUVLoop(UVLoop::create(serviceName))
 {
-    Logger::info(std::format("Created ServiceManager for {}", serviceName));
+    // We initialize the service manager in the context of the UV loop...
+    m_pUVLoop->marshallEvent(
+        [this](uv_loop_t* /*pLoop*/)
+        {
+            initialize();
+        }
+    );
+}
+
+// Destructor.
+ServiceManager::~ServiceManager()
+{
+}
+
+// Initializes the service manager in the context of the service's UV loop.
+void ServiceManager::initialize()
+{
+    Logger::info(std::format("Initializing ServiceManager for {}", m_serviceName));
 }
 
 // Registers a client socket to be managed for this service.

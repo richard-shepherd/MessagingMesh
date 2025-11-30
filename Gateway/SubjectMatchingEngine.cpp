@@ -188,7 +188,6 @@ SubjectMatchingEngine::Node* SubjectMatchingEngine::getOrCreateNode(const std::s
             {
                 // There is no node for the token, so we create it...
                 pNode = new Node;
-                //nodeMap.insert({ token, pNode });
                 nodeMap.insert({ std::string(token), pNode });
             }
             else

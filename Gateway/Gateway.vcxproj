@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="Gateway.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MeshGatewayConnection.cpp" />
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="ServiceManager.cpp" />
     <ClCompile Include="SubjectMatchingEngine.cpp" />
@@ -20,6 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GatewaySharedPointers.h" />
+    <ClInclude Include="MeshGatewayConnection.h" />
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="ParsedMeshConfig.h" />
     <ClInclude Include="SubscriptionInfo.h" />

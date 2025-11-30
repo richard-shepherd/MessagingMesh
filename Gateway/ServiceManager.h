@@ -32,7 +32,7 @@ namespace MessagingMesh
         ServiceManager(const std::string& serviceName);
 
         // Destructor.
-        ~ServiceManager() = default;
+        ~ServiceManager();
 
         // Registers a client socket to be managed for this service.
         void registerSocket(SocketPtr pSocket);
@@ -56,6 +56,9 @@ namespace MessagingMesh
 
     // Private functions...
     private:
+        // Initializes the service manager in the context of the service's UV loop.
+        void initialize();
+
         // Called when we receive a SUBSCRIBE message.
         void onSubscribe(Socket* pSocket, const NetworkMessageHeader& header);
 

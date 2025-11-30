@@ -142,10 +142,6 @@ void Gateway::onConnect(const std::string& socketName, const NetworkMessageHeade
 // Gets or creates a service-manager for the specified service.
 ServiceManager& Gateway::getOrCreateServiceManager(const std::string& service)
 {
-    auto it_serviceManagers = m_serviceManagers.find(service);
-    if (it_serviceManagers == m_serviceManagers.end())
-    {
-        it_serviceManagers = m_serviceManagers.insert(it_serviceManagers, { service, ServiceManager(service) });
-    }
-    return it_serviceManagers->second;
+    auto [it, inserted] = m_serviceManagers.try_emplace(service, service);
+    return it->second;
 }
