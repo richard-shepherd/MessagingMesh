@@ -7,6 +7,7 @@
 #include <Message.h>
 #include <Field.h>
 #include <Exception.h>
+#include "MeshManager.h"
 using namespace MessagingMesh;
 
 // Constructor.
@@ -14,23 +15,32 @@ Gateway::Gateway(int port) :
     m_port(port),
     m_pUVLoop(UVLoop::create("GATEWAY"))
 {
-    // We create a socket to listen to client connections, managed by the uv loop...
+    // We initialize the gateway in the context of the UV loop...
     m_pUVLoop->marshallEvent(
         [this](uv_loop_t* /*pLoop*/)
         {
-            createListeningSocket();
+            initialize();
         }
     );
 }
 
-// Creates the socket to listen for client connections.
-void Gateway::createListeningSocket()
+// Destructor.
+Gateway::~Gateway()
+{
+}
+
+// Initializes the gateway, including creating the socket to listen for client connections.
+void Gateway::initialize()
 {
     try
     {
+        // We create the socket to listen for client connections...
         m_listeningSocket = Socket::create(m_pUVLoop);
         m_listeningSocket->setCallback(this);
         m_listeningSocket->listen(m_port);
+
+        // We create the mesh manager...
+        m_pMeshManager = std::make_unique<MeshManager>();
     }
     catch (const std::exception& ex)
     {

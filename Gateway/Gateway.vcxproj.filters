@@ -30,6 +30,9 @@
     <ClCompile Include="Tests_Gateway.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MeshManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Gateway.h">
@@ -50,5 +53,14 @@
     <ClInclude Include="GatewaySharedPointers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ParsedMeshConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="_PostBuild.cmd" />
   </ItemGroup>
 </Project>

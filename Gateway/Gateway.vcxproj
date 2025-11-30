@@ -13,17 +13,23 @@
   <ItemGroup>
     <ClCompile Include="Gateway.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="ServiceManager.cpp" />
     <ClCompile Include="SubjectMatchingEngine.cpp" />
     <ClCompile Include="Tests_Gateway.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GatewaySharedPointers.h" />
+    <ClInclude Include="MeshManager.h" />
+    <ClInclude Include="ParsedMeshConfig.h" />
     <ClInclude Include="SubscriptionInfo.h" />
     <ClInclude Include="Gateway.h" />
     <ClInclude Include="ServiceManager.h" />
     <ClInclude Include="SubjectMatchingEngine.h" />
     <ClInclude Include="Tests_Gateway.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="_PostBuild.cmd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -82,6 +88,12 @@
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <Profile>false</Profile>
     </Link>
+    <PostBuildEvent>
+      <Command>_PostBuild.cmd $(SolutionDir) $(OutDir)</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying additional files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -104,6 +116,12 @@
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <Profile>false</Profile>
     </Link>
+    <PostBuildEvent>
+      <Command>_PostBuild.cmd $(SolutionDir) $(OutDir)</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying additional files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

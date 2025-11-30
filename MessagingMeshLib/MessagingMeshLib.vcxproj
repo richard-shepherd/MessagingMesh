@@ -127,7 +127,7 @@
       <AdditionalDependencies>$(SolutionDir)third-party\libuv\Debug\libuv.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)libuv\Debug\libuv.pdb $(SolutionDir)build-output\MessagingMeshLib\lib\Debug
+      <Command>copy $(SolutionDir)third-party\libuv\Debug\libuv.pdb $(SolutionDir)build-output\MessagingMeshLib\lib\Debug
 _PostBuild.cmd</Command>
       <Message>Copying MessagingMesh client headers</Message>
     </PostBuildEvent>

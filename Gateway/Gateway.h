@@ -10,6 +10,7 @@ namespace MessagingMesh
 {
     // Forward declarations...
     class NetworkMessageHeader;
+    class MeshManager;
 
     /// <summary>
     /// Manages a messaging-mesh gateway.
@@ -54,7 +55,7 @@ namespace MessagingMesh
         Gateway(int port);
 
         // Destructor.
-        ~Gateway() = default;
+        ~Gateway();
 
     // Socket::ICallback implementation...
     private:
@@ -75,8 +76,8 @@ namespace MessagingMesh
 
     // Private functions...
     private:
-        // Creates the socket to listen for client connections.
-        void createListeningSocket();
+        // Initializes the gateway, including creating the socket to listen for client connections.
+        void initialize();
 
         // Called when we receive a CONNECT message from a client.
         void onConnect(const std::string& socketName, const NetworkMessageHeader& header);
@@ -99,6 +100,9 @@ namespace MessagingMesh
 
         // Service managers, keyed by service name...
         std::unordered_map<std::string, ServiceManager> m_serviceManagers;
+
+        // The mesh manager...
+        std::unique_ptr<MeshManager> m_pMeshManager = nullptr;
     };
 } // namespace
 

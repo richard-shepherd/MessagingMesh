@@ -11,11 +11,11 @@
     ],
     "APOLLO": [
         {
-            "Hostname": "RSS-XPS17",
+            "Hostname": "SERVER-123",
             "Port": 5060
         },
         {
-            "Hostname": "RSS-XPS17",
+            "Hostname": "SERVER-234",
             "Port": 5061
         }
     ]

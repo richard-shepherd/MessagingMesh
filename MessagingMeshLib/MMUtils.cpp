@@ -77,18 +77,39 @@ std::string MMUtils::createGUID()
     }
 
     return base64;
-
-
-
-    //// We convert it to a string...
-    //wchar_t guidStr[39]; // GUID string is 38 chars + null terminator
-    //StringFromGUID2(guid, guidStr, 39);
-
-    //// Convert wide string to std::string
-    //int size = WideCharToMultiByte(CP_UTF8, 0, guidStr, -1, nullptr, 0, nullptr, nullptr);
-    //std::string result(size - 1, 0);
-    //WideCharToMultiByte(CP_UTF8, 0, guidStr, -1, &result[0], size, nullptr, nullptr);
-
-    //return result;
 #endif
 }
+
+// Gets the hostname of the current process.
+std::string MMUtils::getHostname()
+{
+    std::string hostname;
+    char szHostname[256];
+    if (gethostname(szHostname, sizeof(szHostname)) == 0) 
+    {
+        hostname = szHostname;
+    }
+    return hostname;
+}
+
+// Gets the IPV4 address for the hostname specified.
+std::string MMUtils::getIPAddress(const std::string& hostname)
+{
+    struct addrinfo *results;
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+
+    std::string ipAddress;
+    auto status = getaddrinfo(hostname.c_str(), nullptr, &hints, &results);
+    if (status == 0)
+    {
+        char ip[17];
+        uv_ip4_name((struct sockaddr_in*)results->ai_addr, ip, sizeof(ip));
+        ipAddress = ip;
+        freeaddrinfo(results);
+    }
+    return ipAddress;
+}
+

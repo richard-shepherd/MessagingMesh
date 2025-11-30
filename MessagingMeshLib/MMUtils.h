@@ -17,7 +17,8 @@ namespace MessagingMesh
     using VecToken = std::vector<Token>;
 
     /// <summary>
-    /// Static utility functions for messaging mesh.
+    /// Static utility functions for internal use by messaging mesh.
+    /// NOTE: Utilities to be shared with clients go into the Utils class.
     /// </summary>
     class MMUtils
     {
@@ -36,6 +37,12 @@ namespace MessagingMesh
 
         // Creates a GUID and returns it in its base64 string format.
         static std::string createGUID();
+
+        // Gets the hostname of the current process.
+        static std::string getHostname();
+
+        // Gets the IPV4 address for the hostname specified.
+        static std::string getIPAddress(const std::string& hostname);
     };
 } // namespace
 
