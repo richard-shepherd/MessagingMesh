@@ -20,10 +20,10 @@
     <ClCompile Include="Tests_Gateway.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GatewayInfo.h" />
     <ClInclude Include="GatewaySharedPointers.h" />
     <ClInclude Include="MeshGatewayConnection.h" />
     <ClInclude Include="MeshManager.h" />
-    <ClInclude Include="ParsedMeshConfig.h" />
     <ClInclude Include="SubscriptionInfo.h" />
     <ClInclude Include="Gateway.h" />
     <ClInclude Include="ServiceManager.h" />

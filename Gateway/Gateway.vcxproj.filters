@@ -56,13 +56,13 @@
     <ClInclude Include="GatewaySharedPointers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ParsedMeshConfig.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MeshManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MeshGatewayConnection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GatewayInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

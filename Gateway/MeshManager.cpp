@@ -33,13 +33,13 @@ void MeshManager::initialize()
 }
 
 // Returns a vector of gateway-info for peer-gateways in the mesh for the service-name specified.
-ParsedMeshConfig::VecGatewayInfo MeshManager::getPeerGatewayInfos(const std::string& serviceName) const
+VecGatewayInfo MeshManager::getPeerGatewayInfos(const std::string& serviceName) const
 {
-    ParsedMeshConfig::VecGatewayInfo result;
+    VecGatewayInfo result;
 
     // We find the gateway-infos for the service...
-    auto it = m_meshConfig.Services.find(serviceName);
-    if (it == m_meshConfig.Services.end())
+    auto it = m_gatewayInfos.find(serviceName);
+    if (it == m_gatewayInfos.end())
     {
         // We do not know about this service, so we return an empty collection...
         return result;
@@ -49,7 +49,7 @@ ParsedMeshConfig::VecGatewayInfo MeshManager::getPeerGatewayInfos(const std::str
     const auto& gatewayInfos = it->second;
     for (const auto& gatewayInfo : gatewayInfos)
     {
-        if (gatewayInfo.PeerType == ParsedMeshConfig::PeerType::PEER)
+        if (gatewayInfo.PeerType == GatewayInfo::PeerType::PEER)
         {
             result.push_back(gatewayInfo);
         }
@@ -70,15 +70,15 @@ void MeshManager::parseMeshConfig()
     for (auto& [serviceName, jsonGatewayInfos] : j.items()) 
     {
         // We parse each gateway-info...
-        ParsedMeshConfig::VecGatewayInfo gatewayInfos;
+        VecGatewayInfo gatewayInfos;
         for (auto& jsonGatewayInfo : jsonGatewayInfos) 
         {
-            ParsedMeshConfig::GatewayInfo gatewayInfo;
+            GatewayInfo gatewayInfo;
             gatewayInfo.Hostname = jsonGatewayInfo["Hostname"].get<std::string>();
             gatewayInfo.Port = jsonGatewayInfo["Port"].get<int>();
             gatewayInfos.push_back(gatewayInfo);
         }
-        m_meshConfig.Services[serviceName] = gatewayInfos;
+        m_gatewayInfos[serviceName] = gatewayInfos;
     }
 }
 
@@ -91,7 +91,7 @@ void MeshManager::enrichConfig()
     auto gatewayIPAddress = MMUtils::getIPAddress();
 
     // We iterate through the services in the config...
-    for (auto& [serviceName, gatewayInfos] : m_meshConfig.Services)
+    for (auto& [serviceName, gatewayInfos] : m_gatewayInfos)
     {
         // We iterate through the gateway-infos for the service, resolving each to its
         // IP address and checking if it is "us" or not...
@@ -108,11 +108,11 @@ void MeshManager::enrichConfig()
             // We check whether this entry is 'us' or a peer...
             if (gatewayInfo.IPAddress == gatewayIPAddress && gatewayInfo.Port == m_gateway.getPort())
             {
-                gatewayInfo.PeerType = ParsedMeshConfig::PeerType::SELF;
+                gatewayInfo.PeerType = GatewayInfo::PeerType::SELF;
             }
             else
             {
-                gatewayInfo.PeerType = ParsedMeshConfig::PeerType::PEER;
+                gatewayInfo.PeerType = GatewayInfo::PeerType::PEER;
             }
         }
     }
@@ -122,10 +122,10 @@ void MeshManager::enrichConfig()
 void MeshManager::createServiceManagers()
 {
     // We iterate through the services in the config...
-    for (auto& [serviceName, gatewayInfos] : m_meshConfig.Services)
+    for (auto& [serviceName, gatewayInfos] : m_gatewayInfos)
     {
         // We check if any of the gateways for the service is SELF...
-        if (std::ranges::any_of(gatewayInfos, [](const auto& g) {return g.PeerType == ParsedMeshConfig::PeerType::SELF;}))
+        if (std::ranges::any_of(gatewayInfos, [](const auto& g) {return g.PeerType == GatewayInfo::PeerType::SELF;}))
         {
             // We are a member of the mesh for this service so we create the service manager...
             Logger::info(std::format("We are a member of the {} mesh", serviceName));

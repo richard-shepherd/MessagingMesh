@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
-#include "ParsedMeshConfig.h"
+#include <map>
+#include "GatewayInfo.h"
 
 namespace MessagingMesh
 {
@@ -26,7 +27,7 @@ namespace MessagingMesh
         void initialize();
 
         // Returns a vector of gateway-info for peer-gateways in the mesh for the service-name specified.
-        ParsedMeshConfig::VecGatewayInfo getPeerGatewayInfos(const std::string& serviceName) const;
+        VecGatewayInfo getPeerGatewayInfos(const std::string& serviceName) const;
 
     // Private functions...
     private:
@@ -44,8 +45,8 @@ namespace MessagingMesh
         // The parent gateway.
         Gateway& m_gateway;
 
-        // Mesh config...
-        ParsedMeshConfig m_meshConfig;
+        // Vector of gateway-infos for each service in the mesh, keyed by service name.
+        std::map<std::string, VecGatewayInfo> m_gatewayInfos;
     };
 } // namespace
 

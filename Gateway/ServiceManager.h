@@ -4,6 +4,7 @@
 #include <SharedAliases.h>
 #include <Socket.h>
 #include "SubjectMatchingEngine.h"
+#include "MeshGatewayConnection.h"
 
 namespace MessagingMesh
 {
@@ -85,6 +86,9 @@ namespace MessagingMesh
 
         // Maps sent messages to clients who are subscribed to them...
         SubjectMatchingEngine m_subjectMatchingEngine;
+
+        // Peer gateways in the mesh, keyed by GatewayInfo.makeKey()...
+        std::map<std::string, MeshGatewayConnection> m_meshGatewayConnections;
     };
 } // namespace
 

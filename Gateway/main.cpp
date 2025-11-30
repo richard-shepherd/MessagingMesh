@@ -2,6 +2,7 @@
 #include <Logger.h>
 #include <Utils.h>
 #include <UVUtils.h>
+#include <CLI/CLI11.hpp>
 #include "Gateway.h"
 #include "Tests_Gateway.h"
 using namespace MessagingMesh;
@@ -17,13 +18,24 @@ void onMessageLogged(Logger::LogLevel logLevel, const std::string& message)
 // Main.
 int main(int argc, char** argv)
 {
-    if (argc >= 2 && strcmp("-test", argv[1]) == 0)
+    // Command-line parsing...
+    CLI::App app("Gateway");
+    argv = app.ensure_utf8(argv);
+    bool runTests = false;
+    int port;
+    app.add_flag("-t,--test", runTests, "Runs tests");
+    app.add_option("-p,--port", port, "Listening port")->default_val(5050);
+    CLI11_PARSE(app, argc, argv);
+
+    if (runTests)  
     {
         // We run tests...
         Tests_Gateway::runAll();
     }
     else
     {
+        // We run the gateway.
+
         // We set the thread name...
         UVUtils::setThreadName("MAIN");
 
@@ -31,7 +43,7 @@ int main(int argc, char** argv)
         Logger::registerCallback(onMessageLogged);
 
         // We run the gateway...
-        Gateway gateway(5050);
+        Gateway gateway(port);
 
         Logger::info("Press Enter to exit");
         std::cin.get();

@@ -37,7 +37,11 @@ void ServiceManager::initialize()
 
     // We create mesh gateway connections to each peer gateway in the mesh...
     auto peerGatewayInfos = m_meshManager.getPeerGatewayInfos(m_serviceName);
-
+    for (const auto& peerGatewayInfo : peerGatewayInfos)
+    {
+        auto key = peerGatewayInfo.makeKey();
+        m_meshGatewayConnections.emplace(key, peerGatewayInfo);
+    }
 }
 
 // Registers a client socket to be managed for this service.

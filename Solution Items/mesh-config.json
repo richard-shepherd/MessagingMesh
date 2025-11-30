@@ -7,6 +7,10 @@
         {
             "Hostname": "RSS-XPS17",
             "Port": 5051
+        },
+        {
+            "Hostname": "RSS-XPS17",
+            "Port": 5052
         }
     ],
     "APOLLO": [
