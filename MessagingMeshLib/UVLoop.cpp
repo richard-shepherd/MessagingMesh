@@ -11,15 +11,11 @@ UVLoop::UVLoop(const std::string& name) :
 {
     Logger::info("Creating UV loop: " + m_name);
 
-    // We ensure all data set before this call is 'visible' to the UV thread...
-    std::atomic_thread_fence(std::memory_order_release);
-
     // We create the thread...
     uv_thread_create(
         &m_threadHandle, 
         [](void* args)
         {
-            std::atomic_thread_fence(std::memory_order_acquire);  // See comment above
             auto self = (UVLoop*)args;
             self->threadEntryPoint();
         },
