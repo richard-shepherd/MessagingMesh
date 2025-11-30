@@ -154,8 +154,13 @@ void Socket::accept(uv_stream_t* pServer)
 // Connects a client socket to the IP address and port specified.
 void Socket::connectIP(const std::string& ipAddress, int port)
 {
-    m_name = std::format("{}:{}", ipAddress, port);
-    Logger::info(std::format("Connecting to {}", m_name));
+    // If the name has not already been set we create it.
+    // (It could be set already if the connection was requested by (hostname, port) which then resolved to an IP address.)
+    if (m_name.empty())
+    {
+        m_name = std::format("{}:{}", ipAddress, port);
+        Logger::info(std::format("Connecting to {}", m_name));
+    }
 
     // We create the UV socket...
     createSocket();
@@ -182,7 +187,8 @@ void Socket::connect(const std::string& hostname, int port)
 {
     try
     {
-        Logger::info(std::format("Connecting to: {}:{}", hostname, port));
+        m_name = std::format("{}:{}", hostname, port);
+        Logger::info(std::format("Connecting to: {}", m_name));
 
         // We create a context to use in callbacks...
         auto pContext = new connect_hostname_t;
