@@ -57,6 +57,12 @@ namespace MessagingMesh
         // Destructor.
         ~Gateway();
 
+        // Gets the port on which the gateway is listening for client connections.
+        int getPort() const { return m_port; }
+
+        // Gets or creates a service-manager for the specified service.
+        ServiceManager& getOrCreateServiceManager(const std::string& service);
+
     // Socket::ICallback implementation...
     private:
         // Called when a new client connection has been made to a listening socket.

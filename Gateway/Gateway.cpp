@@ -40,7 +40,7 @@ void Gateway::initialize()
         m_listeningSocket->listen(m_port);
 
         // We create the mesh manager...
-        m_pMeshManager = std::make_unique<MeshManager>(m_port);
+        m_pMeshManager = std::make_unique<MeshManager>(*this);
     }
     catch (const std::exception& ex)
     {
@@ -130,16 +130,22 @@ void Gateway::onConnect(const std::string& socketName, const NetworkMessageHeade
     auto pSocket = it_pendingConnections->second;
 
     // We get or create the ServiceManager for the service requested by the client...
-    auto it_serviceManagers = m_serviceManagers.find(service);
-    if (it_serviceManagers == m_serviceManagers.end())
-    {
-        it_serviceManagers = m_serviceManagers.insert(it_serviceManagers, { service, ServiceManager(service) });
-    }
-    auto& serviceManager = it_serviceManagers->second;
+    auto& serviceManager = getOrCreateServiceManager(service);
     
     // We move the socket to the service-manager...
     serviceManager.registerSocket(pSocket);
 
     // The socket is now managed by the service-manager, so we remove it from our pending-collection...
     m_pendingConnections.erase(socketName);
+}
+
+// Gets or creates a service-manager for the specified service.
+ServiceManager& Gateway::getOrCreateServiceManager(const std::string& service)
+{
+    auto it_serviceManagers = m_serviceManagers.find(service);
+    if (it_serviceManagers == m_serviceManagers.end())
+    {
+        it_serviceManagers = m_serviceManagers.insert(it_serviceManagers, { service, ServiceManager(service) });
+    }
+    return it_serviceManagers->second;
 }

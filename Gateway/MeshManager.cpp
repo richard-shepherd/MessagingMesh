@@ -3,16 +3,19 @@
 #include <fstream>
 #include <MMUtils.h>
 #include <Logger.h>
+#include "Gateway.h"
 using namespace MessagingMesh;
 using json = nlohmann::json;
 
 // Constructor.
-MeshManager::MeshManager(int gatewayPort) :
-    m_gatewayPort(gatewayPort)
+MeshManager::MeshManager(Gateway& gateway) :
+    m_gateway(gateway)
 {
     // We parse and enrich the mesh config...
     parseMeshConfig();
     enrichConfig();
+
+    // We pre-create service managers for meshes to which we belong...
 }
 
 // Destructor.
@@ -69,7 +72,7 @@ void MeshManager::enrichConfig()
             }
 
             // We check whether this entry is 'us' or a peer...
-            if (gatewayInfo.IPAddress == gatewayIPAddress && gatewayInfo.Port == m_gatewayPort)
+            if (gatewayInfo.IPAddress == gatewayIPAddress && gatewayInfo.Port == m_gateway.getPort())
             {
                 gatewayInfo.PeerType = ParsedMeshConfig::PeerType::SELF;
             }
@@ -79,5 +82,11 @@ void MeshManager::enrichConfig()
             }
         }
     }
+}
+
+// Creates service-managers for meshes to which we belong.
+void MeshManager::createServiceManagers()
+{
+
 }
 
