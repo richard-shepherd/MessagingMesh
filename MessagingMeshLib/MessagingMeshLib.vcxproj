@@ -62,9 +62,6 @@
     <ClCompile Include="UVUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Snippets.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="_PostBuild.cmd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

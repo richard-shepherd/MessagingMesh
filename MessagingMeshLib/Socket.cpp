@@ -269,11 +269,13 @@ void Socket::onConnectCompleted(uv_connect_t* pRequest, int status)
         delete pRequest;
         if (status < 0)
         {
-            Logger::error(std::format("Connection error: {}", uv_strerror(status)));
+            Logger::error(std::format("Connection error: {}, {}", m_name, uv_strerror(status)));
+            if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_FAILED);
             return;
         }
 
-        // We start reading and writing...
+        // The connection succeeded, so we start reading and writing...
+        if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_SUCCEEDED);
         onSocketConnected();
     }
     catch (const std::exception& ex)

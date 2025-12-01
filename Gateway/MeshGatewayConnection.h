@@ -21,16 +21,13 @@ namespace MessagingMesh
     // Socket::ICallback implementation
     private:
         // Called when a new client connection has been made to a listening socket.
-        // Called on the UV loop thread.
         void onNewConnection(SocketPtr /*pClientSocket*/) {}
 
         // Called when data has been received on the socket.
-        // Called on the UV loop thread.
         void onDataReceived(Socket* /*pSocket*/, BufferPtr /*pBuffer*/) {}
 
-        // Called when the connection status has changed.
-        // Called on the socket's thread.
-        virtual void onConnectionStatusChanged(Socket* /*pSocket*/, Socket::ConnectionStatus /*connectionStatus*/) {}
+        // Called when the socket connection status has changed.
+        virtual void onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus);
 
         // Called when the movement of the socket to a new UV loop has been completed.
         void onMoveToLoopComplete(Socket* /*pSocket*/) {}

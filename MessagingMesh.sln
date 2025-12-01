@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Solution Items\mesh-config.json = Solution Items\mesh-config.json
 		Solution Items\Notes.txt = Solution Items\Notes.txt
 		Solution Items\Project overview.txt = Solution Items\Project overview.txt
+		Solution Items\Snippets.txt = Solution Items\Snippets.txt
 	EndProjectSection
 EndProject
 Global

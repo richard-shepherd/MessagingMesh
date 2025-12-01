@@ -28,3 +28,20 @@ void MeshGatewayConnection::connect()
 {
     m_pSocket->connect(m_gatewayInfo.Hostname, m_gatewayInfo.Port);
 }
+
+// Called when the socket connection status has changed.
+void MeshGatewayConnection::onConnectionStatusChanged(Socket* /*pSocket*/, Socket::ConnectionStatus connectionStatus)
+{
+    try
+    {
+        if (connectionStatus == Socket::ConnectionStatus::CONNECTION_FAILED)
+        {
+            Logger::warn("CONNECTION FAILED!!!");
+        }
+    }
+    catch (const std::exception& ex)
+    {
+        Logger::error(std::format("{}: {}", __func__, ex.what()));
+    }
+}
+
