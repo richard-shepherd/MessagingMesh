@@ -1,4 +1,5 @@
 #include "ServiceManager.h"
+#include <algorithm>
 #include <format>
 #include <UVLoop.h>
 #include <Socket.h>
@@ -30,20 +31,6 @@ ServiceManager::~ServiceManager()
 {
 }
 
-// Initializes the service manager in the context of the service's UV loop.
-void ServiceManager::initialize()
-{
-    Logger::info(std::format("Initializing ServiceManager for {}", m_serviceName));
-
-    // We create mesh gateway connections to each peer gateway in the mesh...
-    auto peerGatewayInfos = m_meshManager.getPeerGatewayInfos(m_serviceName);
-    for (const auto& peerGatewayInfo : peerGatewayInfos)
-    {
-        auto key = peerGatewayInfo.makeKey();
-        m_meshGatewayConnections.try_emplace(key, m_pUVLoop, peerGatewayInfo);
-    }
-}
-
 // Registers a client socket to be managed for this service.
 void ServiceManager::registerSocket(SocketPtr pSocket)
 {
@@ -55,6 +42,34 @@ void ServiceManager::registerSocket(SocketPtr pSocket)
 
     // We move the socket to our UV loop...
     pSocket->moveToLoop(m_pUVLoop);
+}
+
+// Called when the connection status has changed for a mesh gateway connection.
+void ServiceManager::onMeshGatewayConnectionStatusChanged()
+{
+    // We check if we are connected to all gateways in the mesh...
+    auto allConnected = std::all_of(
+        m_meshGatewayConnections.begin(), 
+        m_meshGatewayConnections.end(), 
+        [](const auto& pair) {return pair.second.getConnectionStatus() == Socket::ConnectionStatus::CONNECTION_SUCCEEDED;});
+    if (allConnected)
+    {
+        Logger::info("All mesh gateways connected");
+    }
+}
+
+// Initializes the service manager in the context of the service's UV loop.
+void ServiceManager::initialize()
+{
+    Logger::info(std::format("Initializing ServiceManager for {}", m_serviceName));
+
+    // We create mesh gateway connections to each peer gateway in the mesh...
+    auto peerGatewayInfos = m_meshManager.getPeerGatewayInfos(m_serviceName);
+    for (const auto& peerGatewayInfo : peerGatewayInfos)
+    {
+        auto key = peerGatewayInfo.makeKey();
+        m_meshGatewayConnections.try_emplace(key, m_pUVLoop, *this, peerGatewayInfo);
+    }
 }
 
 // Called when data has been received on the socket.

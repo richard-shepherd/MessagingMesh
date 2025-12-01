@@ -39,6 +39,9 @@ namespace MessagingMesh
         // Registers a client socket to be managed for this service.
         void registerSocket(SocketPtr pSocket);
 
+        // Called when the connection status has changed for a mesh gateway connection.
+        void onMeshGatewayConnectionStatusChanged();
+
     // Socket::ICallback implementation...
     private:
         // Called when a new client connection has been made to a listening socket.

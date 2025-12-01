@@ -5,6 +5,9 @@
 
 namespace MessagingMesh
 {
+    // Forward declarations...
+    class ServiceManager;
+
     /// <summary>
     /// Manages a connection to a peer gateway in the mesh.
     /// </summary>
@@ -13,10 +16,13 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        MeshGatewayConnection(UVLoopPtr pUVLoop, const GatewayInfo& gatewayInfo);
+        MeshGatewayConnection(UVLoopPtr pUVLoop, ServiceManager& serviceManager, const GatewayInfo& gatewayInfo);
 
         // Destructor.
         ~MeshGatewayConnection();
+
+        // Gets the connection status.
+        Socket::ConnectionStatus getConnectionStatus() const { return m_connectionStatus; }
 
     // Socket::ICallback implementation
     private:
@@ -48,6 +54,9 @@ namespace MessagingMesh
         // The UV loop we are running in...
         UVLoopPtr m_pUVLoop;
 
+        // The service manager for this mesh...
+        ServiceManager& m_serviceManager;
+
         // Gateway info (hostname, port etc) for the peer gateway we connect to...
         GatewayInfo m_gatewayInfo;
 
@@ -56,6 +65,9 @@ namespace MessagingMesh
 
         // The socket connection to the peer gateway...
         SocketPtr m_pSocket;
+
+        // The status of our connection...
+        Socket::ConnectionStatus m_connectionStatus = Socket::ConnectionStatus::WAITING;
     };
 } // namespace
 

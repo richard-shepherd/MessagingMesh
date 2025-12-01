@@ -25,6 +25,7 @@ namespace MessagingMesh
         // Passed with the onConnectionStatusChanged callback.
         enum class ConnectionStatus
         {
+            WAITING,
             CONNECTION_SUCCEEDED,
             CONNECTION_FAILED,
             DISCONNECTED

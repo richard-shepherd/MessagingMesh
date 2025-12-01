@@ -1,11 +1,13 @@
 #include "MeshGatewayConnection.h"
 #include <Logger.h>
 #include <UVLoop.h>
+#include "ServiceManager.h"
 using namespace MessagingMesh;
 
 // Constructor.
-MeshGatewayConnection::MeshGatewayConnection(UVLoopPtr pUVLoop, const GatewayInfo& gatewayInfo) :
+MeshGatewayConnection::MeshGatewayConnection(UVLoopPtr pUVLoop, ServiceManager& serviceManager, const GatewayInfo& gatewayInfo) :
     m_pUVLoop(pUVLoop),
+    m_serviceManager(serviceManager),
     m_gatewayInfo(gatewayInfo)
 {
     m_peerName = std::format("{}:{}", gatewayInfo.Hostname, gatewayInfo.Port);
@@ -42,6 +44,8 @@ void MeshGatewayConnection::onConnectionStatusChanged(Socket* /*pSocket*/, Socke
 {
     try
     {
+        // We note the status and act on it...
+        m_connectionStatus = connectionStatus;
         switch (connectionStatus)
         {
         case Socket::ConnectionStatus::CONNECTION_SUCCEEDED:
@@ -52,6 +56,9 @@ void MeshGatewayConnection::onConnectionStatusChanged(Socket* /*pSocket*/, Socke
             onConnectionFailed(message);
             break;
         }
+
+        // We notify the service-manager that our connection status has changed...
+        m_serviceManager.onMeshGatewayConnectionStatusChanged();
     }
     catch (const std::exception& ex)
     {
