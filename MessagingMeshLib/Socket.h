@@ -20,6 +20,16 @@ namespace MessagingMesh
     /// </summary>
     class Socket
     {
+    // Public types...
+    public:
+        // Passed with the onConnectionStatusChanged callback.
+        enum class ConnectionStatus
+        {
+            CONNECTION_SUCCEEDED,
+            CONNECTION_FAILED,
+            DISCONNECTED
+        };
+
     public:
         // Interface for socket callbacks.
         class ICallback
@@ -33,8 +43,8 @@ namespace MessagingMesh
             // Called on the UV loop thread.
             virtual void onDataReceived(Socket* pSocket, BufferPtr pBuffer) = 0;
 
-            // Called when a socket has been disconnected.
-            virtual void onDisconnected(Socket* pSocket) = 0;
+            // Called when the connection status has changed.
+            virtual void onConnectionStatusChanged(Socket* pSocket, ConnectionStatus connectionStatus) = 0;
 
             // Called when the movement of the socket to a new UV loop has been completed.
             virtual void onMoveToLoopComplete(Socket* pSocket) = 0;

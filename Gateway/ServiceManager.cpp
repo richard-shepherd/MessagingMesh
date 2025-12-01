@@ -40,7 +40,7 @@ void ServiceManager::initialize()
     for (const auto& peerGatewayInfo : peerGatewayInfos)
     {
         auto key = peerGatewayInfo.makeKey();
-        m_meshGatewayConnections.emplace(key, peerGatewayInfo);
+        m_meshGatewayConnections.try_emplace(key, m_pUVLoop, peerGatewayInfo);
     }
 }
 
@@ -95,18 +95,18 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
     }
 }
 
-// Called when a socket has been disconnected.
-// Called on the socket's thread.
-void ServiceManager::onDisconnected(Socket* pSocket)
+
+// Called when the connection status has changed.
+void ServiceManager::onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus)
 {
     try
     {
-        // We remove any active subscriptions for the client...
-        auto& socketName = pSocket->getName();
-        m_subjectMatchingEngine.removeAllSubscriptions(socketName);
-
-        // We remove the socket from the collection of client sockets...
-        m_clientSockets.erase(socketName);
+        switch (connectionStatus)
+        {
+        case Socket::ConnectionStatus::DISCONNECTED:
+            onDisconnected(pSocket);
+            break;
+        }
     }
     catch (const std::exception& ex)
     {
@@ -125,6 +125,24 @@ void ServiceManager::onMoveToLoopComplete(Socket* pSocket)
         auto& header = connectMessage.getHeader();
         header.setAction(NetworkMessageHeader::Action::ACK);
         MMUtils::sendNetworkMessage(connectMessage, pSocket);
+    }
+    catch (const std::exception& ex)
+    {
+        Logger::error(std::format("{}: {}", __func__, ex.what()));
+    }
+}
+
+// Called when a socket has been disconnected.
+void ServiceManager::onDisconnected(Socket* pSocket)
+{
+    try
+    {
+        // We remove any active subscriptions for the client...
+        auto& socketName = pSocket->getName();
+        m_subjectMatchingEngine.removeAllSubscriptions(socketName);
+
+        // We remove the socket from the collection of client sockets...
+        m_clientSockets.erase(socketName);
     }
     catch (const std::exception& ex)
     {

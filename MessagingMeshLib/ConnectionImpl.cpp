@@ -294,20 +294,6 @@ void ConnectionImpl::onDataReceived(Socket* /*pSocket*/, BufferPtr pBuffer)
     }
 }
 
-// Called when a socket has been disconnected.
-void ConnectionImpl::onDisconnected(Socket* pSocket)
-{
-    try
-    {
-        // RSSTODO: REMOVE THIS!!!
-        Logger::info(std::format("ConnectionImpl::onDisconnected, socket-name={}", pSocket->getName()));
-    }
-    catch (const std::exception& ex)
-    {
-        Logger::error(std::format("{}: {}", __func__, ex.what()));
-    }
-}
-
 // Called when we see the ACK message from the Gateway.
 void ConnectionImpl::onAck()
 {

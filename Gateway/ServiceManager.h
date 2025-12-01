@@ -46,12 +46,10 @@ namespace MessagingMesh
         void onNewConnection(SocketPtr /*pClientSocket*/) {}
 
         // Called when data has been received on the socket.
-        // Called on the thread of the client socket.
         void onDataReceived(Socket* pSocket, BufferPtr pBuffer);
 
-        // Called when a socket has been disconnected.
-        // Called on the socket's thread.
-        void onDisconnected(Socket* pSocket);
+        // Called when the connection status has changed.
+        virtual void onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus);
 
         // Called when the movement of the socket to a new UV loop has been completed.
         void onMoveToLoopComplete(Socket* pSocket);
@@ -69,6 +67,9 @@ namespace MessagingMesh
 
         // Called when we receive a SEND_MESSAGE message.
         void onMessage(const NetworkMessageHeader& header, BufferPtr pBuffer);
+
+        // Called when a socket has been disconnected.
+        void onDisconnected(Socket* pSocket);
 
     // Private data...
     private:

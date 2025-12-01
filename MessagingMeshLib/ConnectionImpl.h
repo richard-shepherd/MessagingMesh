@@ -65,8 +65,8 @@ namespace MessagingMesh
         // Called on the UV loop thread.
         void onDataReceived(Socket* pSocket, BufferPtr pBuffer);
 
-        // Called when a socket has been disconnected.
-        void onDisconnected(Socket* pSocket);
+        // Called when the connection status has changed.
+        virtual void onConnectionStatusChanged(Socket* /*pSocket*/, Socket::ConnectionStatus /*connectionStatus*/) {};
 
         // Called when the movement of the socket to a new UV loop has been completed.
         void onMoveToLoopComplete(Socket* /*pSocket*/) {}

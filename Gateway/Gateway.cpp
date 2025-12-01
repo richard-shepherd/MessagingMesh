@@ -92,22 +92,25 @@ void Gateway::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
     }
 }
 
-// Called when a socket has been disconnected.
+// Called when the connection status has changed.
 // Called on the socket's thread.
-void Gateway::onDisconnected(Socket* pSocket)
+void Gateway::onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus)
 {
     try
     {
-        // We do not usually expect to get a socket disconnection here.
-        // In most cases a client socket will have sent the CONNECT message and been
-        // moved to be managed by a ServiceManager. We can get the disconnection here
-        // if the socket has disconnected more-or-less immediately after the original
-        // connection, before we get the CONNECT message.
-        // 
-        // If this happens, we remove the socket from the pending-collection. This 
-        // releases our reference to it, allowing it to be destructed.
-        auto& socketName = pSocket->getName();
-        m_pendingConnections.erase(socketName);
+        if (connectionStatus == Socket::ConnectionStatus::DISCONNECTED)
+        {
+            // We do not usually expect to get a socket disconnection here.
+            // In most cases a client socket will have sent the CONNECT message and been
+            // moved to be managed by a ServiceManager. We can get the disconnection here
+            // if the socket has disconnected more-or-less immediately after the original
+            // connection, before we get the CONNECT message.
+            // 
+            // If this happens, we remove the socket from the pending-collection. This 
+            // releases our reference to it, allowing it to be destructed.
+            auto& socketName = pSocket->getName();
+            m_pendingConnections.erase(socketName);
+        }
     }
     catch (const std::exception& ex)
     {

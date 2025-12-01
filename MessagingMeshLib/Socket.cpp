@@ -637,7 +637,7 @@ void Socket::onDataReceived(uv_stream_t* /*pStream*/, ssize_t nread, const uv_bu
             Logger::info(std::format("onDataReceived: {}", error));
             if (nread == UV_EOF || nread == UV_ECONNRESET)
             {
-                if (m_pCallback) m_pCallback->onDisconnected(this);
+                if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::DISCONNECTED);
             }
             return;
         }
