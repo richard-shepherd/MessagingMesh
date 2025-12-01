@@ -309,9 +309,12 @@ namespace MessagingMeshLib.NET
 
                 // If there are no subscriptions left we clean up the subscription and
                 // note that we need to unsubscribe on the gateway...
-                m_subscriptionsBySubject.Remove(subject);
-                m_subscriptionsByID.Remove(subscriptionInfo.SubscriptionID);
-                removeGatewaySubscription = true;
+                if(subscriptionInfo.CallbackInfos.Count == 0)
+                {
+                    m_subscriptionsBySubject.Remove(subject);
+                    m_subscriptionsByID.Remove(subscriptionInfo.SubscriptionID);
+                    removeGatewaySubscription = true;
+                }
             }
 
             // We remove the gateway subscription if needed...
