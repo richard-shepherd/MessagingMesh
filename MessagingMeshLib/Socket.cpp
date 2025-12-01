@@ -269,13 +269,12 @@ void Socket::onConnectCompleted(uv_connect_t* pRequest, int status)
         delete pRequest;
         if (status < 0)
         {
-            Logger::error(std::format("Connection error: {}, {}", m_name, uv_strerror(status)));
-            if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_FAILED);
+            if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_FAILED, uv_strerror(status));
             return;
         }
 
         // The connection succeeded, so we start reading and writing...
-        if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_SUCCEEDED);
+        if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_SUCCEEDED, "");
         onSocketConnected();
     }
     catch (const std::exception& ex)
@@ -639,7 +638,7 @@ void Socket::onDataReceived(uv_stream_t* /*pStream*/, ssize_t nread, const uv_bu
             Logger::info(std::format("onDataReceived: {}", error));
             if (nread == UV_EOF || nread == UV_ECONNRESET)
             {
-                if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::DISCONNECTED);
+                if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::DISCONNECTED, error);
             }
             return;
         }

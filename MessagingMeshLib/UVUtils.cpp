@@ -123,3 +123,38 @@ std::string UVUtils::getThreadName()
     uv_thread_getname(&threadID, &threadName[0], sizeof(threadName));
     return std::string(threadName);
 }
+
+// Runs a single-shot timer.
+void UVUtils::runSingleShotTimer(uv_loop_t* pLoop, int millisecondsTimeout, std::function<void()> callback)
+{
+    uv_timer_t* pTimer = new uv_timer_t();
+    uv_timer_init(pLoop, pTimer);
+    pTimer->data = new std::function<void()>(callback);
+    uv_timer_start(
+        pTimer,
+        [](uv_timer_t* handle)
+        {
+            // We call the callback...
+            auto pCallback = static_cast<std::function<void()>*>(handle->data);
+            try
+            {
+                (*pCallback)();
+            }
+            catch (const std::exception& ex)
+            {
+                Logger::error(ex.what());
+            }
+
+            // We clean up the timer and the allocated callback...
+            delete pCallback;
+            uv_close(
+                (uv_handle_t*)handle, 
+                [](uv_handle_t* handle) 
+                {
+                    delete (uv_timer_t*)handle;
+                }
+            );
+        },
+        millisecondsTimeout,
+        0);
+}

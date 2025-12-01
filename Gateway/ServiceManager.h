@@ -49,7 +49,7 @@ namespace MessagingMesh
         void onDataReceived(Socket* pSocket, BufferPtr pBuffer);
 
         // Called when the connection status has changed.
-        virtual void onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus);
+        virtual void onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus, const std::string& message);
 
         // Called when the movement of the socket to a new UV loop has been completed.
         void onMoveToLoopComplete(Socket* pSocket);

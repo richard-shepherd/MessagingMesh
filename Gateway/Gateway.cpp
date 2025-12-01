@@ -94,7 +94,7 @@ void Gateway::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
 
 // Called when the connection status has changed.
 // Called on the socket's thread.
-void Gateway::onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus)
+void Gateway::onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus, const std::string& /*message*/)
 {
     try
     {

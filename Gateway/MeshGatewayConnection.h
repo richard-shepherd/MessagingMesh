@@ -27,7 +27,7 @@ namespace MessagingMesh
         void onDataReceived(Socket* /*pSocket*/, BufferPtr /*pBuffer*/) {}
 
         // Called when the socket connection status has changed.
-        virtual void onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus);
+        virtual void onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus, const std::string& message);
 
         // Called when the movement of the socket to a new UV loop has been completed.
         void onMoveToLoopComplete(Socket* /*pSocket*/) {}
@@ -37,13 +37,22 @@ namespace MessagingMesh
         // Connects to the peer gateway.
         void connect();
 
+        // Called when the peer socket connection has succeeded.
+        void onConnectionSucceeded();
+
+        // Called when the peer socket connection has failed.
+        void onConnectionFailed(const std::string& message);
+
     // Private data...
     private:
         // The UV loop we are running in...
         UVLoopPtr m_pUVLoop;
 
         // Gateway info (hostname, port etc) for the peer gateway we connect to...
-        const GatewayInfo& m_gatewayInfo;
+        GatewayInfo m_gatewayInfo;
+
+        // The name of the peer (hostname:port)...
+        std::string m_peerName;
 
         // The socket connection to the peer gateway...
         SocketPtr m_pSocket;

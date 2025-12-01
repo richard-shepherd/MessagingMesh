@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <functional>
 #include <libuv/uv.h>
 #include "Buffer.h"
 
@@ -70,6 +71,9 @@ namespace MessagingMesh
 
         // Gets the name of the current thread.
         static std::string getThreadName();
+
+        // Runs a single-shot timer.
+        static void runSingleShotTimer(uv_loop_t* pLoop, int millisecondsTimeout, std::function<void()> callback);
 
     // Private functions...
     private:

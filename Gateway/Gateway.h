@@ -76,7 +76,7 @@ namespace MessagingMesh
 
         // Called when the connection status has changed.
         // Called on the socket's thread.
-        virtual void onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus);
+        virtual void onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus, const std::string& message);
 
         // Called when the movement of the socket to a new UV loop has been completed.
         void onMoveToLoopComplete(Socket* /*pSocket*/) {}

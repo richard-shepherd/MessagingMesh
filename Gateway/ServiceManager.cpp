@@ -97,7 +97,7 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
 
 
 // Called when the connection status has changed.
-void ServiceManager::onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus)
+void ServiceManager::onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus, const std::string& /*message*/)
 {
     try
     {

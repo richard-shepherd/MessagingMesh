@@ -294,6 +294,25 @@ void ConnectionImpl::onDataReceived(Socket* /*pSocket*/, BufferPtr pBuffer)
     }
 }
 
+// Called when the connection status has changed.
+void ConnectionImpl::onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus, const std::string& message)
+{
+    switch (connectionStatus)
+    {
+    case Socket::ConnectionStatus::CONNECTION_SUCCEEDED:
+        Logger::info(std::format("Connection succeeded: {}", pSocket->getName()));
+        break;
+
+    case Socket::ConnectionStatus::CONNECTION_FAILED:
+        Logger::warn(std::format("Connection failed: {} ({})", pSocket->getName(), message));
+        break;
+
+    case Socket::ConnectionStatus::DISCONNECTED:
+        Logger::info(std::format("Socket disconnected: {} ({})", pSocket->getName(), message));
+        break;
+    }
+}
+
 // Called when we see the ACK message from the Gateway.
 void ConnectionImpl::onAck()
 {
