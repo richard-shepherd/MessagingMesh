@@ -274,8 +274,12 @@ void Socket::onConnectCompleted(uv_connect_t* pRequest, int status)
         }
 
         // The connection succeeded, so we start reading and writing...
-        if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_SUCCEEDED, "");
         onSocketConnected();
+
+        // We notify that the socket is connected.
+        // NOTE: This must be done after the line above to ensure that actions taken by the callback 
+        //       on the socket happen after it is fully connected.
+        if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_SUCCEEDED, "");
     }
     catch (const std::exception& ex)
     {

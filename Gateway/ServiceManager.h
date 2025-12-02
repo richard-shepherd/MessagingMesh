@@ -37,7 +37,10 @@ namespace MessagingMesh
         ~ServiceManager();
 
         // Registers a client socket to be managed for this service.
-        void registerSocket(SocketPtr pSocket);
+        void registerSocket(SocketPtr pSocket, bool isMeshPeer);
+
+        // Gets the service name.
+        const std::string& getServiceName() const { return m_serviceName; }
 
         // Called when the connection status has changed for a mesh gateway connection.
         void onMeshGatewayConnectionStatusChanged();

@@ -23,7 +23,8 @@ namespace MessagingMesh
             ACK,
             SUBSCRIBE,
             UNSUBSCRIBE,
-            SEND_MESSAGE
+            SEND_MESSAGE,
+            CONNECT_MESH_PEER
         };
 
     // Public methods...

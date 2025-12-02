@@ -32,7 +32,7 @@ ServiceManager::~ServiceManager()
 }
 
 // Registers a client socket to be managed for this service.
-void ServiceManager::registerSocket(SocketPtr pSocket)
+void ServiceManager::registerSocket(SocketPtr pSocket, bool /*isMeshPeer*/)
 {
     // We add the socket to the collection of active clients...
     m_clientSockets[pSocket->getName()] = pSocket;

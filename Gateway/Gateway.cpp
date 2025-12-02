@@ -82,6 +82,7 @@ void Gateway::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
         switch (action)
         {
         case NetworkMessageHeader::Action::CONNECT:
+        case NetworkMessageHeader::Action::CONNECT_MESH_PEER:
             onConnect(pSocket->getName(), header);
             break;
         }
@@ -123,7 +124,21 @@ void Gateway::onConnect(const std::string& socketName, const NetworkMessageHeade
 {
     // We log the connect request...
     auto& service = header.getSubject();
-    Logger::info(std::format("Received CONNECT request from {} for service {}", socketName, service));
+    bool isMeshPeer = false;
+    std::string strAction;
+    switch (header.getAction())
+    {
+    case NetworkMessageHeader::Action::CONNECT:
+        isMeshPeer = false;
+        strAction = "CONNECT";
+        break;
+
+    case NetworkMessageHeader::Action::CONNECT_MESH_PEER:
+        isMeshPeer = true;
+        strAction = "CONNECT_MESH_PEER";
+        break;
+    }
+    Logger::info(std::format("Received {} request from {} for service {}", strAction, socketName, service));
 
     // We find the socket from the pending-collection...
     auto it_pendingConnections = m_pendingConnections.find(socketName);
@@ -138,7 +153,7 @@ void Gateway::onConnect(const std::string& socketName, const NetworkMessageHeade
     auto& serviceManager = getOrCreateServiceManager(service);
     
     // We move the socket to the service-manager...
-    serviceManager.registerSocket(pSocket);
+    serviceManager.registerSocket(pSocket, isMeshPeer);
 
     // The socket is now managed by the service-manager, so we remove it from our pending-collection...
     m_pendingConnections.erase(socketName);

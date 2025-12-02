@@ -1,6 +1,7 @@
 #include "MeshGatewayConnection.h"
 #include <Logger.h>
 #include <UVLoop.h>
+#include <NetworkMessage.h>
 #include "ServiceManager.h"
 using namespace MessagingMesh;
 
@@ -70,6 +71,13 @@ void MeshGatewayConnection::onConnectionStatusChanged(Socket* /*pSocket*/, Socke
 void MeshGatewayConnection::onConnectionSucceeded()
 {
     Logger::info(std::format("Connection to mesh peer {} succeeded", m_peerName));
+
+    // We send a CONNECT message...
+    NetworkMessage networkMessage;
+    auto& header = networkMessage.getHeader();
+    header.setAction(NetworkMessageHeader::Action::CONNECT_MESH_PEER);
+    header.setSubject(m_serviceManager.getServiceName());
+    MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 }
 
 // Called when the peer socket connection has failed.
