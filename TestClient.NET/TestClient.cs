@@ -86,7 +86,7 @@ namespace TestClient.NET
             // We connect to the gateway...
             var connectionParams = new MM.ConnectionParams
             {
-                GatewayHost = "localhost",
+                GatewayHost = "127.0.0.1",
                 GatewayPort = 5050,
                 Service = "VULCAN"
             };
@@ -111,7 +111,7 @@ namespace TestClient.NET
             // We connect to the gateway...
             var connectionParams = new MM.ConnectionParams
             {
-                GatewayHost = "localhost",
+                GatewayHost = "127.0.0.1",
                 GatewayPort = 5050,
                 Service = "VULCAN"
             };
@@ -136,7 +136,7 @@ namespace TestClient.NET
             // We connect to the gateway...
             var connectionParams = new MM.ConnectionParams
             {
-                GatewayHost = "localhost",
+                GatewayHost = "127.0.0.1",
                 GatewayPort = 5050,
                 Service = "VULCAN"
             };
@@ -166,7 +166,7 @@ namespace TestClient.NET
             // We connect to the gateway...
             var connectionParams = new MM.ConnectionParams
             {
-                GatewayHost = "localhost",
+                GatewayHost = "127.0.0.1",
                 GatewayPort = 5050,
                 Service = "VULCAN"
             };
@@ -201,7 +201,7 @@ namespace TestClient.NET
             // We connect to the gateway...
             var connectionParams = new MM.ConnectionParams
             {
-                GatewayHost = "localhost",
+                GatewayHost = "127.0.0.1",
                 GatewayPort = 5050,
                 Service = "VULCAN"
             };
@@ -232,7 +232,7 @@ namespace TestClient.NET
             // We connect to the gateway...
             var connectionParams = new MM.ConnectionParams
             {
-                GatewayHost = "localhost",
+                GatewayHost = "127.0.0.1",
                 GatewayPort = 5050,
                 Service = "VULCAN"
             };

@@ -36,7 +36,7 @@ void publish()
 {
     // We connect to the gateway...
     MM::ConnectionParams connectionParams;
-    connectionParams.GatewayHost = "localhost";
+    connectionParams.GatewayHost = "127.0.0.1";
     connectionParams.GatewayPort = 5050;
     connectionParams.Service = "VULCAN";
     MM::Connection connection(connectionParams);
@@ -85,7 +85,7 @@ void subscribe()
 {
     // We connect to the gateway...
     MM::ConnectionParams connectionParams;
-    connectionParams.GatewayHost = "localhost";
+    connectionParams.GatewayHost = "127.0.0.1";
     connectionParams.GatewayPort = 5050;
     connectionParams.Service = "VULCAN";
     MM::Connection connection(connectionParams);
@@ -105,7 +105,7 @@ void client()
 {
     // We connect to the gateway...
     MM::ConnectionParams connectionParams;
-    connectionParams.GatewayHost = "localhost";
+    connectionParams.GatewayHost = "127.0.0.1";
     connectionParams.GatewayPort = 5050;
     connectionParams.Service = "VULCAN";
     MM::Connection connection(connectionParams);
@@ -133,7 +133,7 @@ void server()
 {
     // We connect to the gateway...
     MM::ConnectionParams connectionParams;
-    connectionParams.GatewayHost = "localhost";
+    connectionParams.GatewayHost = "127.0.0.1";
     connectionParams.GatewayPort = 5050;
     connectionParams.Service = "VULCAN";
     MM::Connection connection(connectionParams);
