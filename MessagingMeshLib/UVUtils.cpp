@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include "Exception.h"
 #include "OSSocketHolder.h"
+#include "UVLoop.h"
 using namespace MessagingMesh;
 
 // Gets peer IP info for a tcp handle.
@@ -122,6 +123,12 @@ std::string UVUtils::getThreadName()
     auto threadID = uv_thread_self();
     uv_thread_getname(&threadID, &threadName[0], sizeof(threadName));
     return std::string(threadName);
+}
+
+// Runs a single-shot timer.
+void UVUtils::runSingleShotTimer(UVLoopPtr pLoop, int millisecondsTimeout, std::function<void()> callback)
+{
+    runSingleShotTimer(pLoop->getUVLoop(), millisecondsTimeout, callback);
 }
 
 // Runs a single-shot timer.

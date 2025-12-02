@@ -4,6 +4,7 @@
 #include <functional>
 #include <libuv/uv.h>
 #include "Buffer.h"
+#include "SharedAliases.h"
 
 namespace MessagingMesh
 {
@@ -71,6 +72,9 @@ namespace MessagingMesh
 
         // Gets the name of the current thread.
         static std::string getThreadName();
+
+        // Runs a single-shot timer.
+        static void runSingleShotTimer(UVLoopPtr pLoop, int millisecondsTimeout, std::function<void()> callback);
 
         // Runs a single-shot timer.
         static void runSingleShotTimer(uv_loop_t* pLoop, int millisecondsTimeout, std::function<void()> callback);

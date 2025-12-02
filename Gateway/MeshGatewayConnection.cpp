@@ -78,14 +78,7 @@ void MeshGatewayConnection::onConnectionFailed(const std::string& message)
     Logger::info(std::format("Connection to mesh peer {} failed ({}). Retrying in 30 seconds.", m_peerName, message));
 
     // We retry after 30 seconds...
-    UVUtils::runSingleShotTimer(
-        m_pUVLoop->getUVLoop(),
-        30000,
-        [&]()
-        {
-            connect();
-        }
-    );
+    UVUtils::runSingleShotTimer(m_pUVLoop, 30000, [&]() { connect(); });
 }
 
 
