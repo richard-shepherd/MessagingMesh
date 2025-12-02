@@ -2,6 +2,8 @@ TODO
 ----
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
 
+- Do async reverse DNS lookup
+
 - Is there a problem with UVLoop::marshallUniqueEvent()
   - Where the unique event could be set by multiple socket but only call back onto one of them?
 
