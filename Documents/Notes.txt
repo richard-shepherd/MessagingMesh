@@ -2,6 +2,10 @@ TODO
 ----
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
 
+- Ping is a lot slower with a gap between pings
+  - Much faster when running hotter
+  - It would be good to be fast all the time!
+
 - Is there a problem with UVLoop::marshallUniqueEvent()
   - Where the unique event could be set by multiple socket but only call back onto one of them?
 

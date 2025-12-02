@@ -211,25 +211,41 @@ namespace TestClient.NET
             var connection = new MM.Connection(connectionParams);
 
             // We subscribe to pong replies...
+            var totalPingMicroseconds = 0.0;
+            var sampleSize = 10000;
+            var count = 0;
             connection.subscribe("PONG", (c, s, rs, m, t) =>
             {
+                // We get the ping time...
                 var ticks_now = Stopwatch.GetTimestamp();
                 var ticks_ping = m.getSignedInt64("TICKS");
-                var us = (ticks_now - ticks_ping) / (double)Stopwatch.Frequency * 1000000.0;
-                Console.WriteLine($"us={us}");
+                var pingMicroseconds = (ticks_now - ticks_ping) / (double)Stopwatch.Frequency * 1000000.0;
 
+                // We log each sample...
+                totalPingMicroseconds += pingMicroseconds;
+                count++;
+                if( count == sampleSize)
+                {
+                    var sampleMicroseconds = totalPingMicroseconds / sampleSize;
+                    Console.WriteLine($"us={sampleMicroseconds:0.00}");
+                    totalPingMicroseconds = 0.0;
+                    count = 0;
+                }
+
+                //Thread.Sleep(100);
+
+                // We send the next ping...
+                var nextPing = new MM.Message();
+                nextPing.addSignedInt64("TICKS", Stopwatch.GetTimestamp());
+                connection.sendMessage("PING", nextPing);
             });
 
-            // We send pings...
-            for(int i=0; i<10000; ++i)
-            {
-                var message = new MM.Message();
-                message.addSignedInt64("TICKS", Stopwatch.GetTimestamp());
-                connection.sendMessage("PING", message);
-                connection.processMessageQueue(100);
-                //Thread.Sleep(1);
-            }
+            // We send an initial ping to kick things off...
+            var intialPing = new MM.Message();
+            intialPing.addSignedInt64("TICKS", Stopwatch.GetTimestamp());
+            connection.sendMessage("PING", intialPing);
 
+            processMessages(connection);
             connection.Dispose();
         }
 
