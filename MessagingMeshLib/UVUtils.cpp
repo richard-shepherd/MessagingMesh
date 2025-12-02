@@ -26,7 +26,7 @@ UVUtils::IPInfo UVUtils::getPeerIPInfo(uv_tcp_t* pTCPHandle)
         NI_MAXHOST,
         service,
         NI_MAXSERV,
-        NI_NUMERICSERV);
+        NI_NUMERICSERV | NI_NUMERICHOST);
 
     // We return the data in an IPInfo structure...
     IPInfo ipInfo;
