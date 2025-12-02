@@ -1,5 +1,6 @@
 ﻿using MessagingMeshLib.NET;
 using System;
+using System.Diagnostics;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using MM = MessagingMeshLib.NET;
@@ -20,13 +21,13 @@ namespace TestClient.NET
         /// <summary>
         /// Processes messages until Enter is pressed.
         /// </summary>
-        private static void processMessages(Connection connection)
+        private static void processMessages(Connection connection, int millisecondsTimeout = 10)
         {
             MM.Logger.info("Press Enter to exit");
             for (; ; )
             {
                 // We process messages...
-                connection.processMessageQueue(millisecondsTimeout: 10);
+                connection.processMessageQueue(millisecondsTimeout);
 
                 // We check for Enter...
                 if (Console.KeyAvailable)
@@ -195,6 +196,69 @@ namespace TestClient.NET
             connection.Dispose();
         }
 
+        /// <summary>
+        /// Pinger
+        /// </summary>
+        private static void ping()
+        {
+            // We connect to the gateway...
+            var connectionParams = new MM.ConnectionParams
+            {
+                GatewayHost = "127.0.0.1",
+                GatewayPort = 5050,
+                Service = "VULCAN"
+            };
+            var connection = new MM.Connection(connectionParams);
+
+            // We subscribe to pong replies...
+            connection.subscribe("PONG", (c, s, rs, m, t) =>
+            {
+                var ticks_now = Stopwatch.GetTimestamp();
+                var ticks_ping = m.getSignedInt64("TICKS");
+                var us = (ticks_now - ticks_ping) / (double)Stopwatch.Frequency * 1000000.0;
+                Console.WriteLine($"us={us}");
+
+            });
+
+            // We send pings...
+            for(int i=0; i<10000; ++i)
+            {
+                var message = new MM.Message();
+                message.addSignedInt64("TICKS", Stopwatch.GetTimestamp());
+                connection.sendMessage("PING", message);
+                connection.processMessageQueue(100);
+                //Thread.Sleep(1);
+            }
+
+            connection.Dispose();
+        }
+
+        /// <summary>
+        /// Ponger
+        /// </summary>
+        private static void pong()
+        {
+            // We connect to the gateway...
+            var connectionParams = new MM.ConnectionParams
+            {
+                GatewayHost = "127.0.0.1",
+                GatewayPort = 5050,
+                Service = "VULCAN"
+            };
+            var connection = new MM.Connection(connectionParams);
+
+            // We subscribe to ping messages, and reply with a pong...
+            connection.subscribe("PING", (c, s, rs, m, t) =>
+            {
+                var message = new MM.Message();
+                message.addSignedInt64("TICKS", m.getSignedInt64("TICKS"));
+                connection.sendMessage("PONG", message);
+            });
+
+            processMessages(connection);
+            connection.Dispose();
+        }
+
         // Makes blocking requests to the server...
         static void client()
         {
@@ -294,6 +358,14 @@ namespace TestClient.NET
             else if(args.Length > 0 && args[0] == "-server")
             {
                 server();
+            }
+            else if(args.Length > 0 && args[0] == "-ping")
+            {
+                ping();
+            }
+            else if(args.Length > 0 && args[0] == "-pong")
+            {
+                pong();
             }
             else
             {

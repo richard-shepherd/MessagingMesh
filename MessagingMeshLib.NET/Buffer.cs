@@ -307,7 +307,14 @@ namespace MessagingMeshLib.NET
         {
             var size = sizeof(long);
             checkBufferSize_Read(size);
-            var result = BitConverter.ToInt64(m_buffer, m_position);
+            long result = (long)m_buffer[m_position + 0]
+                      | ((long)m_buffer[m_position + 1] << 8)
+                      | ((long)m_buffer[m_position + 2] << 16)
+                      | ((long)m_buffer[m_position + 3] << 24)
+                      | ((long)m_buffer[m_position + 4] << 32)
+                      | ((long)m_buffer[m_position + 5] << 40)
+                      | ((long)m_buffer[m_position + 6] << 48)
+                      | ((long)m_buffer[m_position + 7] << 56);
             updatePosition_Read(size);
             return result;
         }
