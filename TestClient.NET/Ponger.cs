@@ -13,7 +13,7 @@ namespace TestClient.NET
             var connectionParams = new MM.ConnectionParams
             {
                 GatewayHost = "127.0.0.1",
-                GatewayPort = 5050,
+                GatewayPort = 5051,
                 Service = "VULCAN"
             };
             var connection = new MM.Connection(connectionParams);
