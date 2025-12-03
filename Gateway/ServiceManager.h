@@ -45,6 +45,9 @@ namespace MessagingMesh
         // Called when the connection status has changed for a mesh gateway connection.
         void onMeshGatewayConnectionStatusChanged();
 
+        // Called when we receive a SEND_MESSAGE message.
+        void onMessage(const NetworkMessageHeader& header, Socket* pSocket, BufferPtr pBuffer);
+
     // Socket::ICallback implementation...
     private:
         // Called when a new client connection has been made to a listening socket.
@@ -70,9 +73,6 @@ namespace MessagingMesh
 
         // Called when we receive an UNSUBSCRIBE message.
         void onUnsubscribe(Socket* pSocket, const NetworkMessageHeader& header, BufferPtr pBuffer);
-
-        // Called when we receive a SEND_MESSAGE message.
-        void onMessage(const NetworkMessageHeader& header, Socket* pSocket, BufferPtr pBuffer);
 
         // Called when a socket has been disconnected.
         void onDisconnected(Socket* pSocket);

@@ -220,7 +220,10 @@ void ServiceManager::onMessage(const NetworkMessageHeader& header, Socket* pSock
 
     // We send the update to each 'target' matching the subscription.
     // 1. We send to all non-mesh clients.
+    // 
     // 2. We forward the message to mesh peers ONLY if it originated from a non-mesh client.
+    //    We do not relay messages from one peer gateway to others.
+    // 
     // 3. We forward the message only once to each mesh peer, even if the subject matches multiple 
     //    subscriptions (eg, wildcards). It is the peer gateway's job to fan out the update at its end.
     for (const auto& pSubscriptionInfo : subscriptionInfos)

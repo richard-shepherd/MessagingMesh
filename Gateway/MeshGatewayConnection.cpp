@@ -15,6 +15,7 @@ MeshGatewayConnection::MeshGatewayConnection(UVLoopPtr pUVLoop, ServiceManager& 
 
     // We create the socket to connect to the gateway...
     m_pSocket = Socket::create(m_pUVLoop);
+    m_pSocket->setIsMeshPeer(true);
     m_pSocket->setCallback(this);
 
     // We try to connect...
@@ -47,7 +48,7 @@ void MeshGatewayConnection::connect()
 }
 
 // Called when data has been received on the socket.
-void MeshGatewayConnection::onDataReceived(Socket* /*pSocket*/, BufferPtr pBuffer)
+void MeshGatewayConnection::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
 {
     try
     {
@@ -60,6 +61,11 @@ void MeshGatewayConnection::onDataReceived(Socket* /*pSocket*/, BufferPtr pBuffe
         {
         case NetworkMessageHeader::Action::ACK:
             onAck();
+            break;
+
+        case NetworkMessageHeader::Action::SEND_MESSAGE:
+            // The service-manager relays the update to clients...
+            m_serviceManager.onMessage(header, pSocket, pBuffer);
             break;
         }
     }
@@ -112,10 +118,10 @@ void MeshGatewayConnection::onConnectionSucceeded()
 // Called when the peer socket connection has failed.
 void MeshGatewayConnection::onConnectionFailed(const std::string& message)
 {
-    Logger::info(std::format("Connection to mesh peer {} failed ({}). Retrying in 30 seconds.", m_peerName, message));
+    Logger::info(std::format("Connection to mesh peer {} failed ({}). Retrying in 5 seconds.", m_peerName, message));
 
     // We retry after 30 seconds...
-    UVUtils::runSingleShotTimer(m_pUVLoop, 30000, [&]() { connect(); });
+    UVUtils::runSingleShotTimer(m_pUVLoop, 5000, [&]() { connect(); }); // RSSTODO: MAKE THIS 30 SECONDS (or configurable)
 }
 
 // Called when we receive the ACK from a gateway peer.
