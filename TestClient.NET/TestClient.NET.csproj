@@ -46,8 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BLOBPublisher.cs" />
+    <Compile Include="BLOBSubscriber.cs" />
+    <Compile Include="Client.cs" />
+    <Compile Include="Pinger.cs" />
+    <Compile Include="Ponger.cs" />
+    <Compile Include="Server.cs" />
+    <Compile Include="SmallMessagePublisher.cs" />
+    <Compile Include="SmallMessageSubscriber.cs" />
     <Compile Include="TestClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
