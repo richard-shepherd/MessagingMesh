@@ -24,6 +24,9 @@ namespace MessagingMesh
         // Gets the connection status.
         Socket::ConnectionStatus getConnectionStatus() const { return m_connectionStatus; }
 
+        // Relays a message / update to the mesh peer.
+        void relay(BufferPtr pBuffer) const;
+
     // Socket::ICallback implementation
     private:
         // Called when a new client connection has been made to a listening socket.

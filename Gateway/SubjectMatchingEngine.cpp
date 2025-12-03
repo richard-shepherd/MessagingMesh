@@ -6,7 +6,8 @@
 using namespace MessagingMesh;
 
 // Adds a subscription.
-void SubjectMatchingEngine::addSubscription(const std::string& subject, uint32_t subscriptionID, const std::string& clientName, Socket* pClientSocket)
+// Returns the number of clients registered for this subject.
+size_t SubjectMatchingEngine::addSubscription(const std::string& subject, uint32_t subscriptionID, const std::string& clientName, Socket* pClientSocket)
 {
     // We get the node for the subject...
     auto pNode = getOrCreateNode(subject);
@@ -19,10 +20,14 @@ void SubjectMatchingEngine::addSubscription(const std::string& subject, uint32_t
 
     // The change to subscriptions has invalidated the cache...
     m_cache.clear();
+
+    // We returns the number of clients registered for the subject...
+    return pNode->SubscriptionInfos.size();
 }
 
 // Removes a subscription.
-void SubjectMatchingEngine::removeSubscription(const std::string& subject, const std::string& clientName)
+// Returns the number of clients registered for this subject.
+size_t SubjectMatchingEngine::removeSubscription(const std::string& subject, const std::string& clientName)
 {
     // We get the node for the subject...
     auto pNode = getOrCreateNode(subject);
@@ -34,6 +39,9 @@ void SubjectMatchingEngine::removeSubscription(const std::string& subject, const
 
     // The change to subscriptions has invalidated the cache...
     m_cache.clear();
+
+    // We returns the number of clients registered for the subject...
+    return pNode->SubscriptionInfos.size();
 }
 
 // Removes all subscriptions for the client specified.

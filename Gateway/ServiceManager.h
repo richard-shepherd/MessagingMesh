@@ -66,16 +66,19 @@ namespace MessagingMesh
         void initialize();
 
         // Called when we receive a SUBSCRIBE message.
-        void onSubscribe(Socket* pSocket, const NetworkMessageHeader& header);
+        void onSubscribe(Socket* pSocket, const NetworkMessageHeader& header, BufferPtr pBuffer);
 
         // Called when we receive an UNSUBSCRIBE message.
-        void onUnsubscribe(Socket* pSocket, const NetworkMessageHeader& header);
+        void onUnsubscribe(Socket* pSocket, const NetworkMessageHeader& header, BufferPtr pBuffer);
 
         // Called when we receive a SEND_MESSAGE message.
-        void onMessage(const NetworkMessageHeader& header, BufferPtr pBuffer);
+        void onMessage(const NetworkMessageHeader& header, Socket* pSocket, BufferPtr pBuffer);
 
         // Called when a socket has been disconnected.
         void onDisconnected(Socket* pSocket);
+
+        // Relays the message / update in the buffer to all mesh peers.
+        void relayToMesh(BufferPtr pBuffer);
 
     // Private data...
     private:
@@ -94,8 +97,13 @@ namespace MessagingMesh
         // Maps sent messages to clients who are subscribed to them...
         SubjectMatchingEngine m_subjectMatchingEngine;
 
-        // Peer gateways in the mesh, keyed by GatewayInfo.makeKey()...
-        std::map<std::string, MeshGatewayConnection> m_meshGatewayConnections;
+        // Peer gateways in the mesh, keyed by GatewayInfo.makeKey().
+        // These are the connections where we act as the client to the peer gateway.
+        std::map<std::string, MeshGatewayConnection> m_meshGatewayConnections_WeAreTheClient;
+
+        // Sockets for peer gateways in the mesh, keyed by socket name.
+        // These are the connections where we act as the server to the peer gateway.
+        std::unordered_map<std::string, SocketPtr> m_meshGatewayConnections_WeAreTheServer;
     };
 } // namespace
 

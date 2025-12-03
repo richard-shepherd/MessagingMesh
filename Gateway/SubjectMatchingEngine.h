@@ -106,10 +106,12 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Adds a subscription.
-        void addSubscription(const std::string& subject, uint32_t subscriptionID, const std::string& clientName, Socket* pClientSocket);
+        // Returns the number of clients registered for this subject.
+        size_t addSubscription(const std::string& subject, uint32_t subscriptionID, const std::string& clientName, Socket* pClientSocket);
 
         // Removes a subscription.
-        void removeSubscription(const std::string& subject, const std::string& clientName);
+        // Returns the number of clients registered for this subject.
+        size_t removeSubscription(const std::string& subject, const std::string& clientName);
 
         // Removes all subscriptions for the client specified.
         void removeAllSubscriptions(const std::string& clientName);

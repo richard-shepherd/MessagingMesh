@@ -20,13 +20,6 @@ namespace MessagingMesh
         // An 'event' which can be marshalled to the event loop we are managing.
         using MarshalledEvent = std::function<void(uv_loop_t*)>;
 
-        // Enum for unique marshalled events. (Events where we only marshall
-        // one at any one time for a given key.)
-        enum class UniqueEventKey
-        {
-            SOCKET_QUEUE_WRITE
-        };
-
     // Public methods...
     public:
         // Creates a Socket instance to be managed by the uv loop specified.

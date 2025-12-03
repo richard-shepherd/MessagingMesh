@@ -68,6 +68,18 @@ namespace MessagingMesh
         // Sets the callback.
         void setCallback(ICallback* pCallback);
 
+        // Gets whether this socket is a mesh peer (ie, a gateway in the mesh).
+        bool getIsMeshPeer() const { return m_isMeshPeer; }
+
+        // Sets whether this socket is a mesh peer (ie, a gateway in the mesh).
+        void setIsMeshPeer(bool isMeshPeer) { m_isMeshPeer = isMeshPeer; }
+
+        // Gets whether this socket / client has already been updated by the Service Manager when sending updates to mesh peers.
+        bool getAlreadyUpdated() const { return m_alreadyUpdated; }
+
+        // Sets whether this socket / client has already been updated by the Service Manager when sending updates to mesh peers.
+        void setAlreadyUpdated(bool alreadyUpdated) const { m_alreadyUpdated = alreadyUpdated; }
+
         // Connects a server socket to listen on the specified port.
         void listen(int port);
 
@@ -194,6 +206,12 @@ namespace MessagingMesh
 
         // Unique event key for writing to this socket...
         std::string m_writeEventKey;
+
+        // True if the socket is a mesh peer (ie, a gateway in the mesh)...
+        bool m_isMeshPeer = false;
+
+        // Used by ServiceManager when updating mesh peers to avoid sending duplicate updates.
+        mutable bool m_alreadyUpdated = false;
 
     // Constants...
     private:

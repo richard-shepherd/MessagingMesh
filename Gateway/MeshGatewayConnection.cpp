@@ -26,6 +26,12 @@ MeshGatewayConnection::~MeshGatewayConnection()
 {
 }
 
+// Relays a message / update to the mesh peer.
+void MeshGatewayConnection::relay(BufferPtr pBuffer) const
+{
+    m_pSocket->write(pBuffer);
+}
+
 // Connects to the peer gateway.
 void MeshGatewayConnection::connect()
 {
@@ -116,5 +122,7 @@ void MeshGatewayConnection::onConnectionFailed(const std::string& message)
 void MeshGatewayConnection::onAck()
 {
     Logger::info(std::format("Received ACK from mesh peer {}", m_peerName));
+
+    // RSSTODO: We may need to relay existing subscriptions to the peer here.
 }
 
