@@ -40,6 +40,29 @@ void MeshGatewayConnection::connect()
     }
 }
 
+// Called when data has been received on the socket.
+void MeshGatewayConnection::onDataReceived(Socket* /*pSocket*/, BufferPtr pBuffer)
+{
+    try
+    {
+        // The buffer holds a serialized NetworkMessage. We deserialize the header and check the action...
+        NetworkMessage networkMessage;
+        networkMessage.deserializeHeader(*pBuffer);
+        auto& header = networkMessage.getHeader();
+        auto action = header.getAction();
+        switch (action)
+        {
+        case NetworkMessageHeader::Action::ACK:
+            onAck();
+            break;
+        }
+    }
+    catch (const std::exception& ex)
+    {
+        Logger::error(std::format("{}: {}", __func__, ex.what()));
+    }
+}
+
 // Called when the socket connection status has changed.
 void MeshGatewayConnection::onConnectionStatusChanged(Socket* /*pSocket*/, Socket::ConnectionStatus connectionStatus, const std::string& message)
 {
@@ -89,4 +112,9 @@ void MeshGatewayConnection::onConnectionFailed(const std::string& message)
     UVUtils::runSingleShotTimer(m_pUVLoop, 30000, [&]() { connect(); });
 }
 
+// Called when we receive the ACK from a gateway peer.
+void MeshGatewayConnection::onAck()
+{
+    Logger::info(std::format("Received ACK from mesh peer {}", m_peerName));
+}
 

@@ -30,7 +30,7 @@ namespace MessagingMesh
         void onNewConnection(SocketPtr /*pClientSocket*/) {}
 
         // Called when data has been received on the socket.
-        void onDataReceived(Socket* /*pSocket*/, BufferPtr /*pBuffer*/) {}
+        void onDataReceived(Socket* pSocket, BufferPtr pBuffer);
 
         // Called when the socket connection status has changed.
         virtual void onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus, const std::string& message);
@@ -48,6 +48,9 @@ namespace MessagingMesh
 
         // Called when the peer socket connection has failed.
         void onConnectionFailed(const std::string& message);
+
+        // Called when we receive the ACK from a gateway peer.
+        void onAck();
 
     // Private data...
     private:
