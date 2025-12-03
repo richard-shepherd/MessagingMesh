@@ -187,6 +187,14 @@ namespace MessagingMesh
         // Data queued for writing.
         ThreadsafeConsumableVector<BufferInfo> m_queuedWrites;
 
+        // Socket ID.
+        // The atomic allows us to create a unique integer ID for each socket in the process.
+        static std::atomic<int> m_atomicSocketID;
+        int m_socketID;
+
+        // Unique event key for writing to this socket...
+        std::string m_writeEventKey;
+
     // Constants...
     private:
         // The maximum backlog of unprocessed incoming connections.

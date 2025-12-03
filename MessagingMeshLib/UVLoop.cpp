@@ -95,7 +95,7 @@ void UVLoop::marshallEvent(MarshalledEvent marshalledEvent)
 // Marshalls an event to the UV loop we are managing. 
 // Only one event for the given key will be marshalled until events
 // are processed in the UV loop thread.
-void UVLoop::marshallUniqueEvent(const UniqueEventKey& key, MarshalledEvent marshalledEvent)
+void UVLoop::marshallUniqueEvent(const std::string& key, MarshalledEvent marshalledEvent)
 {
     // We add the event to the collection of marshalled events.
     auto itemAdded = m_marshalledEvents.addUnique(key, marshalledEvent);

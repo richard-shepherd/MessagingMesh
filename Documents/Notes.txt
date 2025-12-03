@@ -6,6 +6,8 @@ TODO
   - Much faster when running hotter
   - It would be good to be fast all the time!
 
+- ping/pong when you start other subscribers such as -sub
+
 - Is there a problem with UVLoop::marshallUniqueEvent()
   - Where the unique event could be set by multiple socket but only call back onto one of them?
 

@@ -9,6 +9,9 @@
 #include "Exception.h"
 using namespace MessagingMesh;
 
+// For creating socket IDs...
+std::atomic<int> Socket::m_atomicSocketID = 0;
+
 // Constructor.
 // NOTE: The constructor is private. Use Socket::create() to create an instance.
 Socket::Socket(UVLoopPtr pUVLoop) :
@@ -18,6 +21,10 @@ Socket::Socket(UVLoopPtr pUVLoop) :
     m_pSocket(nullptr),
     m_pCurrentMessage(nullptr)
 {
+    // We create a unique ID (within this process) for the socket and a write event key.
+    // The key helps us marshal write events between the write() to processQueuedWrites() methods.
+    m_socketID = ++m_atomicSocketID;
+    m_writeEventKey = std::format("S{}W", m_socketID);
 }
 
 // Destructor.
@@ -400,7 +407,7 @@ void Socket::write(BufferPtr pBuffer, uint32_t subscriptionIDOverride)
     // We marshall an event to write the data. As this does not take place straight 
     // away, this allows us to coalesce multiple queued writes...
     m_pUVLoop->marshallUniqueEvent(
-        UVLoop::UniqueEventKey::SOCKET_QUEUE_WRITE,
+        m_writeEventKey,
         [this](uv_loop_t* /*pLoop*/)
         {
             processQueuedWrites();

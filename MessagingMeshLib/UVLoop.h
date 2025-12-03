@@ -48,7 +48,7 @@ namespace MessagingMesh
         // Marshalls an event to the UV loop we are managing. 
         // Only one event for the given key will be marshalled until events
         // are processed in the UV loop thread.
-        void marshallUniqueEvent(const UniqueEventKey& key, MarshalledEvent marshalledEvent);
+        void marshallUniqueEvent(const std::string& key, MarshalledEvent marshalledEvent);
 
     // Private functions...
     private:
@@ -77,7 +77,7 @@ namespace MessagingMesh
         std::unique_ptr<uv_async_t> m_marshalledEventsSignal;
 
         // Vector of marshalled events and a lock for it.
-        ThreadsafeConsumableVector<MarshalledEvent, UniqueEventKey> m_marshalledEvents;
+        ThreadsafeConsumableVector<MarshalledEvent, std::string> m_marshalledEvents;
     };
 } // namespace
 
