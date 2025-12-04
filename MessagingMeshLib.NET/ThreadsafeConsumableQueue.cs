@@ -27,7 +27,7 @@ namespace MessagingMeshLib.NET
         public void add(ItemType item)
         {
             m_queue.Enqueue(item);
-            m_autoResetEvent.Set();
+            m_manualResetEvent.Set();
         }
 
         /// <summary>
@@ -46,7 +46,8 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public ConcurrentQueue<ItemType> waitAndGetItems(int millisecondsTimeout)
         {
-            m_autoResetEvent.WaitOne(millisecondsTimeout);
+            m_manualResetEvent.Wait(millisecondsTimeout);
+            m_manualResetEvent.Reset();
             return getItems();
         }
 
@@ -55,7 +56,7 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public void wakeUp()
         {
-            m_autoResetEvent.Set();
+            m_manualResetEvent.Set();
         }
 
         #endregion
@@ -65,7 +66,7 @@ namespace MessagingMeshLib.NET
         private ConcurrentQueue<ItemType> m_queue = new();
 
         // Signals when new data is available...
-        private readonly AutoResetEvent m_autoResetEvent = new(false);
+        private readonly ManualResetEventSlim m_manualResetEvent = new(false);
 
         #endregion
     }
