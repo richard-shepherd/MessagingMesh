@@ -60,7 +60,7 @@ namespace MessagingMeshLib.NET
             // We create the TX thread...
             m_txThread = new Thread(threadEntryPointTX);
             m_txThread.Name = $"MM-{service}-TX";
-            m_rxThread.IsBackground = true;
+            m_txThread.IsBackground = true;
             m_txThread.Start();
         }
 
@@ -244,8 +244,15 @@ namespace MessagingMeshLib.NET
                 var buffer = new byte[8192];  // RSSTODO: CHANGE THIS. MAYBE ALL OF THIS!!!
                 while (!m_stopThreads)
                 {
-                    int bytesReceived = m_socket.Receive(buffer);
-                    onDataReceived(buffer, bytesReceived);
+                    // We poll with a 10us timeout. This is (slightly) more efficient than Receiving on the socket.
+                    if (m_socket.Poll(10, SelectMode.SelectRead))  // 10us timeout
+                    {
+                        int bytesReceived = m_socket.Receive(buffer);
+                        if (bytesReceived > 0)
+                        {
+                            onDataReceived(buffer, bytesReceived);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
