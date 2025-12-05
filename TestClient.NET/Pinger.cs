@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System;
 using MM = MessagingMeshLib.NET;
+using System.Threading;
+using MessagingMeshLib.NET;
 
 namespace TestClient.NET
 {
@@ -22,7 +24,7 @@ namespace TestClient.NET
 
             // We subscribe to pong replies...
             var totalPingMicroseconds = 0.0;
-            var sampleSize = 10000;
+            var sampleSize = 10;
             var count = 0;
             connection.subscribe("PONG", (c, s, rs, m, t) =>
             {
@@ -42,12 +44,26 @@ namespace TestClient.NET
                     count = 0;
                 }
 
-                //Thread.Sleep(100);
+
+                Thread.Sleep(100);
+                //var start = Stopwatch.GetTimestamp();
+                //for (; ; )
+                //{
+                //    var now = Stopwatch.GetTimestamp();
+                //    var us = (now - start) / (double)Stopwatch.Frequency * 1000000.0;
+                //    if (us > 10000.0)
+                //    {
+                //        break;
+                //    }
+                //}
+
+
 
                 // We send the next ping...
                 var nextPing = new MM.Message();
                 nextPing.addSignedInt64("TICKS", Stopwatch.GetTimestamp());
                 connection.sendMessage("PING", nextPing);
+                Logger.info("PING sent");
             });
 
             // We send an initial ping to kick things off...

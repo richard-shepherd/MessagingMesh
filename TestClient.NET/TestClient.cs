@@ -26,41 +26,48 @@ namespace TestClient.NET
             // We connect to the logger...
             MM.Logger.registerCallback(onMessagingMeshLogMessage);
 
-            if (args.Length > 0 && args[0] == "-sub")
+            try
             {
-                SmallMessageSubscriber.start();
+                if (args.Length > 0 && args[0] == "-sub")
+                {
+                    SmallMessageSubscriber.start();
+                }
+                else if (args.Length > 0 && args[0] == "-pub")
+                {
+                    SmallMessagePublisher.start();
+                }
+                else if (args.Length > 0 && args[0] == "-sub-blob")
+                {
+                    BLOBSubscriber.start();
+                }
+                else if (args.Length > 0 && args[0] == "-pub-blob")
+                {
+                    BLOBPublisher.start();
+                }
+                else if (args.Length > 0 && args[0] == "-client")
+                {
+                    Client.start();
+                }
+                else if (args.Length > 0 && args[0] == "-server")
+                {
+                    Server.start();
+                }
+                else if (args.Length > 0 && args[0] == "-ping")
+                {
+                    Pinger.start();
+                }
+                else if (args.Length > 0 && args[0] == "-pong")
+                {
+                    Ponger.start();
+                }
+                else
+                {
+                    MM.Logger.error("Usage: TestClient.NET.exe -sub/-pub");
+                }
             }
-            else if(args.Length > 0 && args[0] == "-pub")
+            catch (Exception ex)
             {
-                SmallMessagePublisher.start();
-            }
-            else if (args.Length > 0 && args[0] == "-sub-blob")
-            {
-                BLOBSubscriber.start();
-            }
-            else if(args.Length > 0 && args[0] == "-pub-blob")
-            {
-                BLOBPublisher.start();
-            }
-            else if(args.Length > 0 && args[0] == "-client")
-            {
-                Client.start();
-            }
-            else if(args.Length > 0 && args[0] == "-server")
-            {
-                Server.start();
-            }
-            else if(args.Length > 0 && args[0] == "-ping")
-            {
-                Pinger.start();
-            }
-            else if(args.Length > 0 && args[0] == "-pong")
-            {
-                Ponger.start();
-            }
-            else
-            {
-                MM.Logger.error("Usage: TestClient.NET.exe -sub/-pub");
+                Console.WriteLine(ex.Message);
             }
         }
     }
