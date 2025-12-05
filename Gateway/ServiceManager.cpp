@@ -16,7 +16,7 @@ using namespace MessagingMesh;
 ServiceManager::ServiceManager(const std::string& serviceName, const MeshManager& meshManager) :
     m_serviceName(serviceName),
     m_meshManager(meshManager),
-    m_pUVLoop(UVLoop::create(serviceName))
+    m_pUVLoop(UVLoop::create(serviceName, UVLoop::Temperature::HOT))
 {
     // We initialize the service manager in the context of the UV loop...
     m_pUVLoop->marshallEvent(

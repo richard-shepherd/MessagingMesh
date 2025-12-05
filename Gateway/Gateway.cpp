@@ -13,7 +13,7 @@ using namespace MessagingMesh;
 // Constructor.
 Gateway::Gateway(int port) :
     m_port(port),
-    m_pUVLoop(UVLoop::create("GATEWAY")),
+    m_pUVLoop(UVLoop::create("GATEWAY", UVLoop::Temperature::COLD)),
     m_meshManager(*this)
 {
     // We initialize the gateway in the context of the UV loop...

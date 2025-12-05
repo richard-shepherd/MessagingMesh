@@ -6,8 +6,9 @@
 using namespace MessagingMesh;
 
 // Constructor.
-UVLoop::UVLoop(const std::string& name) :
-    m_name(name)
+UVLoop::UVLoop(const std::string& name, Temperature temperature) :
+    m_name(name),
+    m_temperature(temperature)
 {
     Logger::info("Creating UV loop: " + m_name);
 
@@ -27,7 +28,11 @@ UVLoop::~UVLoop()
 {
     // We marshall an event to the loop to tell it to stop...
     Logger::info("Signalling UV loop to stop: " + m_name);
+
+    // Singnal used when running hot...
     m_stopLoop = true;
+
+    // Signal used when running cold...
     marshallEvent(
         [](uv_loop_t* pLoop)
         {
@@ -69,10 +74,18 @@ void UVLoop::threadEntryPoint()
 
         // We run the loop...
         Logger::info("Running UV event loop for: " + m_name);
-        //uv_run(m_loop.get(), UV_RUN_DEFAULT);
-        while(!m_stopLoop)
+        switch (m_temperature)
         {
-            uv_run(m_loop.get(), UV_RUN_NOWAIT);
+        case Temperature::HOT:
+            while (!m_stopLoop)
+            {
+                uv_run(m_loop.get(), UV_RUN_NOWAIT);
+            }
+            break;
+
+        case Temperature::COLD:
+            uv_run(m_loop.get(), UV_RUN_DEFAULT);
+            break;
         }
     }
     catch (const std::exception& ex)

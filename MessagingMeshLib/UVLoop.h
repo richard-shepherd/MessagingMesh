@@ -20,10 +20,17 @@ namespace MessagingMesh
         // An 'event' which can be marshalled to the event loop we are managing.
         using MarshalledEvent = std::function<void(uv_loop_t*)>;
 
+        // Enum for how hot or cold we run the UV loop.
+        enum class Temperature
+        {
+            HOT,
+            COLD
+        };
+
     // Public methods...
     public:
         // Creates a Socket instance to be managed by the uv loop specified.
-        static UVLoopPtr create(const std::string& name) { return UVLoopPtr(new UVLoop(name)); }
+        static UVLoopPtr create(const std::string& name, Temperature temperature) { return UVLoopPtr(new UVLoop(name, temperature)); }
 
         // Destructor.
         ~UVLoop();
@@ -47,7 +54,7 @@ namespace MessagingMesh
     private:
         // Constructor.
         // NOTE: The constructor is private. Use UVLoop::create() to create an instance.
-        UVLoop(const std::string& name);
+        UVLoop(const std::string& name, Temperature temperature);
 
         // Thread entry point.
         void threadEntryPoint();
@@ -59,6 +66,9 @@ namespace MessagingMesh
     private:
         // The loop name. This will also be set as the name of the thread running the loop.
         std::string m_name;
+
+        // The loop temperature (eg, if we run hot or cold)
+        Temperature m_temperature;
 
         // Thread handle.
         uv_thread_t m_threadHandle;

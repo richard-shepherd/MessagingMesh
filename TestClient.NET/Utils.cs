@@ -8,7 +8,7 @@ namespace TestClient.NET
         /// <summary>
         /// Processes messages until Enter is pressed.
         /// </summary>
-        public static void processMessages(MM.Connection connection, int millisecondsTimeout = 10)
+        public static void processMessages(MM.Connection connection, int millisecondsTimeout = 100)
         {
             MM.Logger.info("Press Enter to exit");
             for (; ; )

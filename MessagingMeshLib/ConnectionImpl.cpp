@@ -19,7 +19,7 @@ ConnectionImpl::ConnectionImpl(const ConnectionParams& connectionParams, Connect
 {
     // We create the UV loop for client messaging...
     auto name = std::format("MM-{}", connectionParams.Service);
-    m_pUVLoop = UVLoop::create(name);
+    m_pUVLoop = UVLoop::create(name, UVLoop::Temperature::COLD);
 
     // We create the socket to connect to the gateway...
     m_pSocket = Socket::create(m_pUVLoop);

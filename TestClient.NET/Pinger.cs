@@ -24,7 +24,7 @@ namespace TestClient.NET
 
             // We subscribe to pong replies...
             var totalPingMicroseconds = 0.0;
-            var sampleSize = 10;
+            var sampleSize = 10000;
             var count = 0;
             connection.subscribe("PONG", (c, s, rs, m, t) =>
             {
@@ -44,7 +44,6 @@ namespace TestClient.NET
                     count = 0;
                 }
 
-
                 //Thread.Sleep(100);
                 //var start = Stopwatch.GetTimestamp();
                 //for (; ; )
@@ -56,8 +55,6 @@ namespace TestClient.NET
                 //        break;
                 //    }
                 //}
-
-
 
                 // We send the next ping...
                 var nextPing = new MM.Message();
