@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 
 namespace MessagingMeshLib.NET
@@ -137,9 +136,12 @@ namespace MessagingMeshLib.NET
         public void processMessageQueue(int millisecondsTimeout)
         {
             var queuedMessages = m_queuedMessages.waitAndGetItems(millisecondsTimeout);
-            foreach(var queuedMessage in queuedMessages)
+            if (queuedMessages != null && queuedMessages.Count != 0)
             {
-                processGatewayMessage(queuedMessage.Header, queuedMessage.Buffer);
+                foreach (var queuedMessage in queuedMessages)
+                {
+                    processGatewayMessage(queuedMessage.Header, queuedMessage.Buffer);
+                }
             }
         }
 

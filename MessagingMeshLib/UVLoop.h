@@ -71,6 +71,9 @@ namespace MessagingMesh
 
         // Vector of marshalled events and a lock for it.
         ThreadsafeConsumableVector<MarshalledEvent, std::string> m_marshalledEvents;
+
+        // Singnals the loop to stop when running hot...
+        volatile bool m_stopLoop = false;
     };
 } // namespace
 

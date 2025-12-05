@@ -118,7 +118,7 @@ namespace MessagingMeshLib.NET
                 {
                     // We wait for data to write to the socket...
                     var buffers = m_writeQueue.waitAndGetItems(millisecondsTimeout: 100);
-                    if (buffers.Count == 0)
+                    if (buffers == null || buffers.Count == 0)
                     {
                         continue;
                     }
@@ -160,7 +160,7 @@ namespace MessagingMeshLib.NET
         /// Returns an enumerable of all send-buffers to write to the socket, holding the 
         /// data from the buffers passed in.
         /// </summary>
-        private IEnumerable<SendBufferInfo> getSendBufferInfos(ConcurrentQueue<Buffer> buffers)
+        private IEnumerable<SendBufferInfo> getSendBufferInfos(Queue<Buffer> buffers)
         {
             // How we fill in the send-buffers depends on the size of the buffers in the queue.
             // 

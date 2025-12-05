@@ -27,6 +27,7 @@ UVLoop::~UVLoop()
 {
     // We marshall an event to the loop to tell it to stop...
     Logger::info("Signalling UV loop to stop: " + m_name);
+    m_stopLoop = true;
     marshallEvent(
         [](uv_loop_t* pLoop)
         {
@@ -68,7 +69,11 @@ void UVLoop::threadEntryPoint()
 
         // We run the loop...
         Logger::info("Running UV event loop for: " + m_name);
-        uv_run(m_loop.get(), UV_RUN_DEFAULT);
+        //uv_run(m_loop.get(), UV_RUN_DEFAULT);
+        while(!m_stopLoop)
+        {
+            uv_run(m_loop.get(), UV_RUN_NOWAIT);
+        }
     }
     catch (const std::exception& ex)
     {

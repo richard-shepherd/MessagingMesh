@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Collections.Generic;
 using System.Threading;
 
 namespace MessagingMeshLib.NET
@@ -22,33 +22,36 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
-        /// Adds an item to the list.
+        /// Adds an item to the queue.
         /// </summary>
         public void add(ItemType item)
         {
-            m_queue.Enqueue(item);
-            m_manualResetEvent.Set();
+            lock (m_queueLocker)
+            {
+                m_queue.Enqueue(item);
+            }
+            m_autoResetEvent.Set();
         }
 
         /// <summary>
-        /// Gets the current contents of the list, and clears the data being held.
+        /// Waits for data to be available and gets the current contents of the queue, and resets the data being held.
         /// </summary>
-        public ConcurrentQueue<ItemType> getItems()
+        public Queue<ItemType> waitAndGetItems(int millisecondsTimeout)
         {
-            var newQueue = new ConcurrentQueue<ItemType>();
-            var oldQueue = Interlocked.Exchange(ref m_queue, newQueue);
-            return oldQueue;
-        }
-
-        /// <summary>
-        /// Waits for data to be available and gets the current contents of the vector, 
-        /// and clears the data being held.
-        /// </summary>
-        public ConcurrentQueue<ItemType> waitAndGetItems(int millisecondsTimeout)
-        {
-            m_manualResetEvent.Wait(millisecondsTimeout);
-            m_manualResetEvent.Reset();
-            return getItems();
+            m_autoResetEvent.WaitOne(millisecondsTimeout);
+            lock (m_queueLocker)
+            {
+                if(m_queue.Count == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    var queue = m_queue;
+                    m_queue = new();
+                    return queue;
+                }
+            }
         }
 
         /// <summary>
@@ -56,17 +59,19 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public void wakeUp()
         {
-            m_manualResetEvent.Set();
+            m_autoResetEvent.Set();
         }
 
         #endregion
 
         #region Private data
 
-        private ConcurrentQueue<ItemType> m_queue = new();
+        // Queue of items and a locker for it...
+        private Queue<ItemType> m_queue = new();
+        private object m_queueLocker = new();
 
         // Signals when new data is available...
-        private readonly ManualResetEventSlim m_manualResetEvent = new(false);
+        private readonly AutoResetEvent m_autoResetEvent = new(false);
 
         #endregion
     }

@@ -45,7 +45,7 @@ namespace TestClient.NET
                 }
 
 
-                Thread.Sleep(100);
+                //Thread.Sleep(100);
                 //var start = Stopwatch.GetTimestamp();
                 //for (; ; )
                 //{
@@ -63,7 +63,6 @@ namespace TestClient.NET
                 var nextPing = new MM.Message();
                 nextPing.addSignedInt64("TICKS", Stopwatch.GetTimestamp());
                 connection.sendMessage("PING", nextPing);
-                Logger.info("PING sent");
             });
 
             // We send an initial ping to kick things off...
