@@ -38,9 +38,8 @@ namespace MessagingMesh
 
         // Waits for the signal or for a timeout.
         // Returns true if the signal was seen, false if it timed out.
-        bool waitOne(double timeoutSeconds)
+        bool waitOne(int timeoutMilliseconds)
         {
-            auto timeoutMilliseconds = int(timeoutSeconds * 1000);
             auto endTime = std::chrono::system_clock::now() + std::chrono::milliseconds(timeoutMilliseconds);
             std::unique_lock<std::mutex> lock(m_mutex);
             while (!m_flag)

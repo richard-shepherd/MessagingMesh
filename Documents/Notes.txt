@@ -25,12 +25,8 @@ TODO
     - uv_run(m_loop.get(), UV_RUN_ONCE);
     - uv_run(m_loop.get(), UV_RUN_DEFAULT);  // Not 'manual' this keeps running
 
-- Locking around thw whole of Logger.log()?
+- Locking around the whole of Logger.log()?
   - And mandate that clients must not call MM functions in the log callback
-
-- With the ping time: I think it is the wake up of the *TX thread* that is important
-  - Can we keep it warm / hot?
-  - EXPERIMENT: What if we write immediately? Good for the ping test? Bad for lots of messages?
 
 - Require a ClientID to be passed with connection requests?
   - Use it (along with IP address + port) for the socket name

@@ -74,10 +74,9 @@ namespace MessagingMesh
 
         // Waits for data to be available and gets the current contents of the vector, 
         // and clears the data being held.
-        VecItemTypePtr waitAndGetItems(int millisecondsTimeout)
+        VecItemTypePtr waitAndGetItems(int timeoutMilliseconds)
         {
-            auto secondsTimeout = millisecondsTimeout / 1000.0;
-            m_autoResetEvent.waitOne(secondsTimeout);
+            m_autoResetEvent.waitOne(timeoutMilliseconds);
             return getItems();
         }
 

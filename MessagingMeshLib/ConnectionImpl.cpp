@@ -46,7 +46,7 @@ ConnectionImpl::ConnectionImpl(const ConnectionParams& connectionParams, Connect
     // until the Gateway has fully set up the socket at its end and assigned it to
     // the correct thread for the requested service. When the ACK signal has been sent
     // we know that this has been completed.
-    auto waitResult = m_ackSignal.waitOne(30.0);
+    auto waitResult = m_ackSignal.waitOne(30000);
     if (!waitResult)
     {
         throw Exception("Timed out without receive ACK from the Messaging Mesh Gateway");
@@ -128,7 +128,8 @@ MessagePtr ConnectionImpl::sendRequest(const std::string& subject, const Message
     MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 
     // We block on the auto reset event, waiting for the result...
-    autoResetEvent.waitOne(timeoutSeconds);
+    auto timeoutMilliseconds = int(timeoutSeconds * 1000);
+    autoResetEvent.waitOne(timeoutMilliseconds);
 
     // We remove the subscription ID from the collection being managed for sendRequests...
     {
