@@ -1,6 +1,36 @@
 TODO
 ----
+- BUG: Ping sometimes stops working!
+  - Losing an update?
+  - Related to ThreadsafeConsumableQueue?
+  - Happens after ping sent, before send() in TX loop
+
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
+
+- We do not need a thread safe queue in the gateway
+  - ie, on a Service UV thread
+
+- Hybrid hot mode for UV loop:
+  - Run HOT by default. 
+  - Switch to COLD only when messages are flowing continuously.
+  - Switch back to HOT when we haven't seen messages for some (short, configurable?) amount of time, eg 100us.
+  - Have config options for:
+    - COLD
+    - ALWAYS_HOT
+    - HYBRID_HOT (the default?)
+  - QUESTION: Does UV have some way of knowing whether the loop has been active recently?
+    - Something to do with 'idle' maybe?
+  - UV run options:
+    - uv_run(m_loop.get(), UV_RUN_NOWAIT);
+    - uv_run(m_loop.get(), UV_RUN_ONCE);
+    - uv_run(m_loop.get(), UV_RUN_DEFAULT);  // Not 'manual' this keeps running
+
+- Locking around thw whole of Logger.log()?
+  - And mandate that clients must not call MM functions in the log callback
+
+- With the ping time: I think it is the wake up of the *TX thread* that is important
+  - Can we keep it warm / hot?
+  - EXPERIMENT: What if we write immediately? Good for the ping test? Bad for lots of messages?
 
 - Require a ClientID to be passed with connection requests?
   - Use it (along with IP address + port) for the socket name
