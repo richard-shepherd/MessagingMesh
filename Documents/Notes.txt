@@ -17,7 +17,7 @@ TODO
   - Have config options for:
     - COLD
     - ALWAYS_HOT
-    - HYBRID_HOT (the default?)
+    - HYBRID_HOT (the default?): Claude calls this ADAPTIVE, which I rather like
   - QUESTION: Does UV have some way of knowing whether the loop has been active recently?
     - Something to do with 'idle' maybe?
   - UV run options:
