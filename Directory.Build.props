@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <TargetFrameworks>net472;net48;net8.0;net10.0</TargetFrameworks>
+    <LangVersion>13.0</LangVersion>
+    <WarningLevel>9999</WarningLevel>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>

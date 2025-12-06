@@ -160,7 +160,7 @@ namespace MessagingMeshLib.NET.Tests
 
             // The BLOB...
             var blob2 = m.getBLOB("blob");
-            Assert.AreEqual(6, blob2.Length);
+            Assert.HasCount(6, blob2);
             Assert.AreEqual(blob[0], blob2[0]);
             Assert.AreEqual(blob[1], blob2[1]);
             Assert.AreEqual(blob[2], blob2[2]);

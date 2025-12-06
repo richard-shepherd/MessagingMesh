@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11222.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MessagingMeshLib", "MessagingMeshLib\MessagingMeshLib.vcxproj", "{06C7F280-8FCD-451D-8569-A9C1CBE46CB9}"
 EndProject
@@ -29,6 +29,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		Documents\Snippets.txt = Documents\Snippets.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FB8B6CB4-C04E-4500-B03A-4A968C002246}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MessagingMesh = Debug|MessagingMesh
@@ -53,8 +58,8 @@ Global
 		{52094B07-70AA-468C-A36B-F974832BADFD}.Release|MessagingMesh.Build.0 = Release|Any CPU
 		{8B7AF230-D368-43F2-9317-2B804F00E774}.Debug|MessagingMesh.ActiveCfg = Debug|x64
 		{8B7AF230-D368-43F2-9317-2B804F00E774}.Debug|MessagingMesh.Build.0 = Debug|x64
-		{8B7AF230-D368-43F2-9317-2B804F00E774}.Release|MessagingMesh.ActiveCfg = Release|x64
-		{8B7AF230-D368-43F2-9317-2B804F00E774}.Release|MessagingMesh.Build.0 = Release|x64
+		{8B7AF230-D368-43F2-9317-2B804F00E774}.Release|MessagingMesh.ActiveCfg = Release|Any CPU
+		{8B7AF230-D368-43F2-9317-2B804F00E774}.Release|MessagingMesh.Build.0 = Release|Any CPU
 		{54667E8F-6391-44CC-98A1-E04FC319549E}.Debug|MessagingMesh.ActiveCfg = Debug|Any CPU
 		{54667E8F-6391-44CC-98A1-E04FC319549E}.Debug|MessagingMesh.Build.0 = Debug|Any CPU
 		{54667E8F-6391-44CC-98A1-E04FC319549E}.Release|MessagingMesh.ActiveCfg = Release|Any CPU

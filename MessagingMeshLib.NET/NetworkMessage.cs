@@ -1,8 +1,4 @@
-﻿using System;
-using System.Runtime.Remoting.Messaging;
-using System.Xml.Linq;
-
-namespace MessagingMeshLib.NET
+﻿namespace MessagingMeshLib.NET
 {
     /// <summary>
     /// Message sent between messaging-mesh clients and gateways for
