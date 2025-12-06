@@ -62,7 +62,7 @@ namespace MessagingMeshLib.NET.Tests
             testMessageFields(m2);
 
             // We save the buffer for use with deserialization tests...
-            saveBuffer("..\\..\\..\\TestData\\SerializedBuffer-cs.bin", buffer);
+            saveBuffer("..\\..\\..\\..\\TestData\\SerializedBuffer-cs.bin", buffer);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace MessagingMeshLib.NET.Tests
         [TestMethod]
         public void messageDeserialize_CPP()
         {
-            var buffer = loadBuffer("..\\..\\..\\TestData\\SerializedBuffer-cpp.bin");
+            var buffer = loadBuffer("..\\..\\..\\..\\TestData\\SerializedBuffer-cpp.bin");
             var message = new Message();
             message.deserialize(buffer);
             testMessageFields(message);
@@ -83,7 +83,7 @@ namespace MessagingMeshLib.NET.Tests
         [TestMethod]
         public void messageDeserialize_CS()
         {
-            var buffer = loadBuffer("..\\..\\..\\TestData\\SerializedBuffer-cs.bin");
+            var buffer = loadBuffer("..\\..\\..\\..\\TestData\\SerializedBuffer-cs.bin");
             var message = new Message();
             message.deserialize(buffer);
             testMessageFields(message);
@@ -160,7 +160,7 @@ namespace MessagingMeshLib.NET.Tests
 
             // The BLOB...
             var blob2 = m.getBLOB("blob");
-            Assert.HasCount(6, blob2);
+            Assert.AreEqual(6, blob2.Length);
             Assert.AreEqual(blob[0], blob2[0]);
             Assert.AreEqual(blob[1], blob2[1]);
             Assert.AreEqual(blob[2], blob2[2]);

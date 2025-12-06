@@ -24,7 +24,7 @@ namespace TestClient.NET
 
             // We subscribe to pong replies...
             var totalPingMicroseconds = 0.0;
-            var sampleSize = 10000;
+            var sampleSize = 10;
             var count = 0;
             connection.subscribe("PONG", (c, s, rs, m, t) =>
             {
@@ -39,12 +39,12 @@ namespace TestClient.NET
                 if (count == sampleSize)
                 {
                     var sampleMicroseconds = totalPingMicroseconds / sampleSize;
-                    Console.WriteLine($"us={sampleMicroseconds:0.00}");
+                    Logger.info($"us={sampleMicroseconds:0.00}");
                     totalPingMicroseconds = 0.0;
                     count = 0;
                 }
 
-                //Thread.Sleep(100);
+                Thread.Sleep(100);
                 //var start = Stopwatch.GetTimestamp();
                 //for (; ; )
                 //{
