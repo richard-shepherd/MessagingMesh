@@ -17,8 +17,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestClient", "TestClient\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingMeshLib.NET", "MessagingMeshLib.NET\MessagingMeshLib.NET.csproj", "{52094B07-70AA-468C-A36B-F974832BADFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient.NET", "TestClient.NET\TestClient.NET.csproj", "{8B7AF230-D368-43F2-9317-2B804F00E774}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingMeshLib.NET.Tests", "MessagingMeshLib.NET.Tests\MessagingMeshLib.NET.Tests.csproj", "{54667E8F-6391-44CC-98A1-E04FC319549E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
@@ -33,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient.NET", "TestClient.NET\TestClient.NET.csproj", "{36C9A6EF-D8C2-08E9-8823-EC49DB558234}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,14 +56,14 @@ Global
 		{52094B07-70AA-468C-A36B-F974832BADFD}.Debug|MessagingMesh.Build.0 = Debug|Any CPU
 		{52094B07-70AA-468C-A36B-F974832BADFD}.Release|MessagingMesh.ActiveCfg = Release|Any CPU
 		{52094B07-70AA-468C-A36B-F974832BADFD}.Release|MessagingMesh.Build.0 = Release|Any CPU
-		{8B7AF230-D368-43F2-9317-2B804F00E774}.Debug|MessagingMesh.ActiveCfg = Debug|x64
-		{8B7AF230-D368-43F2-9317-2B804F00E774}.Debug|MessagingMesh.Build.0 = Debug|x64
-		{8B7AF230-D368-43F2-9317-2B804F00E774}.Release|MessagingMesh.ActiveCfg = Release|Any CPU
-		{8B7AF230-D368-43F2-9317-2B804F00E774}.Release|MessagingMesh.Build.0 = Release|Any CPU
 		{54667E8F-6391-44CC-98A1-E04FC319549E}.Debug|MessagingMesh.ActiveCfg = Debug|Any CPU
 		{54667E8F-6391-44CC-98A1-E04FC319549E}.Debug|MessagingMesh.Build.0 = Debug|Any CPU
 		{54667E8F-6391-44CC-98A1-E04FC319549E}.Release|MessagingMesh.ActiveCfg = Release|Any CPU
 		{54667E8F-6391-44CC-98A1-E04FC319549E}.Release|MessagingMesh.Build.0 = Release|Any CPU
+		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Debug|MessagingMesh.ActiveCfg = Debug|Any CPU
+		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Debug|MessagingMesh.Build.0 = Debug|Any CPU
+		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Release|MessagingMesh.ActiveCfg = Release|Any CPU
+		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Release|MessagingMesh.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
