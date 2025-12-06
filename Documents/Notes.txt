@@ -76,6 +76,8 @@ TODO
 
 - Performance (C#)
   - AutoResetEvent.Set() looks slow.
+  - Have another look at BlockingCollection<T> for the C# queues
+  - Try Socket.Send(IList<ArraySegment<byte>>) instead of copying to one big byte[]
   - Is the Dictionary in Message slow? For small numbers of fields would checking the List be faster?
   - Sensitive to the initial Buffer size. The initial allocation is slow. 
     - Use a shared pool of byte[]???
