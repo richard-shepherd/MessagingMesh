@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
-#include <vector>
 #include <string>
 #include "SharedAliases.h"
+#include "ObjectPool.h"
 
 namespace MessagingMesh
 {
@@ -86,10 +86,13 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Creates a Buffer instance.
-        static BufferPtr create() { return BufferPtr(new Buffer()); }
+        static BufferPtr create() { return ObjectPool<Buffer>::acquire(); }
 
         // Destructor.
         ~Buffer();
+
+        // Resets the buffer. Used in particular when re-using buffers from an ObjectPool.
+        void reset();
 
         // Gets the buffer.
         char* getBuffer() const;
@@ -114,7 +117,7 @@ namespace MessagingMesh
         // Reads data from a network data buffer until we have all the data for
         // the buffer as specified by the size in the network message.
         // Returns the number of bytes read from the buffer.
-        size_t readNetworkMessage(const char* pBuffer, size_t bufferSize, size_t bufferPosition);
+        size_t readNetworkMessage(const char* pNetworkBuffer, size_t networkBufferSize, size_t networkBufferPosition);
 
     // read() method for various types...
     public:
@@ -195,6 +198,10 @@ namespace MessagingMesh
 
     // Private functions...
     private:
+
+        // The object-pool is a friend so it can access the private constructor.
+        friend class ObjectPool<Buffer>;
+
         // Constructor.
         // NOTE: The constructor is private. Use Buffer::create() to create an instance.
         Buffer();
@@ -224,7 +231,7 @@ namespace MessagingMesh
         void updatePosition_Write(int32_t bytesWritten);
 
         // Reads the network message size (or as much as can be read) from the buffer.
-        size_t readNetworkMessageSize(const char* pBuffer, size_t bufferSize, size_t bufferPosition);
+        size_t readNetworkMessageSize(const char* pNetworkBuffer, size_t networkBufferSize, size_t networkBufferPosition);
 
     // Private data...
     private:
@@ -249,7 +256,8 @@ namespace MessagingMesh
         // Buffer when reading the size from a network message.
         // (We may receive the size across multiple network updates.)
         char m_networkMessageSizeBuffer[SIZE_SIZE] = {};
-        int m_networkMessageSizeBufferPosition = 0;
+        int32_t m_networkMessageSizeBufferPosition = 0;
+        bool m_gotNetworkBufferSize = false;
     };
 
 } // namespace

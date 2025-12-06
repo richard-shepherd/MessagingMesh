@@ -715,7 +715,10 @@ void Socket::onDataReceived(uv_stream_t* /*pStream*/, ssize_t nread, const uv_bu
                 // We reset the position of the message / buffer so that it is 
                 // ready to be read by the client in the callback...
                 m_pCurrentMessage->resetPosition();
-                if (m_pCallback) m_pCallback->onDataReceived(this, m_pCurrentMessage);
+                if (m_pCallback)
+                {
+                    m_pCallback->onDataReceived(this, m_pCurrentMessage);
+                }
 
                 // We clear the current message to start a new one...
                 m_pCurrentMessage = nullptr;

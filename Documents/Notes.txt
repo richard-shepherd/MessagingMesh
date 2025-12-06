@@ -1,9 +1,6 @@
 TODO
 ----
-- BUG: Ping sometimes stops working!
-  - Losing an update?
-  - Related to ThreadsafeConsumableQueue?
-  - Happens after ping sent, before send() in TX loop
+- Buffer: Re-use buffer better in readNetworkMessage and readNetworkMessageSize.
 
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
 

@@ -3,8 +3,6 @@
 #include "Field.h"
 #include "Message.h"
 #include "Exception.h"
-#include "Logger.h"
-#include "MMUtils.h"
 using namespace MessagingMesh;
 
 // Constructor.
@@ -17,6 +15,16 @@ Buffer::Buffer()
 Buffer::~Buffer()
 {
     delete[] m_pBuffer;
+}
+
+// Resets the buffer. Used in particular when re-using buffers from an ObjectPool.
+void Buffer::reset()
+{
+    m_position = SIZE_SIZE;
+    m_dataSize = SIZE_SIZE;
+    m_hasAllData = false;
+    m_networkMessageSizeBufferPosition = 0;
+    m_gotNetworkBufferSize = false;
 }
 
 // Gets the buffer.
@@ -374,7 +382,7 @@ void Buffer::updatePosition_Write(int32_t bytesWritten)
 // Reads data from a network data buffer until we have all the data for
 // the buffer as specified by the size in the network message.
 // Returns the number of bytes read from the buffer.
-size_t Buffer::readNetworkMessage(const char* pBuffer, size_t bufferSize, size_t bufferPosition)
+size_t Buffer::readNetworkMessage(const char* pNetworkBuffer, size_t networkBufferSize, size_t networkBufferPosition)
 {
     // See also the comments in Socket::onDataReceived() about how data for a message
     // can be received across multiple updates.
@@ -387,13 +395,13 @@ size_t Buffer::readNetworkMessage(const char* pBuffer, size_t bufferSize, size_t
 
     // We make sure that we have the message size.
     // (This is a no-op if we already know the size.)
-    size_t bytesRead = readNetworkMessageSize(pBuffer, bufferSize, bufferPosition);
-    if (m_bufferSize == 0)
+    size_t bytesRead = readNetworkMessageSize(pNetworkBuffer, networkBufferSize, networkBufferPosition);
+    if (!m_gotNetworkBufferSize)
     {
         // We do not (yet) have the size...
         return bytesRead;
     }
-    bufferPosition += bytesRead;
+    networkBufferPosition += bytesRead;
 
     // We find the number of bytes we need. This may not be the same as
     // the size of the message, as we may have already read from of the
@@ -402,11 +410,11 @@ size_t Buffer::readNetworkMessage(const char* pBuffer, size_t bufferSize, size_t
 
     // We find how much data there is available in the buffer and
     // work out how many bytes to read from the buffer...
-    size_t sizeAvailable = bufferSize - bufferPosition;
+    size_t sizeAvailable = networkBufferSize - networkBufferPosition;
     size_t sizeToRead = std::min(sizeRequired, sizeAvailable);
 
     // We copy the data into our buffer...
-    std::memcpy(m_pBuffer + m_position, pBuffer + bufferPosition, sizeToRead);
+    std::memcpy(m_pBuffer + m_position, pNetworkBuffer + networkBufferPosition, sizeToRead);
     bytesRead += sizeToRead;
 
     // We update the data buffer position. It may be that we still have not read the
@@ -424,10 +432,10 @@ size_t Buffer::readNetworkMessage(const char* pBuffer, size_t bufferSize, size_t
 }
 
 // Reads the network message size (or as much as can be read) from the buffer.
-size_t Buffer::readNetworkMessageSize(const char* pBuffer, size_t bufferSize, size_t bufferPosition)
+size_t Buffer::readNetworkMessageSize(const char* pNetworkBuffer, size_t networkBufferSize, size_t networkBufferPosition)
 {
     // We check if we already have the size...
-    if (m_bufferSize != 0)
+    if (m_gotNetworkBufferSize)
     {
         return 0;
     }
@@ -436,8 +444,8 @@ size_t Buffer::readNetworkMessageSize(const char* pBuffer, size_t bufferSize, si
     int32_t bytesRead = 0;
     while (m_networkMessageSizeBufferPosition < SIZE_SIZE)
     {
-        if (bufferPosition >= bufferSize) break;
-        m_networkMessageSizeBuffer[m_networkMessageSizeBufferPosition++] = pBuffer[bufferPosition++];
+        if (networkBufferPosition >= networkBufferSize) break;
+        m_networkMessageSizeBuffer[m_networkMessageSizeBufferPosition++] = pNetworkBuffer[networkBufferPosition++];
         bytesRead++;
     }
 
@@ -447,6 +455,7 @@ size_t Buffer::readNetworkMessageSize(const char* pBuffer, size_t bufferSize, si
         // We copy the size buffer to the m_bufferSize field. (We can do this as
         // the messaging-mesh network protocol for int32 is little-endian.)
         std::memcpy(&m_bufferSize, &m_networkMessageSizeBuffer[0], SIZE_SIZE);
+        m_gotNetworkBufferSize = true;
 
         // We allocate the data buffer for the size...
         delete[] m_pBuffer;
