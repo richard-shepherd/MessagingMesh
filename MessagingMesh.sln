@@ -60,10 +60,10 @@ Global
 		{54667E8F-6391-44CC-98A1-E04FC319549E}.Debug|MessagingMesh.Build.0 = Debug|Any CPU
 		{54667E8F-6391-44CC-98A1-E04FC319549E}.Release|MessagingMesh.ActiveCfg = Release|Any CPU
 		{54667E8F-6391-44CC-98A1-E04FC319549E}.Release|MessagingMesh.Build.0 = Release|Any CPU
-		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Debug|MessagingMesh.ActiveCfg = Debug|Any CPU
-		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Debug|MessagingMesh.Build.0 = Debug|Any CPU
-		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Release|MessagingMesh.ActiveCfg = Release|Any CPU
-		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Release|MessagingMesh.Build.0 = Release|Any CPU
+		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Debug|MessagingMesh.ActiveCfg = Debug|x64
+		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Debug|MessagingMesh.Build.0 = Debug|x64
+		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Release|MessagingMesh.ActiveCfg = Release|x64
+		{36C9A6EF-D8C2-08E9-8823-EC49DB558234}.Release|MessagingMesh.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
