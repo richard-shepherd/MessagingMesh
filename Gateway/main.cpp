@@ -1,3 +1,4 @@
+#include <mimalloc/mimalloc-new-delete.h>
 #include <iostream>
 #include <Logger.h>
 #include <Utils.h>
@@ -41,6 +42,9 @@ int main(int argc, char** argv)
 
         // We set up logging...
         Logger::registerCallback(onMessageLogged);
+
+        // We log the mimalloc version...
+        Logger::info(std::format("Using mimalloc version {}", mi_version()));
 
         // We run the gateway...
         Gateway gateway(port);

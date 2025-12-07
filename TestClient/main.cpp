@@ -1,3 +1,4 @@
+#include <mimalloc/mimalloc-new-delete.h>
 #include <iostream>
 #include <format>
 #include <conio.h>
@@ -163,6 +164,7 @@ void server()
 int main(int argc, char** argv)
 {
     MM::Logger::registerCallback(onMessageLogged);
+    MM::Logger::info(std::format("Using mimalloc version {}", mi_version()));
 
     if (argc >= 2 && strcmp("-pub", argv[1]) == 0)
     {

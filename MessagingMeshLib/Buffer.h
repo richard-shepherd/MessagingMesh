@@ -86,7 +86,8 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Creates a Buffer instance.
-        static BufferPtr create() { return ObjectPool<Buffer>::acquire(); }
+        //static BufferPtr create() { return ObjectPool<Buffer>::acquire(); }
+        static BufferPtr create() { return BufferPtr(new Buffer()); }
 
         // Destructor.
         ~Buffer();
