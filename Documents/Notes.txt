@@ -1,8 +1,8 @@
 TODO
 ----
-- Buffer: Re-use buffer better in readNetworkMessage and readNetworkMessageSize.
-
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
+
+- Is it possible to use mimalloc by default in library code without the client having to link it?
 
 - We do not need a thread safe queue in the gateway
   - ie, on a Service UV thread
