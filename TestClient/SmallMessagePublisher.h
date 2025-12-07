@@ -19,15 +19,11 @@ public:
 
         // We send updates...
         MM::Logger::info("Sending data");
-        //const int BLOB_LENGTH = 10;
-        //char blob[BLOB_LENGTH];
-        //auto pBLOB = MM::BLOB::create_fromData(blob, BLOB_LENGTH, MM::BLOB::Ownership::HOLD_REFERENCE);
         for (int32_t i = 1; i <= 10000000; ++i)
         {
             {
                 auto pMessage = MM::Message::create();
                 pMessage->addSignedInt32("#", i);
-                //pMessage->addBLOB("#", pBLOB);
                 connection.sendMessage("A.B", pMessage);
             }
         }
