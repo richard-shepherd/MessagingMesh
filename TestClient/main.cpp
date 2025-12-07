@@ -6,6 +6,8 @@
 #include "SmallMessageSubscriber.h"
 #include "Client.h"
 #include "Server.h"
+#include "Pinger.h"
+#include "Ponger.h"
 namespace MM = MessagingMesh;
 
 
@@ -39,9 +41,17 @@ int main(int argc, char** argv)
     {
         Server::start();
     }
+    else if (argc >= 2 && strcmp("-ping", argv[1]) == 0)
+    {
+        Pinger::start();
+    }
+    else if (argc >= 2 && strcmp("-pong", argv[1]) == 0)
+    {
+        Ponger::start();
+    }
     else
     {
-        MM::Logger::warn("Usage: TestClient.exe -pub/-sub");
+        MM::Logger::warn("Usage: TestClient.exe -pub/-sub, -client/-server, -ping/-pong");
     }
 }
 

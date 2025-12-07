@@ -15,9 +15,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
-    <ClInclude Include="Publisher.h" />
+    <ClInclude Include="Pinger.h" />
+    <ClInclude Include="Ponger.h" />
+    <ClInclude Include="SmallMessagePublisher.h" />
     <ClInclude Include="Server.h" />
-    <ClInclude Include="Subscriber.h" />
+    <ClInclude Include="SmallMessageSubscriber.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

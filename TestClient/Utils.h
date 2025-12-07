@@ -25,5 +25,11 @@ public:
             }
         }
     }
+
+    // Returns the number of microseconds since the epoch.
+    static int64_t microsecondsSinceEpoch()
+    {
+        return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+    }
 };
 
