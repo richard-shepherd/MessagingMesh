@@ -13,6 +13,13 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Client.h" />
+    <ClInclude Include="Publisher.h" />
+    <ClInclude Include="Server.h" />
+    <ClInclude Include="Subscriber.h" />
+    <ClInclude Include="Utils.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
