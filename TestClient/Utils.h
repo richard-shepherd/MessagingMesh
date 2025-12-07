@@ -31,5 +31,11 @@ public:
     {
         return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
     }
+
+    // Sleeps for the time specified.
+    static void sleep(int milliseconds)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+    }
 };
 

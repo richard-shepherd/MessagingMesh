@@ -14,6 +14,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BLOBPublisher.h" />
+    <ClInclude Include="BLOBSubscriber.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Pinger.h" />
     <ClInclude Include="Ponger.h" />

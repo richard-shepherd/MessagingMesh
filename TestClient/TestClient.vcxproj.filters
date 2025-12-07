@@ -41,5 +41,11 @@
     <ClInclude Include="Ponger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BLOBPublisher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BLOBSubscriber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

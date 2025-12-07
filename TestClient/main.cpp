@@ -4,12 +4,16 @@
 #include <MessagingMesh.h>
 #include "SmallMessagePublisher.h"
 #include "SmallMessageSubscriber.h"
+#include "BLOBPublisher.h"
+#include "BLOBSubscriber.h"
 #include "Client.h"
 #include "Server.h"
 #include "Pinger.h"
 #include "Ponger.h"
 namespace MM = MessagingMesh;
 
+// Static used in BLOBSubscriber.
+int BLOBSubscriber::blobCount;
 
 // Outputs messaging-mesh logs to the screen.
 void onMessageLogged(MM::Logger::LogLevel logLevel, const std::string& message)
@@ -32,6 +36,14 @@ int main(int argc, char** argv)
     else if (argc >= 2 && strcmp("-sub", argv[1]) == 0)
     {
         SmallMessageSubscriber::start();
+    }
+    if (argc >= 2 && strcmp("-pub-blob", argv[1]) == 0)
+    {
+        BLOBPublisher::start();
+    }
+    else if (argc >= 2 && strcmp("-sub-blob", argv[1]) == 0)
+    {
+        BLOBSubscriber::start();
     }
     else if (argc >= 2 && strcmp("-client", argv[1]) == 0)
     {
