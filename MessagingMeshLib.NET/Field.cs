@@ -62,6 +62,14 @@ namespace MessagingMeshLib.NET
             m_name = name;
         }
 
+        /// <summary>
+        /// Gets the field's type.
+        /// </summary>
+        public DataType getFieldType()
+        {
+            return m_dataType;
+        }
+
         #endregion
 
         #region Getters and setters for field types
@@ -235,6 +243,145 @@ namespace MessagingMeshLib.NET
         {
             m_dataType = DataType.BLOB;
             m_data = value;
+        }
+
+        #endregion
+
+        #region Try-get methods for field types
+
+        /// <summary>
+        /// Tries to get the string held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetString(out string value)
+        {
+            if (m_dataType == DataType.STRING)
+            {
+                value = (string)m_data;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get the signed int32 held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetSignedInt32(out int value)
+        {
+            if (m_dataType == DataType.SIGNED_INT32)
+            {
+                value = (int)m_data;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get the unsigned int32 held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetUnsignedInt32(out uint value)
+        {
+            if (m_dataType == DataType.UNSIGNED_INT32)
+            {
+                value = (uint)m_data;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get the signed int64 held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetSignedInt64(out long value)
+        {
+            if (m_dataType == DataType.SIGNED_INT64)
+            {
+                value = (long)m_data;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get the unsigned int64 held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetUnsignedInt64(out ulong value)
+        {
+            if (m_dataType == DataType.UNSIGNED_INT64)
+            {
+                value = (ulong)m_data;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get the double held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetDouble(out double value)
+        {
+            if (m_dataType == DataType.DOUBLE)
+            {
+                value = (double)m_data;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get the Message held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetMessage(out Message value)
+        {
+            if (m_dataType == DataType.MESSAGE)
+            {
+                value = (Message)m_data;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get the bool held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetBool(out bool value)
+        {
+            if (m_dataType == DataType.BOOL)
+            {
+                value = (bool)m_data;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get the BLOB held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetBLOB(out byte[] value)
+        {
+            if (m_dataType == DataType.BLOB)
+            {
+                value = (byte[])m_data;
+                return true;
+            }
+            value = default;
+            return false;
         }
 
         #endregion

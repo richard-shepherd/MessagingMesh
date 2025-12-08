@@ -234,6 +234,136 @@ namespace MessagingMeshLib.NET
 
         #endregion
 
+        #region Field try-get methods
+
+        /// <summary>
+        /// Tries to get a string from the named field.
+        /// Returns true if successful, false if the field does not exist or is not the correct type.
+        /// </summary>
+        public bool tryGetString(string name, out string value)
+        {
+            if (m_mapNameToField.TryGetValue(name, out var field))
+            {
+                return field.tryGetString(out value);
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get a signed int32 from the named field.
+        /// Returns true if successful, false if the field does not exist or is not the correct type.
+        /// </summary>
+        public bool tryGetSignedInt32(string name, out int value)
+        {
+            if (m_mapNameToField.TryGetValue(name, out var field))
+            {
+                return field.tryGetSignedInt32(out value);
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get an unsigned int32 from the named field.
+        /// Returns true if successful, false if the field does not exist or is not the correct type.
+        /// </summary>
+        public bool tryGetUnsignedInt32(string name, out uint value)
+        {
+            if (m_mapNameToField.TryGetValue(name, out var field))
+            {
+                return field.tryGetUnsignedInt32(out value);
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get a signed int64 from the named field.
+        /// Returns true if successful, false if the field does not exist or is not the correct type.
+        /// </summary>
+        public bool tryGetSignedInt64(string name, out long value)
+        {
+            if (m_mapNameToField.TryGetValue(name, out var field))
+            {
+                return field.tryGetSignedInt64(out value);
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get an unsigned int64 from the named field.
+        /// Returns true if successful, false if the field does not exist or is not the correct type.
+        /// </summary>
+        public bool tryGetUnsignedInt64(string name, out ulong value)
+        {
+            if (m_mapNameToField.TryGetValue(name, out var field))
+            {
+                return field.tryGetUnsignedInt64(out value);
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get a double from the named field.
+        /// Returns true if successful, false if the field does not exist or is not the correct type.
+        /// </summary>
+        public bool tryGetDouble(string name, out double value)
+        {
+            if (m_mapNameToField.TryGetValue(name, out var field))
+            {
+                return field.tryGetDouble(out value);
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get a sub-message from the named field.
+        /// Returns true if successful, false if the field does not exist or is not the correct type.
+        /// </summary>
+        public bool tryGetMessage(string name, out Message value)
+        {
+            if (m_mapNameToField.TryGetValue(name, out var field))
+            {
+                return field.tryGetMessage(out value);
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get a bool from the named field.
+        /// Returns true if successful, false if the field does not exist or is not the correct type.
+        /// </summary>
+        public bool tryGetBool(string name, out bool value)
+        {
+            if (m_mapNameToField.TryGetValue(name, out var field))
+            {
+                return field.tryGetBool(out value);
+            }
+            value = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Tries to get a BLOB from the named field.
+        /// Returns true if successful, false if the field does not exist or is not the correct type.
+        /// </summary>
+        public bool tryGetBLOB(string name, out byte[] value)
+        {
+            if (m_mapNameToField.TryGetValue(name, out var field))
+            {
+                return field.tryGetBLOB(out value);
+            }
+            value = default;
+            return false;
+        }
+
+        #endregion
+
         #region Serialization
 
         /// <summary>
