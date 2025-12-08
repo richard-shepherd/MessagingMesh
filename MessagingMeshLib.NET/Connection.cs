@@ -156,16 +156,19 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Processes messages in the queue. Waits for the specified time for messages to be available.
         /// </summary>
-        public void processMessageQueue(int millisecondsTimeout)
+        public int processMessageQueue(int millisecondsTimeout)
         {
+            var messagesProcessed = 0;
             var queuedMessages = m_queuedMessages.waitAndGetItems(millisecondsTimeout);
             if (queuedMessages != null && queuedMessages.Count != 0)
             {
+                messagesProcessed = queuedMessages.Count;
                 foreach (var queuedMessage in queuedMessages)
                 {
                     processGatewayMessage(queuedMessage.Header, queuedMessage.Buffer);
                 }
             }
+            return messagesProcessed;
         }
 
         /// <summary>
@@ -458,7 +461,14 @@ namespace MessagingMeshLib.NET
                 message.deserialize(buffer);
                 foreach (var callbackInfo in callbackInfos)
                 {
-                    callbackInfo.Callback(this, header.Subject, header.ReplySubject, message, callbackInfo.Tag);
+                    try
+                    {
+                        callbackInfo.Callback(this, header.Subject, header.ReplySubject, message, callbackInfo.Tag);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.warn($"Exception thrown by client callback: {ex.Message}");
+                    }
                 }
             }
         }

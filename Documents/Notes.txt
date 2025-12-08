@@ -1,5 +1,16 @@
 TODO
 ----
+- Maxim's points:
+  - 1. No Version. C++
+  - 2. No event on disconnect (or other errors) to raise an advisory. C++, C#
+  - 3. Can't send a message with a reply subject. C++
+  - 4. tryGet methods on Field and Message. C++
+  - 5. Field.getFieldType. C++
+  - 6. No max messages limit on PMQ. C++, C#
+  - 7. No messages-dispatched count from PMQ. C++
+  - 8. No way to report the size of the queue. C++, C#
+  - 9. try...catch in processGatewayMessage around client callbacks. C++
+
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
 
 - Add tryGet methods to Field and Message for C++.
