@@ -3,8 +3,8 @@ TODO
 - Maxim's points:
   - 1. No Version. C++
   - 2. No event on disconnect (or other errors) to raise an advisory. C++, C#
-  - 3. Can't send a message with a reply subject. C++
-  - 4. tryGet methods on Field and Message. C++
+  - 3. Can't send a message with a reply subject. C++ (re-order params to match C#)
+  - 4. tryGet methods on Field and Message. C++, (C# move functions around)
   - 5. Field.getFieldType. C++
   - 6. No max messages limit on PMQ. C++, C#
   - 7. No messages-dispatched count from PMQ. C++
@@ -12,10 +12,6 @@ TODO
   - 9. try...catch in processGatewayMessage around client callbacks. C++
 
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
-
-- Add tryGet methods to Field and Message for C++.
-
-- Add (optional) replySubject to Connection.sendMessage
 
 - Is it possible to use mimalloc by default in library code without the client having to link it?
 
@@ -42,8 +38,6 @@ TODO
 
 - Require a ClientID to be passed with connection requests?
   - Use it (along with IP address + port) for the socket name
-
-- Add blob tests to the C++ TestClient
 
 - Optionally hold BufferPtr in UVUtilsWriteRequest
   - Use this for large messages
