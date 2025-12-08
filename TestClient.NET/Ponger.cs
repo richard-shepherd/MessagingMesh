@@ -23,7 +23,7 @@ namespace TestClient.NET
             {
                 var message = new MM.Message();
                 message.addSignedInt64("TICKS", m.getSignedInt64("TICKS"));
-                connection.sendMessage("PONG", message);
+                connection.sendMessage(message, "PONG");
             });
 
             Utils.processMessages(connection);

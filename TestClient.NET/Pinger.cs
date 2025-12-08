@@ -59,13 +59,13 @@ namespace TestClient.NET
                 // We send the next ping...
                 var nextPing = new MM.Message();
                 nextPing.addSignedInt64("TICKS", Stopwatch.GetTimestamp());
-                connection.sendMessage("PING", nextPing);
+                connection.sendMessage(nextPing, "PING");
             });
 
             // We send an initial ping to kick things off...
             var intialPing = new MM.Message();
             intialPing.addSignedInt64("TICKS", Stopwatch.GetTimestamp());
-            connection.sendMessage("PING", intialPing);
+            connection.sendMessage(intialPing, "PING");
 
             Utils.processMessages(connection);
             connection.Dispose();

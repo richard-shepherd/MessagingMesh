@@ -2,6 +2,10 @@ TODO
 ----
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
 
+- Add tryGet methods to Field and Message for C++.
+
+- Add (optional) replySubject to Connection.sendMessage
+
 - Is it possible to use mimalloc by default in library code without the client having to link it?
 
 - We do not need a thread safe queue in the gateway

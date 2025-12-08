@@ -84,12 +84,13 @@ namespace MessagingMeshLib.NET
         /// Sends a message to the specified subject.
         /// Returns the number of bytes sent on the network.
         /// </summary>
-        public int sendMessage(string subject, Message message)
+        public int sendMessage(Message message, string subject, string replySubject = "")
         {
             // We create a NetworkMessage to send the message...
             var networkMessage = new NetworkMessage();
             networkMessage.Header.Action = NetworkMessageHeader.ActionEnum.SEND_MESSAGE;
             networkMessage.Header.Subject = subject;
+            networkMessage.Header.ReplySubject = replySubject;
             networkMessage.Message = message;
 
             // We send the message and return the size of the data sent...

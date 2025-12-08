@@ -25,7 +25,7 @@ namespace TestClient.NET
                 {
                     var message = new MM.Message();
                     message.addSignedInt32("#", i);
-                    connection.sendMessage("A.B", message);
+                    connection.sendMessage(message, "A.B");
                 }
             }
 

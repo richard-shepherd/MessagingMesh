@@ -31,7 +31,7 @@ namespace TestClient.NET
                     // We reply with a message holding the sum...
                     var reply = new MM.Message();
                     reply.addDouble("SUM", sum);
-                    connection.sendMessage(rs, reply);
+                    connection.sendMessage(reply, rs);
                 }
             );
 

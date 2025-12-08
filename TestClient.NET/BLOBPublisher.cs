@@ -29,7 +29,7 @@ namespace TestClient.NET
                     var message = new MM.Message();
                     message.addBLOB("#", blob);
                     message.addSignedInt32("A", i);
-                    connection.sendMessage("A.B", message);
+                    connection.sendMessage(message, "A.B");
                     if (i % 3 == 0)
                     {
                         Thread.Sleep(1);
