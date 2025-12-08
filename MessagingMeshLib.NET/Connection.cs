@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 
 namespace MessagingMeshLib.NET
@@ -23,6 +24,27 @@ namespace MessagingMeshLib.NET
         /// Definition of the subscription callback.
         /// </summary>
         public delegate void SubscriptionCallback(Connection connection, string subject, string replySubject, Message message, object tag);
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the Messaging Mesh .NET client library version.
+        /// </summary>
+        public static string Version
+        {
+            get
+            {
+                var fullVersion = Assembly.GetExecutingAssembly()
+                                          .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                                          ?.InformationalVersion
+                                  ?? "Unknown";
+
+                // Split on '+' to remove the git hash
+                return fullVersion.Split('+')[0];
+            }
+        }
 
         #endregion
 

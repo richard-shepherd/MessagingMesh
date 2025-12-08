@@ -25,6 +25,7 @@ namespace TestClient.NET
 
             // We connect to the logger...
             MM.Logger.registerCallback(onMessagingMeshLogMessage);
+            MM.Logger.info($"MM client version={MM.Connection.Version}");
 
             try
             {
