@@ -65,6 +65,20 @@ namespace MessagingMeshLib.NET.Tests
             saveBuffer("..\\..\\..\\..\\TestData\\SerializedBuffer-cs.bin", buffer);
         }
 
+
+        /// <summary>
+        /// Tests tryGet field access.
+        /// </summary>
+        [TestMethod]
+        public void tryGet()
+        {
+            var message = new Message();
+            message.addString("NAME", "Bob Smith");
+            var success = message.tryGetString("NAME", out var name);
+            Assert.AreEqual(true, success);
+            Assert.AreEqual("Bob Smith", name);
+        }
+
         /// <summary>
         /// Tests deserializing a message from C++ data.
         /// </summary>
