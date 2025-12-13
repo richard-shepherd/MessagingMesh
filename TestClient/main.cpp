@@ -27,7 +27,7 @@ void onMessageLogged(MM::Logger::LogLevel logLevel, const std::string& message)
 int main(int argc, char** argv)
 {
     MM::Logger::registerCallback(onMessageLogged);
-    MM::Logger::info(std::format("Using mimalloc version {}", mi_version()));
+    MM::Logger::info(std::format("MessagingMesh version={}, mimalloc version={}", MM::Connection::getVersion(), mi_version()));
 
     if (argc >= 2 && strcmp("-pub", argv[1]) == 0)
     {

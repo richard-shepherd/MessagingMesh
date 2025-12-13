@@ -1,6 +1,6 @@
 Messaging Mesh
 --------------
-The project is called "Messaging Mesh": https://github.com/richard-shepherd/MessagingMesh.
+The project is called "Messaging Mesh" (sometimes abreviated to MM): https://github.com/richard-shepherd/MessagingMesh.
 
 It is pub/sub messaging system with semantics and client APIs similar to TIBRV (RV). 
 
@@ -134,8 +134,10 @@ This means that we (almost) get the best of both worlds between TCP and UDP mess
 - All fan-out for multiple subscibers on a given machine is handled locally by that
   server's gateway, without the message being send across the network multiple times.
 
-
-
+Coding languages and versions
+-----------------------------
+- C++20
+- C# lang-version:13.0, targetting: net472;net48;net8.0;net10.0
 
 
 

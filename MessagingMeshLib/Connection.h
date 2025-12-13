@@ -24,6 +24,9 @@ namespace MessagingMesh
         // Destructor.
         ~Connection();
 
+        // Gets the library version.
+        static const std::string& getVersion();
+
         // Returns a unique inbox name.
         std::string createInbox();
 

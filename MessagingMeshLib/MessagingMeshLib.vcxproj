@@ -40,6 +40,7 @@
     <ClInclude Include="MMUtils.h" />
     <ClInclude Include="UVLoop.h" />
     <ClInclude Include="UVUtils.h" />
+    <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BLOB.cpp" />

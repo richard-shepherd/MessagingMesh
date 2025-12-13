@@ -5,11 +5,10 @@
 #include "Socket.h"
 #include "Logger.h"
 #include "MMUtils.h"
-#include "Utils.h"
 #include "NetworkMessage.h"
 #include "Message.h"
 #include "Subscription.h"
-#include "Buffer.h"
+#include "Version.h"
 using namespace MessagingMesh;
 
 // Constructor.
@@ -69,6 +68,12 @@ ConnectionImpl::~ConnectionImpl()
     auto& header = networkMessage.getHeader();
     header.setAction(NetworkMessageHeader::Action::DISCONNECT);
     MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
+}
+
+// Gets the library version.
+const std::string& ConnectionImpl::getVersion()
+{
+    return Version::getVersion();
 }
 
 // Sends a message to the specified subject.

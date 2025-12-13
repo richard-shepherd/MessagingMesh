@@ -11,6 +11,12 @@ Connection::Connection(const ConnectionParams& connectionParams) :
 // Destructor.
 Connection::~Connection() = default;
 
+// Gets the library version.
+const std::string& Connection::getVersion()
+{
+    return ConnectionImpl::getVersion();
+}
+
 // Returns a unique inbox name.
 std::string Connection::createInbox()
 {
