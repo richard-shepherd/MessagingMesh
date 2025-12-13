@@ -11,6 +11,9 @@ TODO
   - 8. No way to report the size of the queue. C++, C#
   - 9. try...catch in processGatewayMessage around client callbacks. C++
 
+- Think about storing Message fields in a list / vector when we have a small 
+  number of fields. This might be faster.
+
 - Talk to Maxim (again) about string encoding - for both C++ and C#. Can this be the client's responsibility?
 
 - Is it possible to use mimalloc by default in library code without the client having to link it?

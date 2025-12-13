@@ -72,7 +72,7 @@ namespace MessagingMeshLib.NET
 
         #endregion
 
-        #region Getters and setters for field types
+        #region String
 
         /// <summary>
         /// Gets the string held by the field.
@@ -94,6 +94,19 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
+        /// Tries to get the string held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetString(out string value)
+        {
+            return tryGetValue(DataType.STRING, out value);
+        }
+
+        #endregion
+
+        #region SignedInt32
+
+        /// <summary>
         /// Gets the signed int32 held by the field.
         /// Throws a MessagingMeshException if the field does not hold this type.
         /// </summary>
@@ -111,6 +124,19 @@ namespace MessagingMeshLib.NET
             m_dataType = DataType.SIGNED_INT32;
             m_data = value;
         }
+
+        /// <summary>
+        /// Tries to get the signed int32 held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetSignedInt32(out int value)
+        {
+            return tryGetValue(DataType.SIGNED_INT32, out value);
+        }
+
+        #endregion
+
+        #region UnsignedInt32
 
         /// <summary>
         /// Gets the unsigned int32 held by the field.
@@ -132,6 +158,19 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
+        /// Tries to get the unsigned int32 held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetUnsignedInt32(out uint value)
+        {
+            return tryGetValue(DataType.UNSIGNED_INT32, out value);
+        }
+
+        #endregion
+
+        #region SignedInt64
+
+        /// <summary>
         /// Gets the signed int64 held by the field.
         /// Throws a MessagingMeshException if the field does not hold this type.
         /// </summary>
@@ -149,6 +188,19 @@ namespace MessagingMeshLib.NET
             m_dataType = DataType.SIGNED_INT64;
             m_data = value;
         }
+
+        /// <summary>
+        /// Tries to get the signed int64 held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetSignedInt64(out long value)
+        {
+            return tryGetValue(DataType.SIGNED_INT64, out value);
+        }
+
+        #endregion
+
+        #region UnsignedInt64
 
         /// <summary>
         /// Gets the unsigned int64 held by the field.
@@ -170,6 +222,19 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
+        /// Tries to get the unsigned int64 held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetUnsignedInt64(out ulong value)
+        {
+            return tryGetValue(DataType.UNSIGNED_INT64, out value);
+        }
+
+        #endregion
+
+        #region Double
+
+        /// <summary>
         /// Gets the double held by the field.
         /// Throws a MessagingMeshException if the field does not hold this type.
         /// </summary>
@@ -187,6 +252,19 @@ namespace MessagingMeshLib.NET
             m_dataType = DataType.DOUBLE;
             m_data = value;
         }
+
+        /// <summary>
+        /// Tries to get the double held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetDouble(out double value)
+        {
+            return tryGetValue(DataType.DOUBLE, out value);
+        }
+
+        #endregion
+
+        #region Message
 
         /// <summary>
         /// Gets the Message held by the field.
@@ -208,6 +286,19 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
+        /// Tries to get the Message held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetMessage(out Message value)
+        {
+            return tryGetValue(DataType.MESSAGE, out value);
+        }
+
+        #endregion
+
+        #region Bool
+
+        /// <summary>
         /// Gets the bool held by the field.
         /// Throws a MessagingMeshException if the field does not hold this type.
         /// </summary>
@@ -225,6 +316,19 @@ namespace MessagingMeshLib.NET
             m_dataType = DataType.BOOL;
             m_data = value;
         }
+
+        /// <summary>
+        /// Tries to get the bool held by the field.
+        /// Returns true if successful, false if the field does not hold this type.
+        /// </summary>
+        public bool tryGetBool(out bool value)
+        {
+            return tryGetValue(DataType.BOOL, out value);
+        }
+
+        #endregion
+
+        #region BLOB
 
         /// <summary>
         /// Gets the BLOB held by the field.
@@ -245,143 +349,13 @@ namespace MessagingMeshLib.NET
             m_data = value;
         }
 
-        #endregion
-
-        #region Try-get methods for field types
-
-        /// <summary>
-        /// Tries to get the string held by the field.
-        /// Returns true if successful, false if the field does not hold this type.
-        /// </summary>
-        public bool tryGetString(out string value)
-        {
-            if (m_dataType == DataType.STRING)
-            {
-                value = (string)m_data;
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// Tries to get the signed int32 held by the field.
-        /// Returns true if successful, false if the field does not hold this type.
-        /// </summary>
-        public bool tryGetSignedInt32(out int value)
-        {
-            if (m_dataType == DataType.SIGNED_INT32)
-            {
-                value = (int)m_data;
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// Tries to get the unsigned int32 held by the field.
-        /// Returns true if successful, false if the field does not hold this type.
-        /// </summary>
-        public bool tryGetUnsignedInt32(out uint value)
-        {
-            if (m_dataType == DataType.UNSIGNED_INT32)
-            {
-                value = (uint)m_data;
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// Tries to get the signed int64 held by the field.
-        /// Returns true if successful, false if the field does not hold this type.
-        /// </summary>
-        public bool tryGetSignedInt64(out long value)
-        {
-            if (m_dataType == DataType.SIGNED_INT64)
-            {
-                value = (long)m_data;
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// Tries to get the unsigned int64 held by the field.
-        /// Returns true if successful, false if the field does not hold this type.
-        /// </summary>
-        public bool tryGetUnsignedInt64(out ulong value)
-        {
-            if (m_dataType == DataType.UNSIGNED_INT64)
-            {
-                value = (ulong)m_data;
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// Tries to get the double held by the field.
-        /// Returns true if successful, false if the field does not hold this type.
-        /// </summary>
-        public bool tryGetDouble(out double value)
-        {
-            if (m_dataType == DataType.DOUBLE)
-            {
-                value = (double)m_data;
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// Tries to get the Message held by the field.
-        /// Returns true if successful, false if the field does not hold this type.
-        /// </summary>
-        public bool tryGetMessage(out Message value)
-        {
-            if (m_dataType == DataType.MESSAGE)
-            {
-                value = (Message)m_data;
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
-        /// <summary>
-        /// Tries to get the bool held by the field.
-        /// Returns true if successful, false if the field does not hold this type.
-        /// </summary>
-        public bool tryGetBool(out bool value)
-        {
-            if (m_dataType == DataType.BOOL)
-            {
-                value = (bool)m_data;
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
         /// <summary>
         /// Tries to get the BLOB held by the field.
         /// Returns true if successful, false if the field does not hold this type.
         /// </summary>
         public bool tryGetBLOB(out byte[] value)
         {
-            if (m_dataType == DataType.BLOB)
-            {
-                value = (byte[])m_data;
-                return true;
-            }
-            value = default;
-            return false;
+            return tryGetValue(DataType.BLOB, out value);
         }
 
         #endregion
@@ -501,6 +475,20 @@ namespace MessagingMeshLib.NET
         #endregion
 
         #region Private functions
+
+        /// <summary>
+        /// Generic tryGet helper method.
+        /// </summary>
+        private bool tryGetValue<T>(DataType dataType, out T value)
+        {
+            if (m_dataType == dataType)
+            {
+                value = (T)m_data;
+                return true;
+            }
+            value = default;
+            return false;
+        }
 
         /// <summary>
         /// Checks that the data being held is the type specified.
