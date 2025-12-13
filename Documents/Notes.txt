@@ -3,7 +3,7 @@ TODO
 - Maxim's points:
   - 1. No Version. C++
   - 2. No event on disconnect (or other errors) to raise an advisory. C++, C#
-  - 3. Can't send a message with a reply subject. C++ (re-order params to match C#)
+  DONE - 3. Can't send a message with a reply subject.
   - 4. tryGet methods on Field and Message. C++, (C# move functions around)
   - 5. Field.getFieldType. C++
   - 6. No max messages limit on PMQ. C++, C#

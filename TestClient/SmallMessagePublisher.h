@@ -24,7 +24,7 @@ public:
             {
                 auto pMessage = MM::Message::create();
                 pMessage->addSignedInt32("#", i);
-                connection.sendMessage("A.B", pMessage);
+                connection.sendMessage(pMessage, "A.B");
             }
         }
 

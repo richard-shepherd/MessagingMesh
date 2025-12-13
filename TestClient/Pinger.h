@@ -55,13 +55,13 @@ public:
                 // We send the next ping...
                 auto nextPing = MM::Message::create();
                 nextPing->addSignedInt64("US---", Utils::microsecondsSinceEpoch());
-                c.sendMessage("PING", nextPing);
+                c.sendMessage(nextPing, "PING");
             });
 
         // We send an initial ping to kick things off...
         auto intialPing = MM::Message::create();
         intialPing->addSignedInt64("US---", Utils::microsecondsSinceEpoch());
-        connection.sendMessage("PING", intialPing);
+        connection.sendMessage(intialPing, "PING");
 
         Utils::processMessages(connection);
     }

@@ -28,7 +28,7 @@ public:
                 auto message = MM::Message::create();
                 message->addBLOB("#", pBLOB);
                 message->addSignedInt32("A", i);
-                connection.sendMessage("A.B", message);
+                connection.sendMessage(message, "A.B");
                 if (i % 3 == 0)
                 {
                     Utils::sleep(1);

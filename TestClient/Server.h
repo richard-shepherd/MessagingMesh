@@ -30,7 +30,7 @@ public:
                 // We reply with a message holding the sum...
                 auto pReply = MM::Message::create();
                 pReply->addDouble("SUM", sum);
-                connection.sendMessage(replySubject, pReply);
+                connection.sendMessage(pReply, replySubject);
             }
         );
 

@@ -22,7 +22,7 @@ public:
             {
                 auto message = MM::Message::create();
                 message->addSignedInt64("US---", m->getSignedInt64("US---"));
-                c.sendMessage("PONG", message);
+                c.sendMessage(message, "PONG");
             });
 
         Utils::processMessages(connection);

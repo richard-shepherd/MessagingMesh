@@ -29,7 +29,7 @@ namespace MessagingMesh
 
         // Sends a message to the specified subject.
         // Returns the number of bytes sent on the network.
-        int32_t sendMessage(const std::string& subject, const MessagePtr& pMessage);
+        int32_t sendMessage(const MessagePtr& pMessage, const std::string& subject, const std::string& replySubject = "");
 
         // Sends a blocking request to the subject specified. Returns the reply or 
         // nullptr if the request times out.

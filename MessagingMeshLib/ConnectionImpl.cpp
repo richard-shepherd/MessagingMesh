@@ -73,13 +73,14 @@ ConnectionImpl::~ConnectionImpl()
 
 // Sends a message to the specified subject.
 // Returns the number of bytes sent on the network.
-int32_t ConnectionImpl::sendMessage(const std::string& subject, const MessagePtr& pMessage) const
+int32_t ConnectionImpl::sendMessage(const MessagePtr& pMessage, const std::string& subject, const std::string& replySubject) const
 {
     // We create a NetworkMessage to send the message...
     NetworkMessage networkMessage;
     auto& header = networkMessage.getHeader();
     header.setAction(NetworkMessageHeader::Action::SEND_MESSAGE);
     header.setSubject(subject);
+    header.setReplySubject(replySubject);
     networkMessage.setMessage(pMessage);
 
     // We send the message...
