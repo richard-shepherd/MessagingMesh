@@ -178,39 +178,39 @@ void FieldImpl::serialize(Buffer& buffer) const
     switch (m_dataType)
     {
     case Field::STRING:
-        buffer.write_string(m_dataString);
+        buffer.write_string(std::get<std::string>(m_data));
         break;
 
     case Field::SIGNED_INT32:
-        buffer.write_int32(m_dataNumeric.Int32);
+        buffer.write_int32(std::get<int32_t>(m_data));
         break;
 
     case Field::UNSIGNED_INT32:
-        buffer.write_uint32(m_dataNumeric.UInt32);
+        buffer.write_uint32(std::get<uint32_t>(m_data));
         break;
 
     case Field::SIGNED_INT64:
-        buffer.write_int64(m_dataNumeric.Int64);
+        buffer.write_int64(std::get<int64_t>(m_data));
         break;
 
     case Field::UNSIGNED_INT64:
-        buffer.write_uint64(m_dataNumeric.UInt64);
+        buffer.write_uint64(std::get<uint64_t>(m_data));
         break;
 
     case Field::DOUBLE:
-        buffer.write_double(m_dataNumeric.Double);
+        buffer.write_double(std::get<double>(m_data));
         break;
 
     case Field::MESSAGE:
-        buffer.write_message(m_dataMessage);
+        buffer.write_message(std::get<ConstMessagePtr>(m_data));
         break;
 
     case Field::BOOL:
-        buffer.write_bool(m_dataBool);
+        buffer.write_bool(std::get<bool>(m_data));
         break;
 
     case Field::BLOB:
-        buffer.write_blob(m_dataBLOB);
+        buffer.write_blob(std::get<ConstBLOBPtr>(m_data));
         break;
 
     default:
@@ -231,39 +231,39 @@ void FieldImpl::deserialize(const Buffer& buffer)
     switch (m_dataType)
     {
     case Field::STRING:
-        m_dataString = buffer.read_string();
+        m_data = buffer.read_string();
         break;
 
     case Field::SIGNED_INT32:
-        m_dataNumeric.Int32 = buffer.read_int32();
+        m_data = buffer.read_int32();
         break;
 
     case Field::UNSIGNED_INT32:
-        m_dataNumeric.UInt32 = buffer.read_uint32();
+        m_data = buffer.read_uint32();
         break;
 
     case Field::SIGNED_INT64:
-        m_dataNumeric.Int64 = buffer.read_int64();
+        m_data = buffer.read_int64();
         break;
 
     case Field::UNSIGNED_INT64:
-        m_dataNumeric.UInt64 = buffer.read_uint64();
+        m_data = buffer.read_uint64();
         break;
 
     case Field::DOUBLE:
-        m_dataNumeric.Double = buffer.read_double();
+        m_data = buffer.read_double();
         break;
 
     case Field::MESSAGE:
-        m_dataMessage = buffer.read_message();
+        m_data = buffer.read_message();
         break;
 
     case Field::BOOL:
-        m_dataBool = buffer.read_bool();
+        m_data = buffer.read_bool();
         break;
 
     case Field::BLOB:
-        m_dataBLOB = buffer.read_blob();
+        m_data = buffer.read_blob();
         break;
 
     default:
