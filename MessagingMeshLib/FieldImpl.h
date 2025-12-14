@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <variant>
 #include "Field.h"
 #include "SharedAliases.h"
 
@@ -98,20 +99,20 @@ namespace MessagingMesh
         std::string m_name;
         Field::DataType m_dataType;
 
-        // Data for the various supported types...
-        union NumericDataUnion
-        {
-            int32_t Int32;
-            uint32_t UInt32;
-            int64_t Int64;
-            uint64_t UInt64;
-            double Double;
-        };
-        NumericDataUnion m_dataNumeric;
-        std::string m_dataString;
-        ConstMessagePtr m_dataMessage = nullptr;
-        bool m_dataBool = false;
-        ConstBLOBPtr m_dataBLOB = nullptr;
+        // Variant of field types...
+        using FieldData = std::variant<
+            std::monostate,      // NOT_SET (index 0)
+            std::string,         // STRING (index 1)
+            int32_t,             // SIGNED_INT32 (index 2)
+            uint32_t,            // UNSIGNED_INT32 (index 3)
+            int64_t,             // SIGNED_INT64 (index 4)
+            uint64_t,            // UNSIGNED_INT64 (index 5)
+            double,              // DOUBLE (index 6)
+            ConstMessagePtr,     // MESSAGE (index 7)
+            bool,                // BOOL (index 8)
+            ConstBLOBPtr         // BLOB (index 9)
+        >;
+        FieldData m_data;
     };
 } // namespace
 
