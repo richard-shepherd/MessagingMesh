@@ -9,7 +9,7 @@
 #include "Callbacks.h"
 #include "ConnectionParams.h"
 #include "Subscription.h"
-#include "ThreadsafeConsumableVector.h"
+#include "ThreadsafeConsumableQueue.h"
 #include "NetworkMessageHeader.h"
 
 namespace MessagingMesh
@@ -148,7 +148,7 @@ namespace MessagingMesh
             NetworkMessageHeader Header;
             BufferPtr pBuffer;
         };
-        ThreadsafeConsumableVector<QueuedMessage> m_queuedMessages;
+        ThreadsafeConsumableQueue<QueuedMessage> m_queuedMessages;
     };
 } // namespace
 

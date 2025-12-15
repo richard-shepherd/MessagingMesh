@@ -3,7 +3,7 @@
 #include <functional>
 #include <libuv/uv.h>
 #include "SharedAliases.h"
-#include "ThreadsafeConsumableVector.h"
+#include "ThreadsafeConsumableQueue.h"
 
 namespace MessagingMesh
 {
@@ -79,8 +79,8 @@ namespace MessagingMesh
         // Signal sent to the event loop when there are new marshalled events.
         std::unique_ptr<uv_async_t> m_marshalledEventsSignal;
 
-        // Vector of marshalled events and a lock for it.
-        ThreadsafeConsumableVector<MarshalledEvent, std::string> m_marshalledEvents;
+        // Queue of marshalled events and a lock for it.
+        ThreadsafeConsumableQueue<MarshalledEvent, std::string> m_marshalledEvents;
 
         // Singnals the loop to stop when running hot...
         volatile bool m_stopLoop = false;

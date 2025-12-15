@@ -15,7 +15,7 @@ namespace MessagingMesh
     /// available, and the internal data is cleared.
     /// </summary>
     template<typename ItemType, typename UniqueKeyType = int>
-    class ThreadsafeConsumableVector
+    class ThreadsafeConsumableQueue
     {
     // Public types...
     public:
@@ -28,7 +28,7 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        ThreadsafeConsumableVector()
+        ThreadsafeConsumableQueue()
         {
             // We create the items vector...
             m_items = std::make_shared<VecItemType>();

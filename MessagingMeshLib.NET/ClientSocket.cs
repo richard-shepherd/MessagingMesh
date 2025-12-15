@@ -160,7 +160,7 @@ namespace MessagingMeshLib.NET
         /// Returns an enumerable of all send-buffers to write to the socket, holding the 
         /// data from the buffers passed in.
         /// </summary>
-        private IEnumerable<SendBufferInfo> getSendBufferInfos(Queue<Buffer> buffers)
+        private IEnumerable<SendBufferInfo> getSendBufferInfos(IEnumerable<Buffer> buffers)
         {
             // How we fill in the send-buffers depends on the size of the buffers in the queue.
             // 

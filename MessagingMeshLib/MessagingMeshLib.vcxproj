@@ -36,7 +36,7 @@
     <ClInclude Include="Socket.h" />
     <ClInclude Include="Subscription.h" />
     <ClInclude Include="Tests_MessagingMeshLib.h" />
-    <ClInclude Include="ThreadsafeConsumableVector.h" />
+    <ClInclude Include="ThreadsafeConsumableQueue.h" />
     <ClInclude Include="MMUtils.h" />
     <ClInclude Include="UVLoop.h" />
     <ClInclude Include="UVUtils.h" />

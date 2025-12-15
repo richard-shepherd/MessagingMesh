@@ -69,7 +69,7 @@
     <ClInclude Include="Tests_MessagingMeshLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ThreadsafeConsumableVector.h">
+    <ClInclude Include="ThreadsafeConsumableQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MMUtils.h">

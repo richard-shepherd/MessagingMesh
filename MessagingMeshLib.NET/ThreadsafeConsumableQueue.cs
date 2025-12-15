@@ -28,7 +28,7 @@ namespace MessagingMeshLib.NET
         {
             lock (m_queueLocker)
             {
-                m_queue.Enqueue(item);
+                m_queue.Add(item);
             }
             m_autoResetEvent.Set();
         }
@@ -36,7 +36,7 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Waits for data to be available and gets the current contents of the queue, and resets the data being held.
         /// </summary>
-        public Queue<ItemType> waitAndGetItems(int millisecondsTimeout)
+        public List<ItemType> waitAndGetItems(int millisecondsTimeout)
         {
             m_autoResetEvent.WaitOne(millisecondsTimeout);
             lock (m_queueLocker)
@@ -67,7 +67,7 @@ namespace MessagingMeshLib.NET
         #region Private data
 
         // Queue of items and a locker for it...
-        private Queue<ItemType> m_queue = new();
+        private List<ItemType> m_queue = new();
         private object m_queueLocker = new();
 
         // Signals when new data is available...

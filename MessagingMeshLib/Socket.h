@@ -3,7 +3,7 @@
 #include <functional>
 #include <libuv/uv.h>
 #include "SharedAliases.h"
-#include "ThreadsafeConsumableVector.h"
+#include "ThreadsafeConsumableQueue.h"
 #include "UVUtils.h"
 
 namespace MessagingMesh
@@ -197,7 +197,7 @@ namespace MessagingMesh
         BufferPtr m_pCurrentMessage;
 
         // Data queued for writing.
-        ThreadsafeConsumableVector<BufferInfo> m_queuedWrites;
+        ThreadsafeConsumableQueue<BufferInfo> m_queuedWrites;
 
         // Socket ID.
         // The atomic allows us to create a unique integer ID for each socket in the process.
