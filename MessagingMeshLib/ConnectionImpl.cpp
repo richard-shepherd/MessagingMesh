@@ -425,7 +425,14 @@ void ConnectionImpl::performSubscriptionCallbacks(const VecCallbackInfo& callbac
     // We call the registered callbacks...
     for (const auto& pCallbackInfo : callbackInfos)
     {
-        pCallbackInfo->Callback(m_connection, header.getSubject(), header.getReplySubject(), pMessage, pCallbackInfo->Tag);
+        try
+        {
+            pCallbackInfo->Callback(m_connection, header.getSubject(), header.getReplySubject(), pMessage, pCallbackInfo->Tag);
+        }
+        catch (...)
+        {
+            Logger::warn(std::format("Exception thrown from client callback, Subject={}, ReplySubject={}", header.getSubject(), header.getReplySubject()));
+        }
     }
 }
 

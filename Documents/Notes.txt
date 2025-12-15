@@ -9,7 +9,9 @@ TODO
   - 6. No max messages limit on PMQ. C++, C#
   - 7. No messages-dispatched count from PMQ. C++
   - 8. No way to report the size of the queue. C++, C#
-  - 9. try...catch in processGatewayMessage around client callbacks. C++
+  DONE - 9. try...catch in processGatewayMessage around client callbacks.
+
+- Log the stack trace from exceptions. C++, C#
 
 - Think about storing Message fields in a list / vector when we have a small 
   number of fields. This might be faster.
