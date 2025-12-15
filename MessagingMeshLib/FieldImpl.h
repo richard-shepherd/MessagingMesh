@@ -97,13 +97,13 @@ namespace MessagingMesh
 
         // Gets the message held by the field.
         // Throws a MessagingMesh::Exception if the field does not hold this type.
-        const ConstMessagePtr& getMessage() const;
+        MessagePtr getMessage() const;
 
         // Sets the field to hold a message.
-        void setMessage(const ConstMessagePtr& value);
+        void setMessage(const MessagePtr& value);
 
         // Tries to get the Message held by the field.
-        std::optional<ConstMessagePtr> tryGetMessage() const;
+        std::optional<MessagePtr> tryGetMessage() const;
 
         // Gets the bool held by the field.
         // Throws a MessagingMesh::Exception  if the field does not hold this type.
@@ -117,13 +117,13 @@ namespace MessagingMesh
 
         // Gets the BLOB held by the field.
         // Throws a MessagingMesh::Exception  if the field does not hold this type.
-        const ConstBLOBPtr& getBLOB() const;
+        BLOBPtr getBLOB() const;
 
         // Sets the field to hold a BLOB.
-        void setBLOB(const ConstBLOBPtr& value);
+        void setBLOB(const BLOBPtr& value);
 
         // Tries to get the BLOB held by the field.
-        std::optional<ConstBLOBPtr> tryGetBLOB() const;
+        std::optional<BLOBPtr> tryGetBLOB() const;
 
     // Private functions...
     private:
@@ -152,9 +152,9 @@ namespace MessagingMesh
             int64_t,             // SIGNED_INT64 (index 4)
             uint64_t,            // UNSIGNED_INT64 (index 5)
             double,              // DOUBLE (index 6)
-            ConstMessagePtr,     // MESSAGE (index 7)
+            MessagePtr,          // MESSAGE (index 7)
             bool,                // BOOL (index 8)
-            ConstBLOBPtr         // BLOB (index 9)
+            BLOBPtr              // BLOB (index 9)
         >;
         FieldData m_data;
     };

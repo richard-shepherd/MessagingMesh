@@ -332,7 +332,7 @@ void Tests_MessagingMeshLib::tryGet(TestUtils::TestRun& testRun)
 }
 
 // Tests message fields for message serialization tests.
-void Tests_MessagingMeshLib::testMessageFields(TestUtils::TestRun& testRun, const ConstMessagePtr& m)
+void Tests_MessagingMeshLib::testMessageFields(TestUtils::TestRun& testRun, const MessagePtr& m)
 {
     std::string s = "hello, world!";
     int32_t i32_1 = 123456;

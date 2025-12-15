@@ -150,19 +150,19 @@ std::optional<double> Field::tryGetDouble() const
 
 // Gets the message held by the field.
 // Throws a MessagingMesh::Exception  if the field does not hold this type.
-const ConstMessagePtr& Field::getMessage() const
+MessagePtr Field::getMessage() const
 {
     return m_pImpl->getMessage();
 }
 
 // Sets the field to hold a message.
-void Field::setMessage(const ConstMessagePtr& value)
+void Field::setMessage(const MessagePtr& value)
 {
     m_pImpl->setMessage(value);
 }
 
 // Tries to get the Message held by the field.
-std::optional<ConstMessagePtr> Field::tryGetMessage() const
+std::optional<MessagePtr> Field::tryGetMessage() const
 {
     return m_pImpl->tryGetMessage();
 }
@@ -188,19 +188,19 @@ std::optional<bool> Field::tryGetBool() const
 
 // Gets the BLOB held by the field.
 // Throws a MessagingMesh::Exception  if the field does not hold this type.
-const ConstBLOBPtr& Field::getBLOB() const
+BLOBPtr Field::getBLOB() const
 {
     return m_pImpl->getBLOB();
 }
 
 // Sets the field to hold a BLOB.
-void Field::setBLOB(const ConstBLOBPtr& value)
+void Field::setBLOB(const BLOBPtr& value)
 {
     m_pImpl->setBLOB(value);
 }
 
 // Tries to get the BLOB held by the field.
-std::optional<ConstBLOBPtr> Field::tryGetBLOB() const
+std::optional<BLOBPtr> Field::tryGetBLOB() const
 {
     return m_pImpl->tryGetBLOB();
 }

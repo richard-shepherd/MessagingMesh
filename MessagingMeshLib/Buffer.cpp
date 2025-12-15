@@ -201,7 +201,7 @@ FieldPtr Buffer::read_field() const
 }
 
 // Writes a field to the buffer.
-void Buffer::write_field(const ConstFieldPtr& item)
+void Buffer::write_field(const FieldPtr& item)
 {
     // We call the field's serialize() method. This calls back into the buffer
     // to write the data for the field and the specific type it is managing...
@@ -209,7 +209,7 @@ void Buffer::write_field(const ConstFieldPtr& item)
 }
 
 // Reads a message from the buffer.
-ConstMessagePtr Buffer::read_message() const
+MessagePtr Buffer::read_message() const
 {
     // We create a new message and deserialize into it...
     auto message = Message::create();
@@ -218,7 +218,7 @@ ConstMessagePtr Buffer::read_message() const
 }
 
 // Writes a message to the buffer.
-void Buffer::write_message(const ConstMessagePtr& item)
+void Buffer::write_message(const MessagePtr& item)
 {
     // We call the message's serialize() method. This calls back into the buffer
     // to write the data for the message and the fields it is managing...
@@ -240,7 +240,7 @@ void Buffer::write_bool(bool item)
 }
 
 // Reads a BLOB from the buffer.
-ConstBLOBPtr Buffer::read_blob() const
+BLOBPtr Buffer::read_blob() const
 {
     // We read the length...
     auto length = read_int32();
@@ -258,7 +258,7 @@ ConstBLOBPtr Buffer::read_blob() const
 }
 
 // Writes a BLOB to the buffer.
-void Buffer::write_blob(const ConstBLOBPtr& item)
+void Buffer::write_blob(const BLOBPtr& item)
 {
     // We write the length...
     auto length = item->getLength();

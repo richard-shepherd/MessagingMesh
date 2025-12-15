@@ -161,23 +161,23 @@ std::optional<double> FieldImpl::tryGetDouble() const
 
 // Gets the message held by the field.
 // Throws a MessagingMesh::Exception if the field does not hold this type.
-const ConstMessagePtr& FieldImpl::getMessage() const
+MessagePtr FieldImpl::getMessage() const
 {
     CHECK_DATA_TYPE(Field::MESSAGE);
-    return std::get<ConstMessagePtr>(m_data);
+    return std::get<MessagePtr>(m_data);
 }
 
 // Sets the field to hold a message.
-void FieldImpl::setMessage(const ConstMessagePtr& value)
+void FieldImpl::setMessage(const MessagePtr& value)
 {
     m_dataType = Field::MESSAGE;
     m_data = value;
 }
 
 // Tries to get the Message held by the field.
-std::optional<ConstMessagePtr> FieldImpl::tryGetMessage() const
+std::optional<MessagePtr> FieldImpl::tryGetMessage() const
 {
-    return tryGetValue<ConstMessagePtr>();
+    return tryGetValue<MessagePtr>();
 }
 
 // Gets the bool held by the field.
@@ -203,23 +203,23 @@ std::optional<bool> FieldImpl::tryGetBool() const
 
 // Gets the BLOB held by the field.
 // Throws a MessagingMesh::Exception  if the field does not hold this type.
-const ConstBLOBPtr& FieldImpl::getBLOB() const
+BLOBPtr FieldImpl::getBLOB() const
 {
     CHECK_DATA_TYPE(Field::BLOB);
-    return std::get<ConstBLOBPtr>(m_data);
+    return std::get<BLOBPtr>(m_data);
 }
 
 // Sets the field to hold a BLOB.
-void FieldImpl::setBLOB(const ConstBLOBPtr& value)
+void FieldImpl::setBLOB(const BLOBPtr& value)
 {
     m_dataType = Field::BLOB;
     m_data = value;
 }
 
 // Tries to get the BLOB held by the field.
-std::optional<ConstBLOBPtr> FieldImpl::tryGetBLOB() const
+std::optional<BLOBPtr> FieldImpl::tryGetBLOB() const
 {
-    return tryGetValue<ConstBLOBPtr>();
+    return tryGetValue<BLOBPtr>();
 }
 
 // Serializes the field to the current position of the buffer.
@@ -259,7 +259,7 @@ void FieldImpl::serialize(Buffer& buffer) const
         break;
 
     case Field::MESSAGE:
-        buffer.write_message(std::get<ConstMessagePtr>(m_data));
+        buffer.write_message(std::get<MessagePtr>(m_data));
         break;
 
     case Field::BOOL:
@@ -267,7 +267,7 @@ void FieldImpl::serialize(Buffer& buffer) const
         break;
 
     case Field::BLOB:
-        buffer.write_blob(std::get<ConstBLOBPtr>(m_data));
+        buffer.write_blob(std::get<BLOBPtr>(m_data));
         break;
 
     default:

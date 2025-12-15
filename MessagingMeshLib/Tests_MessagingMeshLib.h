@@ -38,7 +38,7 @@ namespace MessagingMesh
     // Private functions...
     private:
         // Tests message fields for message serialization tests.
-        static void testMessageFields(TestUtils::TestRun& testRun, const ConstMessagePtr& m);
+        static void testMessageFields(TestUtils::TestRun& testRun, const MessagePtr& m);
 
         // Saves a buffer to a file.
         static void saveBuffer(const std::string& filename, const ConstBufferPtr& pBuffer);

@@ -115,13 +115,13 @@ namespace MessagingMesh
 
         // Gets the message held by the field.
         // Throws a MessagingMesh::Exception  if the field does not hold this type.
-        const ConstMessagePtr& getMessage() const;
+        MessagePtr getMessage() const;
 
         // Sets the field to hold a message.
-        void setMessage(const ConstMessagePtr& value);
+        void setMessage(const MessagePtr& value);
 
         // Tries to get the Message held by the field.
-        std::optional<ConstMessagePtr> tryGetMessage() const;
+        std::optional<MessagePtr> tryGetMessage() const;
 
         // Gets the bool held by the field.
         // Throws a MessagingMesh::Exception  if the field does not hold this type.
@@ -135,13 +135,13 @@ namespace MessagingMesh
 
         // Gets the BLOB held by the field.
         // Throws a MessagingMesh::Exception  if the field does not hold this type.
-        const ConstBLOBPtr& getBLOB() const;
+        BLOBPtr getBLOB() const;
 
         // Sets the field to hold a BLOB.
-        void setBLOB(const ConstBLOBPtr& value);
+        void setBLOB(const BLOBPtr& value);
 
         // Tries to get the BLOB held by the field.
-        std::optional<ConstBLOBPtr> tryGetBLOB() const;
+        std::optional<BLOBPtr> tryGetBLOB() const;
 
     // Private functions...
     private:

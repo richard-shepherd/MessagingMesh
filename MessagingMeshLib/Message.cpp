@@ -13,30 +13,21 @@ Message::Message() :
 // Destructor.
 Message::~Message() = default;
 
-// Gets a field by name.
-// Throws a MessagingMesh::Exception if the field is not in the message.
-ConstFieldPtr Message::getConstField(const std::string& name) const
-{
-    return m_pImpl->getConstField(name);
-}
-
 // Tries to get a field by name,
-std::optional<ConstFieldPtr> Message::tryGetConstField(const std::string& name) const
+std::optional<FieldPtr> Message::tryGetField(const std::string& name) const
 {
-    return m_pImpl->tryGetConstField(name);
+    return m_pImpl->tryGetField(name);
 }
 
 // Gets a field by name.
 // Throws a MessagingMesh::Exception if the field is not in the message.
-FieldPtr Message::getField(const std::string& name)
+FieldPtr Message::getField(const std::string& name) const
 {
     return m_pImpl->getField(name);
 }
 
 // Returns a list of all fields in the message.
-// NOTE: This is a copy of the list held by the message, so changes to the returned list
-//       will not change the fields held by the message.
-std::vector<ConstFieldPtr> Message::getAllFields() const
+std::vector<FieldPtr> Message::getAllFields() const
 {
     return m_pImpl->getAllFields();
 }
@@ -51,13 +42,13 @@ void Message::addString(const std::string& name, const std::string& value)
 // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
 const std::string& Message::getString(const std::string& name) const
 {
-    return getConstField(name)->getString();
+    return getField(name)->getString();
 }
 
 // Tries to get the string value for the field specified.
 std::optional<std::reference_wrapper<const std::string>> Message::tryGetString(const std::string& name) const
 {
-    if (auto field = tryGetConstField(name))
+    if (auto field = tryGetField(name))
     {
         return (*field)->tryGetString();
     }
@@ -74,13 +65,13 @@ void Message::addSignedInt32(const std::string& name, int32_t value)
 // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
 int32_t Message::getSignedInt32(const std::string& name) const
 {
-    return getConstField(name)->getSignedInt32();
+    return getField(name)->getSignedInt32();
 }
 
 // Tries to get the signed int32 value for the field specified.
 std::optional<int32_t> Message::tryGetSignedInt32(const std::string& name) const
 {
-    if (auto field = tryGetConstField(name))
+    if (auto field = tryGetField(name))
     {
         return (*field)->tryGetSignedInt32();
     }
@@ -97,13 +88,13 @@ void Message::addUnsignedInt32(const std::string& name, uint32_t value)
 // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
 uint32_t Message::getUnsignedInt32(const std::string& name) const
 {
-    return getConstField(name)->getUnsignedInt32();
+    return getField(name)->getUnsignedInt32();
 }
 
 // Tries to get the unsigned int32 value for the field specified.
 std::optional<uint32_t> Message::tryGetUnsignedInt32(const std::string& name) const
 {
-    if (auto field = tryGetConstField(name))
+    if (auto field = tryGetField(name))
     {
         return (*field)->tryGetUnsignedInt32();
     }
@@ -120,13 +111,13 @@ void Message::addSignedInt64(const std::string& name, int64_t value)
 // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
 int64_t Message::getSignedInt64(const std::string& name) const
 {
-    return getConstField(name)->getSignedInt64();
+    return getField(name)->getSignedInt64();
 }
 
 // Tries to get the signed int64 value for the field specified.
 std::optional<int64_t> Message::tryGetSignedInt64(const std::string& name) const
 {
-    if (auto field = tryGetConstField(name))
+    if (auto field = tryGetField(name))
     {
         return (*field)->tryGetSignedInt64();
     }
@@ -143,13 +134,13 @@ void Message::addUnsignedInt64(const std::string& name, uint64_t value)
 // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
 uint64_t Message::getUnsignedInt64(const std::string& name) const
 {
-    return getConstField(name)->getUnsignedInt64();
+    return getField(name)->getUnsignedInt64();
 }
 
 // Tries to get the unsigned int64 value for the field specified.
 std::optional<uint64_t> Message::tryGetUnsignedInt64(const std::string& name) const
 {
-    if (auto field = tryGetConstField(name))
+    if (auto field = tryGetField(name))
     {
         return (*field)->tryGetUnsignedInt64();
     }
@@ -166,13 +157,13 @@ void Message::addDouble(const std::string& name, double value)
 // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
 double Message::getDouble(const std::string& name) const
 {
-    return getConstField(name)->getDouble();
+    return getField(name)->getDouble();
 }
 
 // Tries to get the double value for the field specified.
 std::optional<double> Message::tryGetDouble(const std::string& name) const
 {
-    if (auto field = tryGetConstField(name))
+    if (auto field = tryGetField(name))
     {
         return (*field)->tryGetDouble();
     }
@@ -180,22 +171,22 @@ std::optional<double> Message::tryGetDouble(const std::string& name) const
 }
 
 // Adds a message field to the message. 
-void Message::addMessage(const std::string& name, const ConstMessagePtr& value)
+void Message::addMessage(const std::string& name, const MessagePtr& value)
 {
     m_pImpl->addMessage(name, value);
 }
 
 // Gets the sub-message for the field specified.
 // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
-const ConstMessagePtr& Message::getMessage(const std::string& name) const
+MessagePtr Message::getMessage(const std::string& name) const
 {
-    return getConstField(name)->getMessage();
+    return getField(name)->getMessage();
 }
 
 // Tries to get the Message value for the field specified.
-std::optional<ConstMessagePtr> Message::tryGetMessage(const std::string& name) const
+std::optional<MessagePtr> Message::tryGetMessage(const std::string& name) const
 {
-    if (auto field = tryGetConstField(name))
+    if (auto field = tryGetField(name))
     {
         return (*field)->tryGetMessage();
     }
@@ -212,13 +203,13 @@ void Message::addBool(const std::string& name, bool value)
 // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
 bool Message::getBool(const std::string& name) const
 {
-    return getConstField(name)->getBool();
+    return getField(name)->getBool();
 }
 
 // Tries to get the bool value for the field specified.
 std::optional<bool> Message::tryGetBool(const std::string& name) const
 {
-    if (auto field = tryGetConstField(name))
+    if (auto field = tryGetField(name))
     {
         return (*field)->tryGetBool();
     }
@@ -226,22 +217,22 @@ std::optional<bool> Message::tryGetBool(const std::string& name) const
 }
 
 // Adds a BLOB field to the message. 
-void Message::addBLOB(const std::string& name, const ConstBLOBPtr& value)
+void Message::addBLOB(const std::string& name, const BLOBPtr& value)
 {
     m_pImpl->addBLOB(name, value);
 }
 
 // Gets the BLOB value for the field specified.
 // Throws a MessagingMesh::Exception if the field is not in the message or is not of the requested type.
-const ConstBLOBPtr& Message::getBLOB(const std::string& name) const
+BLOBPtr Message::getBLOB(const std::string& name) const
 {
-    return getConstField(name)->getBLOB();
+    return getField(name)->getBLOB();
 }
 
 // Tries to get the BLOB value for the field specified.
-std::optional<ConstBLOBPtr> Message::tryGetBLOB(const std::string& name) const
+std::optional<BLOBPtr> Message::tryGetBLOB(const std::string& name) const
 {
-    if (auto field = tryGetConstField(name))
+    if (auto field = tryGetField(name))
     {
         return (*field)->tryGetBLOB();
     }

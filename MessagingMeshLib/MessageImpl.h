@@ -27,12 +27,8 @@ namespace MessagingMesh
 
     // Field add and get methods...
     public:
-        // Gets a field by name.
-        // Throws a MessagingMesh::Exception if the field is not in the message.
-        ConstFieldPtr getConstField(const std::string& name) const;
-
         // Tries to get a field by name,
-        std::optional<ConstFieldPtr> tryGetConstField(const std::string& name) const;
+        std::optional<FieldPtr> tryGetField(const std::string& name) const;
 
         // Gets a field by name.
         // Throws a MessagingMesh::Exception if the field is not in the message.
@@ -41,7 +37,7 @@ namespace MessagingMesh
         // Returns a list of all fields in the message.
         // NOTE: This is a copy of the list held by the message, so changes to the returned list
         //       will not change the fields held by the message.
-        std::vector<ConstFieldPtr> getAllFields() const;
+        std::vector<FieldPtr> getAllFields() const;
 
         // Adds a string field to the message. 
         void addString(const std::string& name, const std::string& value);
@@ -62,13 +58,13 @@ namespace MessagingMesh
         void addDouble(const std::string& name, double value);
 
         // Adds a message field to the message. 
-        void addMessage(const std::string& name, const ConstMessagePtr& value);
+        void addMessage(const std::string& name, const MessagePtr& value);
 
         // Adds a bool field to the message. 
         void addBool(const std::string& name, bool value);
 
         // Adds a BLOB field to the message. 
-        void addBLOB(const std::string& name, const ConstBLOBPtr& value);
+        void addBLOB(const std::string& name, const BLOBPtr& value);
 
     // Private functions...
     private:

@@ -151,13 +151,13 @@ namespace MessagingMesh
         FieldPtr read_field() const;
 
         // Reads a message from the buffer.
-        ConstMessagePtr read_message() const;
+        MessagePtr read_message() const;
 
         // Reads a bool from the buffer.
         bool read_bool() const;
 
         // Reads a BLOB from the buffer.
-        ConstBLOBPtr read_blob() const;
+        BLOBPtr read_blob() const;
 
     // write() method for various types...
     public:
@@ -186,16 +186,16 @@ namespace MessagingMesh
         void write_bytes(const void* p, int32_t size);
 
         // Writes a field to the buffer.
-        void write_field(const ConstFieldPtr& item);
+        void write_field(const FieldPtr& item);
 
         // Writes a message to the buffer.
-        void write_message(const ConstMessagePtr& item);
+        void write_message(const MessagePtr& item);
 
         // Writes a bool to the buffer.
         void write_bool(bool item);
 
         // Writes a BLOB to the buffer.
-        void write_blob(const ConstBLOBPtr& item);
+        void write_blob(const BLOBPtr& item);
 
     // Private functions...
     private:

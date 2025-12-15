@@ -9,20 +9,8 @@ MessageImpl::MessageImpl()
 {
 }
 
-// Gets a field by name.
-// Throws a MessagingMesh::Exception if the field is not in the message.
-ConstFieldPtr MessageImpl::getConstField(const std::string& name) const
-{
-    auto it = m_mapNameToField.find(name);
-    if (it == m_mapNameToField.end())
-    {
-        throw Exception("Field " + name + " not in message");
-    }
-    return it->second;
-}
-
 // Tries to get a field by name,
-std::optional<ConstFieldPtr> MessageImpl::tryGetConstField(const std::string& name) const
+std::optional<FieldPtr> MessageImpl::tryGetField(const std::string& name) const
 {
     auto it = m_mapNameToField.find(name);
     if (it == m_mapNameToField.end())
@@ -45,16 +33,9 @@ FieldPtr MessageImpl::getField(const std::string& name)
 }
 
 // Returns a list of all fields in the message.
-// NOTE: This is a copy of the list held by the message, so changes to the returned list
-//       will not change the fields held by the message.
-std::vector<ConstFieldPtr> MessageImpl::getAllFields() const
+std::vector<FieldPtr> MessageImpl::getAllFields() const
 {
-    std::vector<ConstFieldPtr> result;
-    for (auto field : m_fields)
-    {
-        result.push_back(field);
-    }
-    return result;
+    return m_fields;
 }
 
 // Adds a string field to the message. 
@@ -94,7 +75,7 @@ void MessageImpl::addDouble(const std::string& name, double value)
 }
 
 // Adds a message field to the message. 
-void MessageImpl::addMessage(const std::string& name, const ConstMessagePtr& value)
+void MessageImpl::addMessage(const std::string& name, const MessagePtr& value)
 {
     addField(name, [&value](const FieldPtr& field) {field->setMessage(value);});
 }
@@ -106,7 +87,7 @@ void MessageImpl::addBool(const std::string& name, bool value)
 }
 
 // Adds a BLOB field to the message. 
-void MessageImpl::addBLOB(const std::string& name, const ConstBLOBPtr& value)
+void MessageImpl::addBLOB(const std::string& name, const BLOBPtr& value)
 {
     addField(name, [&value](const FieldPtr& field) {field->setBLOB(value);});
 }
