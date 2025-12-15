@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <vector>
 #include <unordered_map>
 #include <string>
@@ -29,6 +30,9 @@ namespace MessagingMesh
         // Gets a field by name.
         // Throws a MessagingMesh::Exception if the field is not in the message.
         ConstFieldPtr getConstField(const std::string& name) const;
+
+        // Tries to get a field by name,
+        std::optional<ConstFieldPtr> tryGetConstField(const std::string& name) const;
 
         // Gets a field by name.
         // Throws a MessagingMesh::Exception if the field is not in the message.

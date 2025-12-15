@@ -20,6 +20,12 @@ ConstFieldPtr Message::getConstField(const std::string& name) const
     return m_pImpl->getConstField(name);
 }
 
+// Tries to get a field by name,
+std::optional<ConstFieldPtr> Message::tryGetConstField(const std::string& name) const
+{
+    return m_pImpl->tryGetConstField(name);
+}
+
 // Gets a field by name.
 // Throws a MessagingMesh::Exception if the field is not in the message.
 FieldPtr Message::getField(const std::string& name)
@@ -48,6 +54,16 @@ const std::string& Message::getString(const std::string& name) const
     return getConstField(name)->getString();
 }
 
+// Tries to get the string value for the field specified.
+std::optional<std::reference_wrapper<const std::string>> Message::tryGetString(const std::string& name) const
+{
+    if (auto field = tryGetConstField(name))
+    {
+        return (*field)->tryGetString();
+    }
+    return std::nullopt;
+}
+
 // Adds a signed int32 field to the message. 
 void Message::addSignedInt32(const std::string& name, int32_t value)
 {
@@ -59,6 +75,16 @@ void Message::addSignedInt32(const std::string& name, int32_t value)
 int32_t Message::getSignedInt32(const std::string& name) const
 {
     return getConstField(name)->getSignedInt32();
+}
+
+// Tries to get the signed int32 value for the field specified.
+std::optional<int32_t> Message::tryGetSignedInt32(const std::string& name) const
+{
+    if (auto field = tryGetConstField(name))
+    {
+        return (*field)->tryGetSignedInt32();
+    }
+    return std::nullopt;
 }
 
 // Adds an unsigned int32 field to the message. 
@@ -74,6 +100,16 @@ uint32_t Message::getUnsignedInt32(const std::string& name) const
     return getConstField(name)->getUnsignedInt32();
 }
 
+// Tries to get the unsigned int32 value for the field specified.
+std::optional<uint32_t> Message::tryGetUnsignedInt32(const std::string& name) const
+{
+    if (auto field = tryGetConstField(name))
+    {
+        return (*field)->tryGetUnsignedInt32();
+    }
+    return std::nullopt;
+}
+
 // Adds a signed int64 field to the message. 
 void Message::addSignedInt64(const std::string& name, int64_t value)
 {
@@ -85,6 +121,16 @@ void Message::addSignedInt64(const std::string& name, int64_t value)
 int64_t Message::getSignedInt64(const std::string& name) const
 {
     return getConstField(name)->getSignedInt64();
+}
+
+// Tries to get the signed int64 value for the field specified.
+std::optional<int64_t> Message::tryGetSignedInt64(const std::string& name) const
+{
+    if (auto field = tryGetConstField(name))
+    {
+        return (*field)->tryGetSignedInt64();
+    }
+    return std::nullopt;
 }
 
 // Adds an unsigned int64 field to the message. 
@@ -100,6 +146,16 @@ uint64_t Message::getUnsignedInt64(const std::string& name) const
     return getConstField(name)->getUnsignedInt64();
 }
 
+// Tries to get the unsigned int64 value for the field specified.
+std::optional<uint64_t> Message::tryGetUnsignedInt64(const std::string& name) const
+{
+    if (auto field = tryGetConstField(name))
+    {
+        return (*field)->tryGetUnsignedInt64();
+    }
+    return std::nullopt;
+}
+
 // Adds a double field to the message. 
 void Message::addDouble(const std::string& name, double value)
 {
@@ -111,6 +167,16 @@ void Message::addDouble(const std::string& name, double value)
 double Message::getDouble(const std::string& name) const
 {
     return getConstField(name)->getDouble();
+}
+
+// Tries to get the double value for the field specified.
+std::optional<double> Message::tryGetDouble(const std::string& name) const
+{
+    if (auto field = tryGetConstField(name))
+    {
+        return (*field)->tryGetDouble();
+    }
+    return std::nullopt;
 }
 
 // Adds a message field to the message. 
@@ -126,6 +192,16 @@ const ConstMessagePtr& Message::getMessage(const std::string& name) const
     return getConstField(name)->getMessage();
 }
 
+// Tries to get the Message value for the field specified.
+std::optional<ConstMessagePtr> Message::tryGetMessage(const std::string& name) const
+{
+    if (auto field = tryGetConstField(name))
+    {
+        return (*field)->tryGetMessage();
+    }
+    return std::nullopt;
+}
+
 // Adds a bool field to the message. 
 void Message::addBool(const std::string& name, bool value)
 {
@@ -139,6 +215,16 @@ bool Message::getBool(const std::string& name) const
     return getConstField(name)->getBool();
 }
 
+// Tries to get the bool value for the field specified.
+std::optional<bool> Message::tryGetBool(const std::string& name) const
+{
+    if (auto field = tryGetConstField(name))
+    {
+        return (*field)->tryGetBool();
+    }
+    return std::nullopt;
+}
+
 // Adds a BLOB field to the message. 
 void Message::addBLOB(const std::string& name, const ConstBLOBPtr& value)
 {
@@ -150,6 +236,16 @@ void Message::addBLOB(const std::string& name, const ConstBLOBPtr& value)
 const ConstBLOBPtr& Message::getBLOB(const std::string& name) const
 {
     return getConstField(name)->getBLOB();
+}
+
+// Tries to get the BLOB value for the field specified.
+std::optional<ConstBLOBPtr> Message::tryGetBLOB(const std::string& name) const
+{
+    if (auto field = tryGetConstField(name))
+    {
+        return (*field)->tryGetBLOB();
+    }
+    return std::nullopt;
 }
 
 // Serializes the message to the current position in the buffer.

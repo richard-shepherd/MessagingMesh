@@ -21,6 +21,17 @@ ConstFieldPtr MessageImpl::getConstField(const std::string& name) const
     return it->second;
 }
 
+// Tries to get a field by name,
+std::optional<ConstFieldPtr> MessageImpl::tryGetConstField(const std::string& name) const
+{
+    auto it = m_mapNameToField.find(name);
+    if (it == m_mapNameToField.end())
+    {
+        return std::nullopt;
+    }
+    return it->second;
+}
+
 // Gets a field by name.
 // Throws a MessagingMesh::Exception if the field is not in the message.
 FieldPtr MessageImpl::getField(const std::string& name)

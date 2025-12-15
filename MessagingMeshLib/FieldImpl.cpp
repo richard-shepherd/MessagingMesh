@@ -5,12 +5,11 @@ using namespace MessagingMesh;
 
 // Checks that the data-type we hold is an the type specified.
 // (This is a macro so that we can stringify the enum name in exception text.)
-#define CHECK_DATA_TYPE(x) if(m_dataType != x) throw Exception("Field '" + m_name + "' is not a " + #x)
+#define CHECK_DATA_TYPE(x) if(m_dataType != x) [[unlikely]] throw Exception("Field '" + m_name + "' is not a " + #x)
 
 // Constructor.
 FieldImpl::FieldImpl() :
-    m_dataType(Field::NOT_SET),
-    m_dataNumeric({ 0 })
+    m_dataType(Field::NOT_SET)
 {
 }
 
@@ -36,14 +35,24 @@ void FieldImpl::setName(const std::string& name)
 const std::string& FieldImpl::getString() const
 {
     CHECK_DATA_TYPE(Field::STRING);
-    return m_dataString;
+    return std::get<std::string>(m_data);
 }
 
 // Sets the field to hold a string.
 void FieldImpl::setString(const std::string& value)
 {
     m_dataType = Field::STRING;
-    m_dataString = value;
+    m_data = value;
+}
+
+// Tries to get the string held by the field.
+std::optional<std::reference_wrapper<const std::string>> FieldImpl::tryGetString() const
+{
+    if (const std::string* ptr = std::get_if<std::string>(&m_data)) 
+    {
+        return std::cref(*ptr);
+    }
+    return std::nullopt;
 }
 
 // Gets the signed int32 held by the field.
@@ -51,14 +60,19 @@ void FieldImpl::setString(const std::string& value)
 int32_t FieldImpl::getSignedInt32() const
 {
     CHECK_DATA_TYPE(Field::SIGNED_INT32);
-    return m_dataNumeric.Int32;
+    return std::get<int32_t>(m_data);
 }
 
 // Sets the field to hold a signed int32.
 void FieldImpl::setSignedInt32(int32_t value)
 {
     m_dataType = Field::SIGNED_INT32;
-    m_dataNumeric.Int32 = value;
+    m_data = value;
+}
+// Tries to get the signed int32 held by the field.
+std::optional<int32_t> FieldImpl::tryGetSignedInt32() const
+{
+    return tryGetValue<int32_t>();
 }
 
 // Gets the unsigned int32 held by the field.
@@ -66,14 +80,20 @@ void FieldImpl::setSignedInt32(int32_t value)
 uint32_t FieldImpl::getUnsignedInt32() const
 {
     CHECK_DATA_TYPE(Field::UNSIGNED_INT32);
-    return m_dataNumeric.UInt32;
+    return std::get<uint32_t>(m_data);
 }
 
 // Sets the field to hold an unsigned int32.
 void FieldImpl::setUnsignedInt32(uint32_t value)
 {
     m_dataType = Field::UNSIGNED_INT32;
-    m_dataNumeric.UInt32 = value;
+    m_data = value;
+}
+
+// Tries to get the unsigned int32 held by the field.
+std::optional<uint32_t> FieldImpl::tryGetUnsignedInt32() const
+{
+    return tryGetValue<uint32_t>();
 }
 
 // Gets the signed int64 held by the field.
@@ -81,14 +101,20 @@ void FieldImpl::setUnsignedInt32(uint32_t value)
 int64_t FieldImpl::getSignedInt64() const
 {
     CHECK_DATA_TYPE(Field::SIGNED_INT64);
-    return m_dataNumeric.Int64;
+    return std::get<int64_t>(m_data);
 }
 
 // Sets the field to hold a signed int64.
 void FieldImpl::setSignedInt64(int64_t value)
 {
     m_dataType = Field::SIGNED_INT64;
-    m_dataNumeric.Int64 = value;
+    m_data = value;
+}
+
+// Tries to get the signed int64 held by the field.
+std::optional<int64_t> FieldImpl::tryGetSignedInt64() const
+{
+    return tryGetValue<int64_t>();
 }
 
 // Gets the unsigned int64 held by the field.
@@ -96,14 +122,20 @@ void FieldImpl::setSignedInt64(int64_t value)
 uint64_t FieldImpl::getUnsignedInt64() const
 {
     CHECK_DATA_TYPE(Field::UNSIGNED_INT64);
-    return m_dataNumeric.UInt64;
+    return std::get<uint64_t>(m_data);
 }
 
 // Sets the field to hold an unsigned int64.
 void FieldImpl::setUnsignedInt64(uint64_t value)
 {
     m_dataType = Field::UNSIGNED_INT64;
-    m_dataNumeric.UInt64 = value;
+    m_data = value;
+}
+
+// Tries to get the unsigned int64 held by the field.
+std::optional<uint64_t> FieldImpl::tryGetUnsignedInt64() const
+{
+    return tryGetValue<uint64_t>();
 }
 
 // Gets the double held by the field.
@@ -111,14 +143,20 @@ void FieldImpl::setUnsignedInt64(uint64_t value)
 double FieldImpl::getDouble() const
 {
     CHECK_DATA_TYPE(Field::DOUBLE);
-    return m_dataNumeric.Double;
+    return std::get<double>(m_data);
 }
 
 // Sets the field to hold a double.
 void FieldImpl::setDouble(double value)
 {
     m_dataType = Field::DOUBLE;
-    m_dataNumeric.Double = value;
+    m_data = value;
+}
+
+// Tries to get the double held by the field.
+std::optional<double> FieldImpl::tryGetDouble() const
+{
+    return tryGetValue<double>();
 }
 
 // Gets the message held by the field.
@@ -126,14 +164,20 @@ void FieldImpl::setDouble(double value)
 const ConstMessagePtr& FieldImpl::getMessage() const
 {
     CHECK_DATA_TYPE(Field::MESSAGE);
-    return m_dataMessage;
+    return std::get<ConstMessagePtr>(m_data);
 }
 
 // Sets the field to hold a message.
 void FieldImpl::setMessage(const ConstMessagePtr& value)
 {
     m_dataType = Field::MESSAGE;
-    m_dataMessage = value;
+    m_data = value;
+}
+
+// Tries to get the Message held by the field.
+std::optional<ConstMessagePtr> FieldImpl::tryGetMessage() const
+{
+    return tryGetValue<ConstMessagePtr>();
 }
 
 // Gets the bool held by the field.
@@ -141,14 +185,20 @@ void FieldImpl::setMessage(const ConstMessagePtr& value)
 bool FieldImpl::getBool() const
 {
     CHECK_DATA_TYPE(Field::BOOL);
-    return m_dataBool;
+    return std::get<bool>(m_data);
 }
 
 // Sets the field to hold a bool.
 void FieldImpl::setBool(bool value)
 {
     m_dataType = Field::BOOL;
-    m_dataBool = value;
+    m_data = value;
+}
+
+// Tries to get the bool held by the field.
+std::optional<bool> FieldImpl::tryGetBool() const
+{
+    return tryGetValue<bool>();
 }
 
 // Gets the BLOB held by the field.
@@ -156,14 +206,20 @@ void FieldImpl::setBool(bool value)
 const ConstBLOBPtr& FieldImpl::getBLOB() const
 {
     CHECK_DATA_TYPE(Field::BLOB);
-    return m_dataBLOB;
+    return std::get<ConstBLOBPtr>(m_data);
 }
 
 // Sets the field to hold a BLOB.
 void FieldImpl::setBLOB(const ConstBLOBPtr& value)
 {
     m_dataType = Field::BLOB;
-    m_dataBLOB = value;
+    m_data = value;
+}
+
+// Tries to get the BLOB held by the field.
+std::optional<ConstBLOBPtr> FieldImpl::tryGetBLOB() const
+{
+    return tryGetValue<ConstBLOBPtr>();
 }
 
 // Serializes the field to the current position of the buffer.
@@ -179,39 +235,39 @@ void FieldImpl::serialize(Buffer& buffer) const
     switch (m_dataType)
     {
     case Field::STRING:
-        buffer.write_string(m_dataString);
+        buffer.write_string(std::get<std::string>(m_data));
         break;
 
     case Field::SIGNED_INT32:
-        buffer.write_int32(m_dataNumeric.Int32);
+        buffer.write_int32(std::get<int32_t>(m_data));
         break;
 
     case Field::UNSIGNED_INT32:
-        buffer.write_uint32(m_dataNumeric.UInt32);
+        buffer.write_uint32(std::get<uint32_t>(m_data));
         break;
 
     case Field::SIGNED_INT64:
-        buffer.write_int64(m_dataNumeric.Int64);
+        buffer.write_int64(std::get<int64_t>(m_data));
         break;
 
     case Field::UNSIGNED_INT64:
-        buffer.write_uint64(m_dataNumeric.UInt64);
+        buffer.write_uint64(std::get<uint64_t>(m_data));
         break;
 
     case Field::DOUBLE:
-        buffer.write_double(m_dataNumeric.Double);
+        buffer.write_double(std::get<double>(m_data));
         break;
 
     case Field::MESSAGE:
-        buffer.write_message(m_dataMessage);
+        buffer.write_message(std::get<ConstMessagePtr>(m_data));
         break;
 
     case Field::BOOL:
-        buffer.write_bool(m_dataBool);
+        buffer.write_bool(std::get<bool>(m_data));
         break;
 
     case Field::BLOB:
-        buffer.write_blob(m_dataBLOB);
+        buffer.write_blob(std::get<ConstBLOBPtr>(m_data));
         break;
 
     default:
@@ -232,39 +288,39 @@ void FieldImpl::deserialize(const Buffer& buffer)
     switch (m_dataType)
     {
     case Field::STRING:
-        m_dataString = buffer.read_string();
+        m_data = buffer.read_string();
         break;
 
     case Field::SIGNED_INT32:
-        m_dataNumeric.Int32 = buffer.read_int32();
+        m_data = buffer.read_int32();
         break;
 
     case Field::UNSIGNED_INT32:
-        m_dataNumeric.UInt32 = buffer.read_uint32();
+        m_data = buffer.read_uint32();
         break;
 
     case Field::SIGNED_INT64:
-        m_dataNumeric.Int64 = buffer.read_int64();
+        m_data = buffer.read_int64();
         break;
 
     case Field::UNSIGNED_INT64:
-        m_dataNumeric.UInt64 = buffer.read_uint64();
+        m_data = buffer.read_uint64();
         break;
 
     case Field::DOUBLE:
-        m_dataNumeric.Double = buffer.read_double();
+        m_data = buffer.read_double();
         break;
 
     case Field::MESSAGE:
-        m_dataMessage = buffer.read_message();
+        m_data = buffer.read_message();
         break;
 
     case Field::BOOL:
-        m_dataBool = buffer.read_bool();
+        m_data = buffer.read_bool();
         break;
 
     case Field::BLOB:
-        m_dataBLOB = buffer.read_blob();
+        m_data = buffer.read_blob();
         break;
 
     default:
