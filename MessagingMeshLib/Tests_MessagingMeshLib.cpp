@@ -265,10 +265,10 @@ void Tests_MessagingMeshLib::guids(TestUtils::TestRun& testRun)
     assertEqual(testRun, guid1 == guid2, false);
 }
 
-// Tests for generating tryGet methods.
+// Tests for tryGet methods.
 void Tests_MessagingMeshLib::tryGet(TestUtils::TestRun& testRun)
 {
-    TestUtils::log("tryGet - string");
+    TestUtils::log("Field: tryGet - string");
     {
         auto field = Field::create();
 
@@ -280,13 +280,46 @@ void Tests_MessagingMeshLib::tryGet(TestUtils::TestRun& testRun)
         assertEqual(testRun, result->get(), city);
     }
 
-    TestUtils::log("tryGet - integer as string");
+    TestUtils::log("Field: tryGet - integer as string");
     {
         auto field = Field::create();
 
         // String...
         field->setSignedInt32(123);
         auto result = field->tryGetString();
+        assertEqual(testRun, result.has_value(), false);
+    }
+
+    TestUtils::log("Message: tryGet - string");
+    {
+        auto message = Message::create();
+
+        // String...
+        std::string city = "London";
+        message->addString("CITY", city);
+        auto result = message->tryGetString("CITY");
+        assertEqual(testRun, result.has_value(), true);
+        assertEqual(testRun, result->get(), city);
+    }
+
+    TestUtils::log("Message: tryGet - string, wrong field name");
+    {
+        auto message = Message::create();
+
+        // String...
+        std::string city = "London";
+        message->addString("CITY", city);
+        auto result = message->tryGetString("TOWN");
+        assertEqual(testRun, result.has_value(), false);
+    }
+
+    TestUtils::log("Message: tryGet - integer as string");
+    {
+        auto message = Message::create();
+
+        // String...
+        message->addSignedInt32("VALUE", 123);
+        auto result = message->tryGetString("VALUE");
         assertEqual(testRun, result.has_value(), false);
     }
 }
