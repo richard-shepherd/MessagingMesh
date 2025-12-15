@@ -42,6 +42,9 @@ namespace MessagingMesh
         // Sets the field's name.
         void setName(const std::string& name);
 
+        // Gets the field's type.
+        DataType getFieldType() const;
+
         // Serializes the field to the current position of the buffer.
         void serialize(Buffer& buffer) const;
 

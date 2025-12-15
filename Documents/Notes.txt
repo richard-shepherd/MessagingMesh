@@ -4,8 +4,8 @@ TODO
   DONE - 1. No Version.
   - 2. No event on disconnect (or other errors) to raise an advisory. C++, C#
   DONE - 3. Can't send a message with a reply subject.
-  - 4. tryGet methods on Field and Message. C++
-  - 5. Field.getFieldType. C++
+  DONE - 4. tryGet methods on Field and Message.
+  DONE - 5. Field.getFieldType.
   - 6. No max messages limit on PMQ. C++, C#
   - 7. No messages-dispatched count from PMQ. C++
   - 8. No way to report the size of the queue. C++, C#

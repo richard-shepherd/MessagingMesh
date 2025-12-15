@@ -290,6 +290,13 @@ void Tests_MessagingMeshLib::tryGet(TestUtils::TestRun& testRun)
         assertEqual(testRun, result.has_value(), false);
     }
 
+    TestUtils::log("Message: getFieldType");
+    {
+        auto message = Message::create();
+        message->addString("CITY", "London");
+        assertEqual(testRun, message->getField("CITY")->getFieldType() == Field::DataType::STRING, true);
+    }
+
     TestUtils::log("Message: tryGet - string");
     {
         auto message = Message::create();

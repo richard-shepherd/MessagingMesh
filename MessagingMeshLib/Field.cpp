@@ -28,6 +28,12 @@ void Field::setName(const std::string& name)
     m_pImpl->setName(name);
 }
 
+// Gets the field's type.
+Field::DataType Field::getFieldType() const
+{
+    return m_pImpl->getFieldType();
+}
+
 // Gets the string held by the field.
 // Throws a MessagingMesh::Exception if the field does not hold this type.
 const std::string& Field::getString() const
