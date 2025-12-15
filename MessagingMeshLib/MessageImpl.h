@@ -32,7 +32,7 @@ namespace MessagingMesh
 
         // Gets a field by name.
         // Throws a MessagingMesh::Exception if the field is not in the message.
-        FieldPtr getField(const std::string& name);
+        FieldPtr getField(const std::string& name) const;
 
         // Returns a list of all fields in the message.
         // NOTE: This is a copy of the list held by the message, so changes to the returned list

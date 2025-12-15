@@ -22,7 +22,7 @@ std::optional<FieldPtr> MessageImpl::tryGetField(const std::string& name) const
 
 // Gets a field by name.
 // Throws a MessagingMesh::Exception if the field is not in the message.
-FieldPtr MessageImpl::getField(const std::string& name)
+FieldPtr MessageImpl::getField(const std::string& name) const
 {
     auto it = m_mapNameToField.find(name);
     if (it == m_mapNameToField.end())
