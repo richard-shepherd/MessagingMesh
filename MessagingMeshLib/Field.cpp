@@ -41,6 +41,12 @@ void Field::setString(const std::string& value)
     m_pImpl->setString(value);
 }
 
+// Tries to get the string held by the field.
+std::optional<std::reference_wrapper<const std::string>> Field::tryGetString() const
+{
+    return m_pImpl->tryGetString();
+}
+
 // Gets the signed int32 held by the field.
 // Throws a MessagingMesh::Exception if the field does not hold this type.
 int32_t Field::getSignedInt32() const
@@ -52,6 +58,12 @@ int32_t Field::getSignedInt32() const
 void Field::setSignedInt32(int32_t value)
 {
     m_pImpl->setSignedInt32(value);
+}
+
+// Tries to get the signed int32 held by the field.
+std::optional<int32_t> Field::tryGetSignedInt32() const
+{
+    return m_pImpl->tryGetSignedInt32();
 }
 
 // Gets the unsigned int32 held by the field.
@@ -67,6 +79,12 @@ void Field::setUnsignedInt32(uint32_t value)
     m_pImpl->setUnsignedInt32(value);
 }
 
+// Tries to get the unsigned int32 held by the field.
+std::optional<uint32_t> Field::tryGetUnsignedInt32() const
+{
+    return m_pImpl->tryGetUnsignedInt32();
+}
+
 // Gets the signed int64 held by the field.
 // Throws a MessagingMesh::Exception if the field does not hold this type.
 int64_t Field::getSignedInt64() const
@@ -78,6 +96,12 @@ int64_t Field::getSignedInt64() const
 void Field::setSignedInt64(int64_t value)
 {
     m_pImpl->setSignedInt64(value);
+}
+
+// Tries to get the signed int64 held by the field.
+std::optional<int64_t> Field::tryGetSignedInt64() const
+{
+    return m_pImpl->tryGetSignedInt64();
 }
 
 // Gets the unsigned int64 held by the field.
@@ -93,6 +117,12 @@ void Field::setUnsignedInt64(uint64_t value)
     m_pImpl->setUnsignedInt64(value);
 }
 
+// Tries to get the unsigned int64 held by the field.
+std::optional<uint64_t> Field::tryGetUnsignedInt64() const
+{
+    return m_pImpl->tryGetUnsignedInt64();
+}
+
 // Gets the double held by the field.
 // Throws a MessagingMesh::Exception  if the field does not hold this type.
 double Field::getDouble() const
@@ -104,6 +134,12 @@ double Field::getDouble() const
 void Field::setDouble(double value)
 {
     m_pImpl->setDouble(value);
+}
+
+// Tries to get the double held by the field.
+std::optional<double> Field::tryGetDouble() const
+{
+    return m_pImpl->tryGetDouble();
 }
 
 // Gets the message held by the field.
@@ -119,6 +155,12 @@ void Field::setMessage(const ConstMessagePtr& value)
     m_pImpl->setMessage(value);
 }
 
+// Tries to get the Message held by the field.
+std::optional<ConstMessagePtr> Field::tryGetMessage() const
+{
+    return m_pImpl->tryGetMessage();
+}
+
 // Gets the bool held by the field.
 // Throws a MessagingMesh::Exception  if the field does not hold this type.
 bool Field::getBool() const
@@ -132,6 +174,12 @@ void Field::setBool(bool value)
     m_pImpl->setBool(value);
 }
 
+// Tries to get the bool held by the field.
+std::optional<bool> Field::tryGetBool() const
+{
+    return m_pImpl->tryGetBool();
+}
+
 // Gets the BLOB held by the field.
 // Throws a MessagingMesh::Exception  if the field does not hold this type.
 const ConstBLOBPtr& Field::getBLOB() const
@@ -143,6 +191,12 @@ const ConstBLOBPtr& Field::getBLOB() const
 void Field::setBLOB(const ConstBLOBPtr& value)
 {
     m_pImpl->setBLOB(value);
+}
+
+// Tries to get the BLOB held by the field.
+std::optional<ConstBLOBPtr> Field::tryGetBLOB() const
+{
+    return m_pImpl->tryGetBLOB();
 }
 
 // Serializes the field to the current position of the buffer.

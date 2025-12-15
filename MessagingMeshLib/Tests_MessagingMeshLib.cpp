@@ -20,6 +20,7 @@ void Tests_MessagingMeshLib::runAll(TestUtils::TestRun& testRun)
     updateFields(testRun);
     tokenize(testRun);
     guids(testRun);
+    tryGet(testRun);
 }
 
 // Tests writing to a reading from a buffer.
@@ -262,6 +263,32 @@ void Tests_MessagingMeshLib::guids(TestUtils::TestRun& testRun)
     assertEqual(testRun, guid2.size(), (size_t)24);
 
     assertEqual(testRun, guid1 == guid2, false);
+}
+
+// Tests for generating tryGet methods.
+void Tests_MessagingMeshLib::tryGet(TestUtils::TestRun& testRun)
+{
+    TestUtils::log("tryGet - string");
+    {
+        auto field = Field::create();
+
+        // String...
+        std::string city = "London";
+        field->setString(city);
+        auto result = field->tryGetString();
+        assertEqual(testRun, result.has_value(), true);
+        assertEqual(testRun, result->get(), city);
+    }
+
+    TestUtils::log("tryGet - integer as string");
+    {
+        auto field = Field::create();
+
+        // String...
+        field->setSignedInt32(123);
+        auto result = field->tryGetString();
+        assertEqual(testRun, result.has_value(), false);
+    }
 }
 
 // Tests message fields for message serialization tests.

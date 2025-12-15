@@ -32,6 +32,9 @@ namespace MessagingMesh
         // Tests for generating GUIDs.
         static void guids(TestUtils::TestRun& testRun);
 
+        // Tests for generating tryGet methods.
+        static void tryGet(TestUtils::TestRun& testRun);
+
     // Private functions...
     private:
         // Tests message fields for message serialization tests.
