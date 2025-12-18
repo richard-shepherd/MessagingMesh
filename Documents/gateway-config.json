@@ -1,20 +1,13 @@
 {
+    // This minimal config can be used when running MessagingMesh with a single Gateway and no mesh.
+
     // Gateway connection for the MessagingMeshCoordinator, used for:
     // - Managing / discovering meshes
     // - Reporting statistics
     // Set this field to an empty string if you are not using the coordinator.
-    "CoordinatorGateway": "RSS-XPS17:5050",
+    "CoordinatorGateway": "",
 
     // Meshes which the gateway will connect to at startup.
     "StartupMeshes": [
-        {
-            "Name": "VULCAN",
-            "DiscoverMeshUsingCoordinator": false,
-            "MeshGateways": [
-                "RSS-XPS17:5050",
-                "RSS-XPS17:5051",
-                "RSS-XPS17:5052"
-            ]
-        }
     ]
 }

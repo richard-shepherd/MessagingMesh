@@ -1,4 +1,6 @@
 {
+    // This minimal config can be used when running MessagingMesh with a single Gateway and no mesh.
+
     // Gateway connection for the MessagingMeshCoordinator, used for:
     // - Managing / discovering meshes
     // - Reporting statistics
