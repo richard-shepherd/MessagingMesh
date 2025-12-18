@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <map>
 #include "GatewayInfo.h"
 #include "GatewayConfig.h"
 
