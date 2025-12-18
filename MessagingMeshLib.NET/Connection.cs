@@ -25,6 +25,22 @@ namespace MessagingMeshLib.NET
         /// </summary>
         public delegate void SubscriptionCallback(Connection connection, string subject, string replySubject, Message message, object tag);
 
+        /// <summary>
+        /// Returned from processMessageQueue() with info about messages processed and the queue size.
+        /// </summary>
+        public class MessageQueueInfo
+        {
+            /// <summary>
+            /// The number of messages processed in processMessageQueue().
+            /// </summary>
+            public int MessagesProcessed { get; set; } = 0;
+
+            /// <summary>
+            /// The number of queued messages remaining to be processed.
+            /// </summary>
+            public int QueueSize { get; set; } = 0;
+        }
+
         #endregion
 
         #region Properties
@@ -155,20 +171,24 @@ namespace MessagingMeshLib.NET
 
         /// <summary>
         /// Processes messages in the queue. Waits for the specified time for messages to be available.
+        /// NOTE: You should call processMessageQueue from only one client thread.
         /// </summary>
-        public int processMessageQueue(int millisecondsTimeout)
+        public MessageQueueInfo processMessageQueue(int millisecondsTimeout, int maxMessages = -1)
         {
-            var messagesProcessed = 0;
-            var queuedMessages = m_queuedMessages.waitAndGetItems(millisecondsTimeout);
-            if (queuedMessages != null && queuedMessages.Count != 0)
+            // We process messages...
+            var messageQueueInfo = new MessageQueueInfo();
+            if (maxMessages == -1)
             {
-                messagesProcessed = queuedMessages.Count;
-                foreach (var queuedMessage in queuedMessages)
-                {
-                    processGatewayMessage(queuedMessage.Header, queuedMessage.Buffer);
-                }
+                messageQueueInfo.MessagesProcessed = processMessageQueue_AllMessages(millisecondsTimeout);
             }
-            return messagesProcessed;
+            else
+            {
+                messageQueueInfo.MessagesProcessed = processMessageQueue_MaxMessages(millisecondsTimeout, maxMessages);
+            }
+
+            // We find the number of remaining messages in the queues...
+            messageQueueInfo.QueueSize = m_queuedMessages.getQueueSize() + m_messageBacklog.Count;
+            return messageQueueInfo;
         }
 
         /// <summary>
@@ -362,6 +382,46 @@ namespace MessagingMeshLib.NET
         #region Private functions
 
         /// <summary>
+        /// Processes all messages from the backlog and the message queue.
+        /// </summary>
+        private int processMessageQueue_AllMessages(int millisecondsTimeout)
+        {
+            // We process the backlog...
+            var messagesProcessed = m_messageBacklog.Count;
+            foreach(var queuedMessage in m_messageBacklog)
+            {
+                processGatewayMessage(queuedMessage.Header, queuedMessage.Buffer);
+            }
+            m_messageBacklog.Clear();
+
+            // We process queued messages...
+            var queuedMessages = m_queuedMessages.waitAndGetItems(millisecondsTimeout);
+            if (queuedMessages != null && queuedMessages.Count != 0)
+            {
+                messagesProcessed += queuedMessages.Count;
+                foreach (var queuedMessage in queuedMessages)
+                {
+                    processGatewayMessage(queuedMessage.Header, queuedMessage.Buffer);
+                }
+            }
+            return messagesProcessed;
+        }
+
+        /// <summary>
+        /// Processes queued messages from the backlog and the message queue, up to the maximum
+        /// number of messages specified.
+        /// </summary>
+        private int processMessageQueue_MaxMessages(int millisecondsTimeout, int maxMessages)
+        {
+            // We get queued messages and add them to the backlog...
+            var queuedMessages = m_queuedMessages.waitAndGetItems(millisecondsTimeout);
+            m_messageBacklog.AddRange(queuedMessages);
+
+            // We process items up to max messages...
+
+        }
+
+        /// <summary>
         /// Sends a network message to the gateway.
         /// Returns the number of bytes sent on the network.
         /// </summary>
@@ -524,6 +584,10 @@ namespace MessagingMeshLib.NET
             public Buffer Buffer { get; set; }
         }
         private ThreadsafeConsumableQueue<QueuedMessage> m_queuedMessages = new();
+
+        // Message backlog if maxMessages is passed to processMessageQueue() and
+        // not all messages have been processed.
+        private List<QueuedMessage> m_messageBacklog = new();
 
         #endregion
     }

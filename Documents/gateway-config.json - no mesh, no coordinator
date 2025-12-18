@@ -1,0 +1,11 @@
+{
+    // Gateway connection for the MessagingMeshCoordinator, used for:
+    // - Managing / discovering meshes
+    // - Reporting statistics
+    // Set this field to an empty string if you are not using the coordinator.
+    "CoordinatorGateway": "",
+
+    // Meshes which the gateway will connect to at startup.
+    "StartupMeshes": [
+    ]
+}

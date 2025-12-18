@@ -58,6 +58,10 @@ namespace MessagingMesh
         // Destructor.
         ~Gateway();
 
+        // Gets the gateway's IP address.
+        // NOTE: This can only be called after networking has been enabled.
+        const std::string& getIPAddress() const { return m_ipAddress; }
+
         // Gets the port on which the gateway is listening for client connections.
         int getPort() const { return m_port; }
 
@@ -99,6 +103,9 @@ namespace MessagingMesh
 
         // Socket listening for incoming connections.
         SocketPtr m_listeningSocket;
+
+        // The gateway's IP address...
+        std::string m_ipAddress;
 
         // Sockets for which we have not yet received a CONNECT message, keyed 
         // by socket name. We need to hold onto these to avoid the Sockets going

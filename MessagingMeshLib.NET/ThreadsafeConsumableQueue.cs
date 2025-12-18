@@ -22,6 +22,17 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
+        /// Gets the queue size.
+        /// </summary>
+        public int getQueueSize()
+        {
+            lock (m_queueLocker)
+            {
+                return m_queue.Count;
+            }
+        }
+
+        /// <summary>
         /// Adds an item to the queue.
         /// </summary>
         public void add(ItemType item)

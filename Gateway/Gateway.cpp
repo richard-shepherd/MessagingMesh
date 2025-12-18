@@ -1,11 +1,8 @@
 #include "Gateway.h"
 #include <format>
 #include <Socket.h>
-#include <Utils.h>
 #include <Logger.h>
 #include <NetworkMessage.h>
-#include <Message.h>
-#include <Field.h>
 #include <Exception.h>
 #include "MeshManager.h"
 using namespace MessagingMesh;
@@ -35,6 +32,9 @@ void Gateway::initialize()
 {
     try
     {
+        // We find out IP address...
+        m_ipAddress = MMUtils::getIPAddress();
+
         // We create the socket to listen for client connections...
         m_listeningSocket = Socket::create(m_pUVLoop);
         m_listeningSocket->setCallback(this);

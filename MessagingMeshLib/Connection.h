@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include <string>
-#include <functional>
 #include "SharedAliases.h"
 #include "Callbacks.h"
 #include "ConnectionParams.h"

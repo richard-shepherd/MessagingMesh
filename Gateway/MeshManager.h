@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include "GatewayInfo.h"
+#include "GatewayConfig.h"
 
 namespace MessagingMesh
 {
@@ -31,12 +32,6 @@ namespace MessagingMesh
 
     // Private functions...
     private:
-        // Parses the mesh config from mesh-config.json.
-        void parseMeshConfig();
-
-        // Enriches the config, resolving IP addresses and working out which gateways are 'us' and which are peers.
-        void enrichConfig();
-
         // Creates service-managers for meshes to which we belong.
         void createServiceManagers();
 
@@ -45,8 +40,11 @@ namespace MessagingMesh
         // The parent gateway.
         Gateway& m_gateway;
 
+        // Parsed and enriched gateway-config.json.
+        GatewayConfig m_gatewayConfig;
+
         // Vector of gateway-infos for each service in the mesh, keyed by service name.
-        std::map<std::string, VecGatewayInfo> m_gatewayInfos;
+        //std::map<std::string, VecGatewayInfo> m_gatewayInfos;
     };
 } // namespace
 

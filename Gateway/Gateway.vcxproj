@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Gateway.cpp" />
+    <ClCompile Include="GatewayConfig.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MeshGatewayConnection.cpp" />
     <ClCompile Include="MeshManager.cpp" />
@@ -20,6 +21,7 @@
     <ClCompile Include="Tests_Gateway.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GatewayConfig.h" />
     <ClInclude Include="GatewayInfo.h" />
     <ClInclude Include="GatewaySharedPointers.h" />
     <ClInclude Include="MeshGatewayConnection.h" />

@@ -21,7 +21,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingMeshLib.NET.Tests"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
-		Documents\mesh-config.json = Documents\mesh-config.json
+		Documents\gateway-config.json = Documents\gateway-config.json
+		Documents\gateway-config.json - full example = Documents\gateway-config.json - full example
+		Documents\gateway-config.json - no mesh, no coordinator = Documents\gateway-config.json - no mesh, no coordinator
 		Documents\Notes.txt = Documents\Notes.txt
 		Documents\Project overview.txt = Documents\Project overview.txt
 		Documents\Snippets.txt = Documents\Snippets.txt

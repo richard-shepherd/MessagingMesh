@@ -14,7 +14,8 @@ namespace TestClient.NET
             for (; ; )
             {
                 // We process messages...
-                connection.processMessageQueue(millisecondsTimeout);
+                var info = connection.processMessageQueue(millisecondsTimeout);
+                MM.Logger.info($"P={info.MessagesProcessed}, Q={info.QueueSize}");
 
                 // We check for Enter...
                 if (Console.KeyAvailable)

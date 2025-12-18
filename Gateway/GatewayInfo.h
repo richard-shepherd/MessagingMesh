@@ -5,7 +5,6 @@
 
 namespace MessagingMesh
 {
-
     // Info for one gateway in the mesh.
     struct GatewayInfo
     {
