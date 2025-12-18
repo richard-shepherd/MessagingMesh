@@ -42,9 +42,6 @@ namespace MessagingMesh
 
         // Parsed and enriched gateway-config.json.
         GatewayConfig m_gatewayConfig;
-
-        // Vector of gateway-infos for each service in the mesh, keyed by service name.
-        //std::map<std::string, VecGatewayInfo> m_gatewayInfos;
     };
 } // namespace
 
