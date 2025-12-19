@@ -257,8 +257,8 @@ size_t ConnectionImpl::processMessageQueue_MaxMessages(int millisecondsTimeout, 
     while (!m_messageBacklog.empty() && messagesProcessed < maxMessages)
     {
         auto& queuedMessage = m_messageBacklog.front();
-        processGatewayMessage(queuedMessage.Header, queuedMessage.pBuffer);
         m_messageBacklog.pop();  // Note: pop must be called after the message is processed so that the reference is valid for processing
+        processGatewayMessage(queuedMessage.Header, queuedMessage.pBuffer);
         messagesProcessed++;
     }
 

@@ -1,12 +1,10 @@
 #include "Socket.h"
 #include <format>
 #include "Logger.h"
-#include "Utils.h"
 #include "UVUtils.h"
 #include "UVLoop.h"
 #include "Buffer.h"
 #include "OSSocketHolder.h"
-#include "Exception.h"
 using namespace MessagingMesh;
 
 // For creating socket IDs...
@@ -30,7 +28,7 @@ Socket::Socket(UVLoopPtr pUVLoop) :
 // Destructor.
 Socket::~Socket()
 {
-    Logger::info("Closing socket: " + m_name);
+    Logger::info(std::format("Closing socket: {}", m_name));
 
     // The destructor could be called from a different thread than the
     // one running the UV loop, so we marshall the socket close event
@@ -261,6 +259,9 @@ void Socket::onDNSResolution(uv_getaddrinfo_t* pRequest, int status, struct addr
         uv_ip4_name((struct sockaddr_in*)pAddressInfo->ai_addr, ipAddress, 16);
         auto strIPAddress = std::string(ipAddress);
         connectIP(strIPAddress, port);
+
+        // We free the address info...
+        uv_freeaddrinfo(pAddressInfo);
     }
     catch (const std::exception& ex)
     {
@@ -276,7 +277,10 @@ void Socket::onConnectCompleted(uv_connect_t* pRequest, int status)
         delete pRequest;
         if (status < 0)
         {
-            if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_FAILED, uv_strerror(status));
+            if (m_pCallback)
+            {
+                m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_FAILED, uv_strerror(status));
+            }
             return;
         }
 
@@ -286,7 +290,10 @@ void Socket::onConnectCompleted(uv_connect_t* pRequest, int status)
         // We notify that the socket is connected.
         // NOTE: This must be done after the line above to ensure that actions taken by the callback 
         //       on the socket happen after it is fully connected.
-        if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_SUCCEEDED, "");
+        if (m_pCallback)
+        {
+            m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::CONNECTION_SUCCEEDED, "");
+        }
     }
     catch (const std::exception& ex)
     {
@@ -386,7 +393,10 @@ void Socket::moveToLoop_registerDuplicatedSocket(UVLoopPtr pUVLoop, OSSocketHold
         onSocketConnected();
 
         // We notify that the move to the new loop has completed...
-        if (m_pCallback) m_pCallback->onMoveToLoopComplete(this);
+        if (m_pCallback)
+        {
+            m_pCallback->onMoveToLoopComplete(this);
+        }
     }
     catch (const std::exception& ex)
     {
@@ -598,7 +608,15 @@ void Socket::onWriteCompleted(uv_write_t* pRequest, int status)
         // We check the status...
         if (status < 0)
         {
-            Logger::error(std::format("Write error: {}", uv_strerror(status)));
+            // We log the error...
+            auto strError = std::string(uv_strerror(status));
+            Logger::error(std::format("Write error on {}: {}", m_name, strError));
+
+            // It looks like the socket has disconnected...
+            if (m_pCallback)
+            {
+                m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::DISCONNECTED, strError);
+            }
         }
 
         // We release the write request (including the buffer)...
@@ -629,7 +647,10 @@ void Socket::onNewConnection(uv_stream_t* pServer, int status)
         clientSocket->accept(pServer);
 
         // We pass the socket to the callback...
-        if (m_pCallback) m_pCallback->onNewConnection(clientSocket);
+        if (m_pCallback)
+        {
+            m_pCallback->onNewConnection(clientSocket);
+        }
     }
     catch (const std::exception& ex)
     {
@@ -642,14 +663,25 @@ void Socket::onDataReceived(uv_stream_t* /*pStream*/, ssize_t nread, const uv_bu
 {
     try
     {
-        // We check for errors...
-        if (nread < 1)
+        // If we have (somehow) received zero bytes we free the buffer and return...
+        if (nread == 0)
         {
+            UVUtils::releaseBufferMemory(pBuffer);
+            return;
+        }
+
+        // We check for errors...
+        if (nread < 0)
+        {
+            // We free the buffer...
+            UVUtils::releaseBufferMemory(pBuffer);
+
+            // We log the error, notify the callback and return...
             auto error = uv_strerror((int)nread);
-            Logger::info(std::format("onDataReceived: {}", error));
-            if (nread == UV_EOF || nread == UV_ECONNRESET)
+            Logger::warn(std::format("onDataReceived from {}: {}", m_name, error));
+            if (m_pCallback)
             {
-                if (m_pCallback) m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::DISCONNECTED, error);
+                m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::DISCONNECTED, error);
             }
             return;
         }
