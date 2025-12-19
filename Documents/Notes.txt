@@ -26,6 +26,7 @@ TODO
 
 - We do not need a thread safe queue in the gateway
   - ie, on a Service UV thread
+  - We *do* still want to queue messages (to get the benefits of coalescing) but it does not need to be thread safe
 
 - Hybrid hot mode for UV loop:
   - Run HOT by default. 
