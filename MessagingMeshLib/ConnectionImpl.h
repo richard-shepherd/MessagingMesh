@@ -154,7 +154,7 @@ namespace MessagingMesh
         // Messages received from the gateway, queued for processMessageQueue.
         struct QueuedMessage
         {
-            QueuedMessage(const NetworkMessageHeader& header, BufferPtr& buffer) : Header(header), pBuffer(buffer) {}
+            QueuedMessage(const NetworkMessageHeader& header, const BufferPtr& buffer) : Header(header), pBuffer(buffer) {}
             NetworkMessageHeader Header;
             BufferPtr pBuffer;
         };
