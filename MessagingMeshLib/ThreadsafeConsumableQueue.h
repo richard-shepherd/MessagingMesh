@@ -62,6 +62,13 @@ namespace MessagingMesh
             }
         }
 
+        // Gets the queue size.
+        size_t getQueueSize()
+        {
+            std::scoped_lock lock(m_mutex);
+            return m_items->size();
+        }
+
         // Gets the current contents of the vector, and clears the data being held.
         VecItemTypePtr getItems()
         {

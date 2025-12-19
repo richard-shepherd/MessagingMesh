@@ -28,42 +28,52 @@ int main(int argc, char** argv)
 {
     MM::Logger::registerCallback(onMessageLogged);
     MM::Logger::info(std::format("MessagingMesh version={}, mimalloc version={}", MM::Connection::getVersion(), mi_version()));
-
-    if (argc >= 2 && strcmp("-pub", argv[1]) == 0)
+    try
     {
-        SmallMessagePublisher::start();
+        if (argc >= 2 && strcmp("-pub", argv[1]) == 0)
+        {
+            SmallMessagePublisher::start();
+        }
+        else if (argc >= 2 && strcmp("-sub", argv[1]) == 0)
+        {
+            SmallMessageSubscriber::start();
+        }
+        if (argc >= 2 && strcmp("-pub-blob", argv[1]) == 0)
+        {
+            BLOBPublisher::start();
+        }
+        else if (argc >= 2 && strcmp("-sub-blob", argv[1]) == 0)
+        {
+            BLOBSubscriber::start();
+        }
+        else if (argc >= 2 && strcmp("-client", argv[1]) == 0)
+        {
+            Client::start();
+        }
+        else if (argc >= 2 && strcmp("-server", argv[1]) == 0)
+        {
+            Server::start();
+        }
+        else if (argc >= 2 && strcmp("-ping", argv[1]) == 0)
+        {
+            Pinger::start();
+        }
+        else if (argc >= 2 && strcmp("-pong", argv[1]) == 0)
+        {
+            Ponger::start();
+        }
+        else
+        {
+            MM::Logger::warn("Usage: TestClient.exe -pub/-sub, -client/-server, -ping/-pong");
+        }
     }
-    else if (argc >= 2 && strcmp("-sub", argv[1]) == 0)
+    catch (const std::exception& ex)
     {
-        SmallMessageSubscriber::start();
+        MM::Logger::error(ex.what());
     }
-    if (argc >= 2 && strcmp("-pub-blob", argv[1]) == 0)
+    catch (...)
     {
-        BLOBPublisher::start();
-    }
-    else if (argc >= 2 && strcmp("-sub-blob", argv[1]) == 0)
-    {
-        BLOBSubscriber::start();
-    }
-    else if (argc >= 2 && strcmp("-client", argv[1]) == 0)
-    {
-        Client::start();
-    }
-    else if (argc >= 2 && strcmp("-server", argv[1]) == 0)
-    {
-        Server::start();
-    }
-    else if (argc >= 2 && strcmp("-ping", argv[1]) == 0)
-    {
-        Pinger::start();
-    }
-    else if (argc >= 2 && strcmp("-pong", argv[1]) == 0)
-    {
-        Ponger::start();
-    }
-    else
-    {
-        MM::Logger::warn("Usage: TestClient.exe -pub/-sub, -client/-server, -ping/-pong");
+        MM::Logger::error("Unexpected exception");
     }
 }
 

@@ -11,6 +11,8 @@ TODO
   - 8. No way to report the size of the queue. C++
   DONE - 9. try...catch in processGatewayMessage around client callbacks.
 
+- Is ConnectionImpl::QueuedMessage copying the Header? Can we do anything about that?
+
 - Rename Gateway -> MessagingMeshGateway
 
 - Log the stack trace from exceptions. C++, C#

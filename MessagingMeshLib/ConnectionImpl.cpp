@@ -205,13 +205,87 @@ SubscriptionPtr ConnectionImpl::subscribe(const std::string& subject, Subscripti
     return Subscription::create(this, subject, pCallbackInfo, subscriptionID);
 }
 // Processes messages in the queue. Waits for the specified time for messages to be available.
-void ConnectionImpl::processMessageQueue(int millisecondsTimeout)
+MessageQueueInfo ConnectionImpl::processMessageQueue(int millisecondsTimeout, int maxMessages)
 {
+    // We process messages...
+    MessageQueueInfo messageQueueInfo;
+    if (maxMessages == -1)
+    {
+        messageQueueInfo.MessagesProcessed = processMessageQueue_AllMessages(millisecondsTimeout);
+    }
+    else
+    {
+        messageQueueInfo.MessagesProcessed = processMessageQueue_MaxMessages(millisecondsTimeout, maxMessages);
+    }
+
+    // We find the number of remaining messages in the queues...
+    messageQueueInfo.QueueSize = m_queuedMessages.getQueueSize() + m_messageBacklog.size();
+    return messageQueueInfo;
+}
+
+// Processes all messages from the backlog and the message queue.
+// Returns the number of messages processed.
+size_t ConnectionImpl::processMessageQueue_AllMessages(int millisecondsTimeout)
+{
+    // We process the backlog...
+    auto messagesProcessed = m_messageBacklog.size();
+    while (!m_messageBacklog.empty())
+    {
+        auto& queuedMessage = m_messageBacklog.front();
+        m_messageBacklog.pop();
+        processGatewayMessage(queuedMessage.Header, queuedMessage.pBuffer);
+    }
+
+    // We process queued messages...
     auto queuedMessages = m_queuedMessages.waitAndGetItems(millisecondsTimeout);
     for(auto& queuedMessage : *queuedMessages)
     {
         processGatewayMessage(queuedMessage.Header, queuedMessage.pBuffer);
     }
+    messagesProcessed += queuedMessages->size();
+
+    return messagesProcessed;
+}
+
+// Processes queued messages from the backlog and the message queue, up to the maximum
+// number of messages specified.
+// Returns the number of messages processed.
+size_t ConnectionImpl::processMessageQueue_MaxMessages(int millisecondsTimeout, int maxMessages)
+{
+    // We process messages from the backlog...
+    auto messagesProcessed = 0;
+    while (!m_messageBacklog.empty() && messagesProcessed < maxMessages)
+    {
+        auto& queuedMessage = m_messageBacklog.front();
+        m_messageBacklog.pop();
+        processGatewayMessage(queuedMessage.Header, queuedMessage.pBuffer);
+        messagesProcessed++;
+    }
+
+    // If we have processed all items from the backlog, there is nothing further to do...
+    if (messagesProcessed >= maxMessages)
+    {
+        return messagesProcessed;
+    }
+
+    // We have not processed the number of messages requested, so we wait for new messages...
+    auto queuedMessages = m_queuedMessages.waitAndGetItems(millisecondsTimeout);
+
+    // We process new messages up to the limit requested, and add messages beyond the limit to the backlog...
+    for(auto& queuedMessage : *queuedMessages)
+    {
+        if (messagesProcessed < maxMessages)
+        {
+            processGatewayMessage(queuedMessage.Header, queuedMessage.pBuffer);
+            messagesProcessed++;
+        }
+        else
+        {
+            m_messageBacklog.push(queuedMessage);
+        }
+    }
+
+    return messagesProcessed;
 }
 
 // Unblocks the current processMessageQueue() call without waiting for its timeout to elapse.

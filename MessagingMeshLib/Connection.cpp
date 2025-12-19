@@ -45,9 +45,9 @@ SubscriptionPtr Connection::subscribe(const std::string& subject, SubscriptionCa
 }
 
 // Processes messages in the queue. Waits for the specified time for messages to be available.
-void Connection::processMessageQueue(int millisecondsTimeout)
+MessageQueueInfo Connection::processMessageQueue(int millisecondsTimeout, int maxMessages)
 {
-    m_pImpl->processMessageQueue(millisecondsTimeout);
+    return m_pImpl->processMessageQueue(millisecondsTimeout, maxMessages);
 }
 
 // Unblocks the current processMessageQueue() call without waiting for its timeout to elapse.

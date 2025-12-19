@@ -2,6 +2,7 @@
 #include <string>
 #include <set>
 #include <unordered_map>
+#include <queue>
 #include <atomic>
 #include "SharedAliases.h"
 #include "Socket.h"
@@ -11,6 +12,7 @@
 #include "Subscription.h"
 #include "ThreadsafeConsumableQueue.h"
 #include "NetworkMessageHeader.h"
+#include "MessageQueueInfo.h"
 
 namespace MessagingMesh
 {
@@ -53,7 +55,7 @@ namespace MessagingMesh
         void releaseSubscription(const std::string& subject, const Subscription::CallbackInfo* pCallbackInfo);
 
         // Processes messages in the queue. Waits for the specified time for messages to be available.
-        void processMessageQueue(int millisecondsTimeout);
+        MessageQueueInfo processMessageQueue(int millisecondsTimeout, int maxMessages = -1);
 
         // Unblocks the current processMessageQueue() call without waiting for its timeout to elapse.
         void wakeUp();
@@ -94,6 +96,14 @@ namespace MessagingMesh
 
         // Calls back for subscriptions to the message described by the header and buffer.
         void performSubscriptionCallbacks(const VecCallbackInfo& callbackInfos, const NetworkMessageHeader& header, BufferPtr pBuffer);
+
+        // Processes all messages from the backlog and the message queue.
+        size_t processMessageQueue_AllMessages(int millisecondsTimeout);
+
+        // Processes queued messages from the backlog and the message queue, up to the maximum
+        // number of messages specified.
+        // Returns the number of messages processed.
+        size_t processMessageQueue_MaxMessages(int millisecondsTimeout, int maxMessages);
 
     // Private data...
     private:
@@ -149,6 +159,10 @@ namespace MessagingMesh
             BufferPtr pBuffer;
         };
         ThreadsafeConsumableQueue<QueuedMessage> m_queuedMessages;
+
+        // Message backlog if maxMessages is passed to processMessageQueue() and
+        // not all messages have been processed.
+        std::queue<QueuedMessage> m_messageBacklog;
     };
 } // namespace
 

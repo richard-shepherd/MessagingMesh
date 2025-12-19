@@ -1,5 +1,6 @@
 #pragma once
 #include <conio.h>
+#include <format>
 #include <MessagingMesh.h>
 namespace MM = MessagingMesh;
 
@@ -15,7 +16,9 @@ public:
         for (; ; )
         {
             // We process messages...
-            connection.processMessageQueue(10);
+            //auto info = connection.processMessageQueue(10, 100);
+            auto info = connection.processMessageQueue(10);
+            //MM::Logger::info(std::format("P={}, Q={}", info.MessagesProcessed, info.QueueSize));
 
             // We check for Enter...
             if (_kbhit())

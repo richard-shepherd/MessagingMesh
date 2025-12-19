@@ -4,6 +4,7 @@
 #include "SharedAliases.h"
 #include "Callbacks.h"
 #include "ConnectionParams.h"
+#include "MessageQueueInfo.h"
 
 namespace MessagingMesh
 {
@@ -42,7 +43,7 @@ namespace MessagingMesh
         [[nodiscard]] SubscriptionPtr subscribe(const std::string& subject, SubscriptionCallback callback, void* tag=nullptr);
 
         // Processes messages in the queue. Waits for the specified time for messages to be available.
-        void processMessageQueue(int millisecondsTimeout);
+        MessageQueueInfo processMessageQueue(int millisecondsTimeout, int maxMessages = -1);
 
         // Unblocks the current processMessageQueue() call without waiting for its timeout to elapse.
         void wakeUp();
