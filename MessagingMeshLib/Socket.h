@@ -175,6 +175,9 @@ namespace MessagingMesh
         // Note: This is called on the thread for the UVLoop to which we are moving the socket.
         void moveToLoop_registerDuplicatedSocket(UVLoopPtr pUVLoop, OSSocketHolderPtr pOSSocketHolder);
 
+        // Called when the socket has disconnected, to reset the connection and notify observers.
+        void handleSocketDisconnected(const std::string& error);
+
     // Private data...
     private:
         // The socket's name (made from its connection info).

@@ -16,9 +16,9 @@ public:
         for (; ; )
         {
             // We process messages...
-            //auto info = connection.processMessageQueue(10);
-            auto info = connection.processMessageQueue(100, 100);
-            MM::Logger::info(std::format("P={}, Q={}", info.MessagesProcessed, info.QueueSize));
+            auto info = connection.processMessageQueue(10);
+            //auto info = connection.processMessageQueue(100, 100);
+            //MM::Logger::info(std::format("P={}, Q={}", info.MessagesProcessed, info.QueueSize));
 
             // We check for Enter...
             if (_kbhit())

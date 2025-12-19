@@ -28,8 +28,9 @@ namespace MessagingMesh
         {
             // Constructor specifying a buffer size.
             // We allocate the buffer and release it in the destructor.
-            WriteRequest(size_t bufferSize) :
-                write_request{}
+            WriteRequest(size_t bufferSize, SocketPtr socket) :
+                write_request{},
+                pSocket(socket)
             {
                 buffer.base = new char[bufferSize];
                 buffer.len = (ULONG)bufferSize;
@@ -43,6 +44,7 @@ namespace MessagingMesh
 
             uv_write_t write_request;
             uv_buf_t buffer;
+            SocketPtr pSocket;
         };
 
     // Public functions...
@@ -58,7 +60,7 @@ namespace MessagingMesh
         static void releaseBufferMemory(const uv_buf_t* pBuffer);
 
         // Allocates a write request.
-        static WriteRequest* allocateWriteRequest(size_t bufferSize, void* data);
+        static WriteRequest* allocateWriteRequest(size_t bufferSize, SocketPtr pSocket);
 
         // Releases a write request.
         static void releaseWriteRequest(WriteRequest* pWriteRequest);

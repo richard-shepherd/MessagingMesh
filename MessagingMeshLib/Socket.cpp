@@ -467,8 +467,8 @@ void Socket::send(UVUtils::WriteRequest* pWriteRequest)
         1,
         [](uv_write_t* r, int s)
         {
-            auto self = (Socket*)r->data;
-            self->onWriteCompleted(r, s);
+            auto pWriteRequest = (UVUtils::WriteRequest*)r;
+            pWriteRequest->pSocket->onWriteCompleted(r, s);
         }
     );
 }
@@ -549,7 +549,7 @@ void Socket::getWriteRequests(const std::vector<BufferInfo>& bufferInfos, std::f
                 // We copy the data to the write request...
                 if (pSmallMessagesWriteRequest == nullptr)
                 {
-                    pSmallMessagesWriteRequest = UVUtils::allocateWriteRequest(SMALL_MESSAGE_SEND_BUFFER_SIZE, this);
+                    pSmallMessagesWriteRequest = UVUtils::allocateWriteRequest(SMALL_MESSAGE_SEND_BUFFER_SIZE, shared_from_this());
                 }
                 std::memcpy(pSmallMessagesWriteRequest->buffer.base + smallMessageSendBufferPosition, bufferData + bufferPosition, sizeToCopy);
 
@@ -587,7 +587,7 @@ void Socket::getWriteRequests(const std::vector<BufferInfo>& bufferInfos, std::f
             }
 
             // We send the large buffer...
-            auto pLargeWriteRequest = UVUtils::allocateWriteRequest(bufferSize, this);
+            auto pLargeWriteRequest = UVUtils::allocateWriteRequest(bufferSize, shared_from_this());
             std::memcpy(pLargeWriteRequest->buffer.base, bufferData, bufferSize);
 
             // We override the subscription ID if needed...
@@ -617,14 +617,11 @@ void Socket::onWriteCompleted(uv_write_t* pRequest, int status)
         if (status < 0)
         {
             // We log the error...
-            auto strError = std::string(uv_strerror(status));
-            Logger::error(std::format("Write error on {}: {}", m_name, strError));
+            auto error = std::string(uv_strerror(status));
+            Logger::error(std::format("Write error on {}: {}", m_name, error));
 
             // It looks like the socket has disconnected...
-            if (m_pCallback)
-            {
-                m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::DISCONNECTED, strError);
-            }
+            handleSocketDisconnected(error);
         }
 
         // We release the write request (including the buffer)...
@@ -634,6 +631,24 @@ void Socket::onWriteCompleted(uv_write_t* pRequest, int status)
     catch (const std::exception& ex)
     {
         Logger::error(std::format("{}: {}", __func__, ex.what()));
+    }
+}
+
+// Called when the socket has disconnected, to reset the connection and notify observers.
+void Socket::handleSocketDisconnected(const std::string& error)
+{
+    Logger::warn(std::format("Socket disconnected {}: {}", m_name, error));
+
+    // We note that the socket is no longer connected...
+    m_connected = false;
+
+    // We clear the write queue...
+    m_queuedWrites.clear();
+
+    // We notify observers...
+    if (m_pCallback)
+    {
+        m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::DISCONNECTED, error);
     }
 }
 
@@ -685,12 +700,9 @@ void Socket::onDataReceived(uv_stream_t* /*pStream*/, ssize_t nread, const uv_bu
             UVUtils::releaseBufferMemory(pBuffer);
 
             // We log the error, notify the callback and return...
-            auto error = uv_strerror((int)nread);
+            auto error = std::string(uv_strerror((int)nread));
             Logger::warn(std::format("onDataReceived from {}: {}", m_name, error));
-            if (m_pCallback)
-            {
-                m_pCallback->onConnectionStatusChanged(this, ConnectionStatus::DISCONNECTED, error);
-            }
+            handleSocketDisconnected(error);
             return;
         }
 
