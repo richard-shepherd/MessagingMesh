@@ -30,6 +30,10 @@ Socket::~Socket()
 {
     Logger::info(std::format("Closing socket: {}", m_name));
 
+    // We mark the socket as not connected and clear the write queue...
+    m_connected = false;
+    m_queuedWrites.clear();
+
     // The destructor could be called from a different thread than the
     // one running the UV loop, so we marshall the socket close event
     // to the socket's UV loop.
@@ -414,13 +418,17 @@ void Socket::write(BufferPtr pBuffer, uint32_t subscriptionIDOverride)
     BufferInfo bufferInfo(pBuffer, subscriptionIDOverride);
     m_queuedWrites.add(bufferInfo);
 
+    // We take a shared pointer to the socket. This keeps it alive until the marshalled
+    // event (below) has occurred.
+    auto self = shared_from_this();
+
     // We marshall an event to write the data. As this does not take place straight 
     // away, this allows us to coalesce multiple queued writes...
     m_pUVLoop->marshallUniqueEvent(
         m_writeEventKey,
-        [this](uv_loop_t* /*pLoop*/)
+        [self](uv_loop_t* /*pLoop*/)
         {
-            processQueuedWrites();
+            self->processQueuedWrites();
         }
     );
 }

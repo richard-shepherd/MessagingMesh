@@ -34,6 +34,13 @@ namespace MessagingMesh
             m_items = std::make_shared<VecItemType>();
         }
 
+        // Cleares all items from the queue.
+        void clear()
+        {
+            std::scoped_lock lock(m_mutex);
+            m_items->clear();
+        }
+
         // Adds an item to the vector.
         void add(ItemType& item)
         {

@@ -28,6 +28,7 @@ ConnectionImpl::ConnectionImpl(const ConnectionParams& connectionParams, Connect
     m_pUVLoop->marshallEvent(
         [&connectionParams, this](uv_loop_t* /*pLoop*/)
         {
+            // We connect to the socket...
             m_pSocket->connect(connectionParams.GatewayHost, connectionParams.GatewayPort);
         }
     );

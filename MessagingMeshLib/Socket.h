@@ -18,7 +18,7 @@ namespace MessagingMesh
     /// Can either be a client socket making a connection to a server
     /// or a server socket listening for client connections.
     /// </summary>
-    class Socket
+    class Socket : public std::enable_shared_from_this<Socket>
     {
     // Public types...
     public:
