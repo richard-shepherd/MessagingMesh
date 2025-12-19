@@ -28,6 +28,11 @@ namespace MessagingMesh
         {
             // Constructor specifying a buffer size.
             // We allocate the buffer and release it in the destructor.
+            //
+            // SocketPtr: We keep a reference to the socket shared pointer to ensure that the lifetime
+            //            of the Socket object is as long as that of the write request. Otherwise we can 
+            //            have asynchronous UV write requests which take place after the Socket has
+            //            been destructed.
             WriteRequest(size_t bufferSize, SocketPtr socket) :
                 write_request{},
                 pSocket(socket)
