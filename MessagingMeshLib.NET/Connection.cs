@@ -410,15 +410,47 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Processes queued messages from the backlog and the message queue, up to the maximum
         /// number of messages specified.
+        /// Returns the number of messages processed.
         /// </summary>
         private int processMessageQueue_MaxMessages(int millisecondsTimeout, int maxMessages)
         {
-            // We get queued messages and add them to the backlog...
+            // We process messages from the backlog...
+            var messagesProcessed = 0;
+            while (m_messageBacklog.Count > 0 && messagesProcessed < maxMessages)
+            {
+                var queuedMessage = m_messageBacklog.Dequeue();
+                processGatewayMessage(queuedMessage.Header, queuedMessage.Buffer);
+                messagesProcessed++;
+            }
+
+            // If we have processed all items from the backlog, there is nothing further to do...
+            if(messagesProcessed >= maxMessages)
+            {
+                return messagesProcessed;
+            }
+
+            // We have not processed the number of messages requested, so we wait for new messages...
             var queuedMessages = m_queuedMessages.waitAndGetItems(millisecondsTimeout);
-            m_messageBacklog.AddRange(queuedMessages);
+            if (queuedMessages == null)
+            {
+                return messagesProcessed;
+            }
 
-            // We process items up to max messages...
+            // We process new messages up to the limit requested, and add messages beyond the limit to the backlog...
+            foreach (var queuedMessage in queuedMessages)
+            {
+                if(messagesProcessed < maxMessages)
+                {
+                    processGatewayMessage(queuedMessage.Header, queuedMessage.Buffer);
+                    messagesProcessed++;
+                }
+                else
+                {
+                    m_messageBacklog.Enqueue(queuedMessage);
+                }
+            }
 
+            return messagesProcessed;
         }
 
         /// <summary>
@@ -587,7 +619,7 @@ namespace MessagingMeshLib.NET
 
         // Message backlog if maxMessages is passed to processMessageQueue() and
         // not all messages have been processed.
-        private List<QueuedMessage> m_messageBacklog = new();
+        private Queue<QueuedMessage> m_messageBacklog = new();
 
         #endregion
     }
