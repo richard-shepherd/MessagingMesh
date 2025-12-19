@@ -6,9 +6,9 @@ TODO
   DONE - 3. Can't send a message with a reply subject.
   DONE - 4. tryGet methods on Field and Message.
   DONE - 5. Field.getFieldType.
-  - 6. No max messages limit on PMQ. C++
-  - 7. No messages-dispatched count from PMQ. C++
-  - 8. No way to report the size of the queue. C++
+  DONE - 6. No max messages limit on PMQ.
+  DONE - 7. No messages-dispatched count from PMQ.
+  DONE - 8. No way to report the size of the queue.
   DONE - 9. try...catch in processGatewayMessage around client callbacks.
 
 - Is ConnectionImpl::QueuedMessage copying the Header? Can we do anything about that?
