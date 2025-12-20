@@ -54,6 +54,13 @@ Socket::~Socket()
     );
 }
 
+// Sets the client ID (used as part of the socket name).
+void Socket::setClientID(const std::string& clientID)
+{
+    // We update the name to include the the client ID...
+    m_name = std::format("[{}]:[{}]", clientID, m_name);
+}
+
 // Creates the UV socket.
 // Note: This is not done in the constructor, as that can be called outside
 //       the UV loop. It is only called from functions inside the loop.

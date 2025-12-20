@@ -34,15 +34,16 @@ ServiceManager::~ServiceManager()
 void ServiceManager::registerSocket(SocketPtr pSocket, bool isMeshPeer)
 {
     // We add the socket to the collection of active clients...
+    auto socketID = pSocket->getSocketID();
     if (isMeshPeer)
     {
         // This is a mesh peer...
-        m_meshGatewayConnections_WeAreTheServer[pSocket->getName()] = pSocket;
+        m_meshGatewayConnections_WeAreTheServer[socketID] = pSocket;
     }
     else
     {
         // This is a client connection...
-        m_clientSockets[pSocket->getName()] = pSocket;
+        m_clientSockets[socketID] = pSocket;
     }
 
     // We note whether the socket is a mesh peer (ie, a gateway in the mesh).
@@ -163,12 +164,12 @@ void ServiceManager::onDisconnected(Socket* pSocket)
     try
     {
         // We remove any active subscriptions for the client...
-        auto& socketName = pSocket->getName();
-        m_subjectMatchingEngine.removeAllSubscriptions(socketName);
+        auto socketID = pSocket->getSocketID();
+        m_subjectMatchingEngine.removeAllSubscriptions(socketID);
 
         // We remove the socket from the collections of sockets we manage...
-        m_clientSockets.erase(socketName);
-        m_meshGatewayConnections_WeAreTheServer.erase(socketName);
+        m_clientSockets.erase(socketID);
+        m_meshGatewayConnections_WeAreTheServer.erase(socketID);
     }
     catch (const std::exception& ex)
     {
@@ -183,7 +184,7 @@ void ServiceManager::onSubscribe(Socket* pSocket, const NetworkMessageHeader& he
     auto subscriptionCount = m_subjectMatchingEngine.addSubscription(
         header.getSubject(),
         header.getSubscriptionID(),
-        pSocket->getName(),
+        pSocket->getSocketID(),
         pSocket);
 
     // If this is the first subscription we have for this subject AND the subscription came
@@ -200,7 +201,7 @@ void ServiceManager::onUnsubscribe(Socket* pSocket, const NetworkMessageHeader& 
     // We unregister the subscription from the subject matching engine...
     auto subscriptionCount = m_subjectMatchingEngine.removeSubscription(
         header.getSubject(),
-        pSocket->getName());
+        pSocket->getSocketID());
 
     // If we have no subscriptions remaining for this subject AND the unsubscribe came
     // from a client (not a mesh peer) then we forward the unsubscribe to the mesh...

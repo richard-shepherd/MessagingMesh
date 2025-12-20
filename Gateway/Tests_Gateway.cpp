@@ -18,16 +18,24 @@ void Tests_Gateway::runAll()
 // Tests for the subject-matching engine.
 void Tests_Gateway::subjectMatchingEngine(TestRun& testRun)
 {
+    // Test socket IDs...
+    const int ClientA = 1;
+    const int ClientB = 2;
+    const int ClientC = 3;
+    const int ClientD = 4;
+    //const int ClientE = 5;
+    const int ClientF = 6;
+
     TestUtils::log("No wildcards...");
     {
         SubjectMatchingEngine sme;
 
         // We add subscriptions...
-        sme.addSubscription("A.B.C", 123, "ClientA", nullptr);
-        sme.addSubscription("A.B.C", 234, "ClientB", nullptr);
-        sme.addSubscription("A.B.D", 345, "ClientC", nullptr);
-        sme.addSubscription("A.B.D.E", 456, "ClientC", nullptr);
-        sme.addSubscription("A.B.D.E.F", 567, "ClientC", nullptr);
+        sme.addSubscription("A.B.C", 123, ClientA, nullptr);
+        sme.addSubscription("A.B.C", 234, ClientB, nullptr);
+        sme.addSubscription("A.B.D", 345, ClientC, nullptr);
+        sme.addSubscription("A.B.D.E", 456, ClientC, nullptr);
+        sme.addSubscription("A.B.D.E.F", 567, ClientC, nullptr);
 
         // We check for matches...
         auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");
@@ -64,15 +72,15 @@ void Tests_Gateway::subjectMatchingEngine(TestRun& testRun)
         SubjectMatchingEngine sme;
 
         // We add subscriptions...
-        sme.addSubscription("A.B.C", 123, "ClientA", nullptr);
-        sme.addSubscription("A.B.C", 234, "ClientB", nullptr);
-        sme.addSubscription("A.B.C", 345, "ClientC", nullptr);
-        sme.addSubscription("A.B.C.D", 456, "ClientA", nullptr);
-        sme.addSubscription("A.B.C.D", 567, "ClientB", nullptr);
+        sme.addSubscription("A.B.C", 123, ClientA, nullptr);
+        sme.addSubscription("A.B.C", 234, ClientB, nullptr);
+        sme.addSubscription("A.B.C", 345, ClientC, nullptr);
+        sme.addSubscription("A.B.C.D", 456, ClientA, nullptr);
+        sme.addSubscription("A.B.C.D", 567, ClientB, nullptr);
 
         // We remove subscriptions...
-        sme.removeSubscription("A.B.C", "ClientB");
-        sme.removeSubscription("A.B.C.D", "ClientA");
+        sme.removeSubscription("A.B.C", ClientB);
+        sme.removeSubscription("A.B.C.D", ClientA);
 
         // We check for matches...
         auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");
@@ -91,14 +99,14 @@ void Tests_Gateway::subjectMatchingEngine(TestRun& testRun)
         SubjectMatchingEngine sme;
 
         // We add subscriptions...
-        sme.addSubscription("A.B.C", 123, "ClientA", nullptr);
-        sme.addSubscription("A.B.C", 234, "ClientB", nullptr);
-        sme.addSubscription("A.B.C", 345, "ClientC", nullptr);
-        sme.addSubscription("A.B.C.D", 456, "ClientA", nullptr);
-        sme.addSubscription("A.B.C.D", 567, "ClientB", nullptr);
+        sme.addSubscription("A.B.C", 123, ClientA, nullptr);
+        sme.addSubscription("A.B.C", 234, ClientB, nullptr);
+        sme.addSubscription("A.B.C", 345, ClientC, nullptr);
+        sme.addSubscription("A.B.C.D", 456, ClientA, nullptr);
+        sme.addSubscription("A.B.C.D", 567, ClientB, nullptr);
 
         // We remove subscriptions...
-        sme.removeAllSubscriptions("ClientA");
+        sme.removeAllSubscriptions(ClientA);
 
         // We check for matches...
         auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");
@@ -117,12 +125,12 @@ void Tests_Gateway::subjectMatchingEngine(TestRun& testRun)
         SubjectMatchingEngine sme;
 
         // We add subscriptions...
-        sme.addSubscription("A.B.C", 123, "ClientA", nullptr);
-        sme.addSubscription("A.B.C", 234, "ClientB", nullptr);
-        sme.addSubscription("A.B.>", 345, "ClientC", nullptr);
-        sme.addSubscription("A.>", 456, "ClientD", nullptr);
-        sme.addSubscription(">", 567, "ClientC", nullptr);
-        sme.addSubscription("A.B.D.>", 678, "ClientF", nullptr);
+        sme.addSubscription("A.B.C", 123, ClientA, nullptr);
+        sme.addSubscription("A.B.C", 234, ClientB, nullptr);
+        sme.addSubscription("A.B.>", 345, ClientC, nullptr);
+        sme.addSubscription("A.>", 456, ClientD, nullptr);
+        sme.addSubscription(">", 567, ClientC, nullptr);
+        sme.addSubscription("A.B.D.>", 678, ClientF, nullptr);
 
         // We check for matches...
         auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");
@@ -156,12 +164,12 @@ void Tests_Gateway::subjectMatchingEngine(TestRun& testRun)
         SubjectMatchingEngine sme;
 
         // We add subscriptions...
-        sme.addSubscription("A.B.C", 123, "ClientA", nullptr);
-        sme.addSubscription("A.B.C", 234, "ClientB", nullptr);
-        sme.addSubscription("A.B.*", 345, "ClientC", nullptr);
-        sme.addSubscription("A.*.C", 456, "ClientD", nullptr);
-        sme.addSubscription("*", 567, "ClientC", nullptr);
-        sme.addSubscription("*.>", 678, "ClientF", nullptr);
+        sme.addSubscription("A.B.C", 123, ClientA, nullptr);
+        sme.addSubscription("A.B.C", 234, ClientB, nullptr);
+        sme.addSubscription("A.B.*", 345, ClientC, nullptr);
+        sme.addSubscription("A.*.C", 456, ClientD, nullptr);
+        sme.addSubscription("*", 567, ClientC, nullptr);
+        sme.addSubscription("*.>", 678, ClientF, nullptr);
 
         // We check for matches...
         auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");

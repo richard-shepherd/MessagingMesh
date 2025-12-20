@@ -81,6 +81,7 @@ namespace MessagingMeshLib.NET
             var networkMessage = new NetworkMessage();
             networkMessage.Header.Action = NetworkMessageHeader.ActionEnum.CONNECT;
             networkMessage.Header.Subject = connectionParams.Service;
+            networkMessage.Header.ReplySubject = connectionParams.ClientID;
             sendNetworkMessage(networkMessage);
 
             // We wait for the ACK to confirm that we have connected.

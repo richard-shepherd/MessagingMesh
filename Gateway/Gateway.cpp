@@ -58,7 +58,7 @@ void Gateway::onNewConnection(SocketPtr pSocket)
     {
         // We add the socket to the pending-collection and observe it 
         // to listen for the CONNECT message...
-        m_pendingConnections[pSocket->getName()] = pSocket;
+        m_pendingConnections[pSocket->getSocketID()] = pSocket;
         pSocket->setCallback(this);
     }
     catch (const std::exception& ex)
@@ -83,7 +83,7 @@ void Gateway::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
         {
         case NetworkMessageHeader::Action::CONNECT:
         case NetworkMessageHeader::Action::CONNECT_MESH_PEER:
-            onConnect(pSocket->getName(), header);
+            onConnect(pSocket->getSocketID(), header);
             break;
         }
     }
@@ -109,8 +109,8 @@ void Gateway::onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatu
             // 
             // If this happens, we remove the socket from the pending-collection. This 
             // releases our reference to it, allowing it to be destructed.
-            auto& socketName = pSocket->getName();
-            m_pendingConnections.erase(socketName);
+            auto socketID = pSocket->getSocketID();
+            m_pendingConnections.erase(socketID);
         }
     }
     catch (const std::exception& ex)
@@ -120,7 +120,7 @@ void Gateway::onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatu
 }
 
 // Called when we receive a CONNECT message from a client.
-void Gateway::onConnect(const std::string& socketName, const NetworkMessageHeader& header)
+void Gateway::onConnect(int socketID, const NetworkMessageHeader& header)
 {
     // We log the connect request...
     auto& service = header.getSubject();
@@ -138,16 +138,19 @@ void Gateway::onConnect(const std::string& socketName, const NetworkMessageHeade
         strAction = "CONNECT_MESH_PEER";
         break;
     }
-    Logger::info(std::format("Received {} request from {} for service {}", strAction, socketName, service));
-
     // We find the socket from the pending-collection...
-    auto it_pendingConnections = m_pendingConnections.find(socketName);
+    auto it_pendingConnections = m_pendingConnections.find(socketID);
     if (it_pendingConnections == m_pendingConnections.end())
     {
-        auto message = std::format("Socket {} not in pending-collection", socketName);
+        auto message = std::format("Socket {} not in pending-collection", socketID);
         throw Exception(message);
     }
     auto pSocket = it_pendingConnections->second;
+
+    // We update the socket name to include the Client ID (which is in the reply-subject for a CONNECT message)...
+    pSocket->setClientID(header.getReplySubject());
+    Logger::info(std::format("Received {} request from {} for service {}", strAction, pSocket->getName(), service));
+
 
     // We get or create the ServiceManager for the service requested by the client...
     auto& serviceManager = getOrCreateServiceManager(service);
@@ -156,7 +159,7 @@ void Gateway::onConnect(const std::string& socketName, const NetworkMessageHeade
     serviceManager.registerSocket(pSocket, isMeshPeer);
 
     // The socket is now managed by the service-manager, so we remove it from our pending-collection...
-    m_pendingConnections.erase(socketName);
+    m_pendingConnections.erase(socketID);
 }
 
 // Gets or creates a service-manager for the specified service.

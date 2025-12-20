@@ -7,7 +7,7 @@ using namespace MessagingMesh;
 
 // Adds a subscription.
 // Returns the number of clients registered for this subject.
-size_t SubjectMatchingEngine::addSubscription(const std::string& subject, uint32_t subscriptionID, const std::string& clientName, Socket* pClientSocket)
+size_t SubjectMatchingEngine::addSubscription(const std::string& subject, uint32_t subscriptionID, int clientSocketID, Socket* pClientSocket)
 {
     // We get the node for the subject...
     auto pNode = getOrCreateNode(subject);
@@ -16,7 +16,7 @@ size_t SubjectMatchingEngine::addSubscription(const std::string& subject, uint32
     // Note: We are not expecting more than one subscription from a client
     //       for the same subject. This is managed in client libraries.
     auto pSubscriptionInfo = SubscriptionInfo::create(pClientSocket, subscriptionID);
-    pNode->SubscriptionInfos.insert({ clientName, pSubscriptionInfo });
+    pNode->SubscriptionInfos.insert({ clientSocketID, pSubscriptionInfo });
 
     // The change to subscriptions has invalidated the cache...
     m_cache.clear();
@@ -27,13 +27,13 @@ size_t SubjectMatchingEngine::addSubscription(const std::string& subject, uint32
 
 // Removes a subscription.
 // Returns the number of clients registered for this subject.
-size_t SubjectMatchingEngine::removeSubscription(const std::string& subject, const std::string& clientName)
+size_t SubjectMatchingEngine::removeSubscription(const std::string& subject, int clientSocketID)
 {
     // We get the node for the subject...
     auto pNode = getOrCreateNode(subject);
 
     // We remove info for this client...
-    pNode->SubscriptionInfos.erase(clientName);
+    pNode->SubscriptionInfos.erase(clientSocketID);
 
     // RSSTODO: Clean up nodes which are no longer used by any subscriptions.
 
@@ -45,9 +45,9 @@ size_t SubjectMatchingEngine::removeSubscription(const std::string& subject, con
 }
 
 // Removes all subscriptions for the client specified.
-void SubjectMatchingEngine::removeAllSubscriptions(const std::string& clientName)
+void SubjectMatchingEngine::removeAllSubscriptions(int clientSocketID)
 {
-    removeAllSubscriptions(m_pRootNode, clientName);
+    removeAllSubscriptions(m_pRootNode, clientSocketID);
 
     // The change to subscriptions has invalidated the cache...
     m_cache.clear();
@@ -55,12 +55,12 @@ void SubjectMatchingEngine::removeAllSubscriptions(const std::string& clientName
 
 // Removes all subscriptions for the client specified from the node provided
 // and from all its child nodes recursively.
-void SubjectMatchingEngine::removeAllSubscriptions(Node* pNode, const std::string& clientName)
+void SubjectMatchingEngine::removeAllSubscriptions(Node* pNode, int clientSocketID)
 {
-    pNode->SubscriptionInfos.erase(clientName);
+    pNode->SubscriptionInfos.erase(clientSocketID);
     for (const auto& pair : pNode->Nodes)
     {
-        removeAllSubscriptions(pair.second, clientName);
+        removeAllSubscriptions(pair.second, clientSocketID);
     }
 }
 

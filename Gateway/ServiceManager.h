@@ -91,8 +91,8 @@ namespace MessagingMesh
         // UV loop for processing client messages...
         UVLoopPtr m_pUVLoop;
 
-        // Client sockets, keyed by socket name...
-        std::unordered_map<std::string, SocketPtr> m_clientSockets;
+        // Client sockets, keyed by socket ID...
+        std::unordered_map<int, SocketPtr> m_clientSockets;
 
         // Maps sent messages to clients who are subscribed to them...
         SubjectMatchingEngine m_subjectMatchingEngine;
@@ -101,9 +101,9 @@ namespace MessagingMesh
         // These are the connections where we act as the client to the peer gateway.
         std::map<std::string, MeshGatewayConnection> m_meshGatewayConnections_WeAreTheClient;
 
-        // Sockets for peer gateways in the mesh, keyed by socket name.
+        // Sockets for peer gateways in the mesh, keyed by socket ID.
         // These are the connections where we act as the server to the peer gateway.
-        std::unordered_map<std::string, SocketPtr> m_meshGatewayConnections_WeAreTheServer;
+        std::unordered_map<int, SocketPtr> m_meshGatewayConnections_WeAreTheServer;
     };
 } // namespace
 

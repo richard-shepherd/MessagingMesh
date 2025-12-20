@@ -59,8 +59,14 @@ namespace MessagingMesh
         // Destructor.
         ~Socket();
 
+        // Gets the socket's ID.
+        int getSocketID() const { return m_socketID; }
+
         // Gets the socket's name.
         const std::string& getName() const { return m_name; }
+
+        // Sets the client ID (used as part of the socket name).
+        void setClientID(const std::string& clientID);
 
         // Returns true if the UV loop passed in is the same one managing this socket.
         bool isSameUVLoop(const UVLoopPtr& pUVLoop) const { return pUVLoop == m_pUVLoop; }

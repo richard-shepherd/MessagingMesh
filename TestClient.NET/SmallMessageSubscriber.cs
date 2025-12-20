@@ -16,7 +16,8 @@ namespace TestClient.NET
             {
                 GatewayHost = "127.0.0.1",
                 GatewayPort = 5050,
-                Service = "VULCAN"
+                Service = "VULCAN",
+                ClientID = "SmallMessageSubscriber"
             };
             var connection = new MM.Connection(connectionParams);
 
