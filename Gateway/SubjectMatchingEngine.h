@@ -106,14 +106,14 @@ namespace MessagingMesh
     public:
         // Adds a subscription.
         // Returns the number of clients registered for this subject.
-        size_t addSubscription(const std::string& subject, uint32_t subscriptionID, int clientSocketID, Socket* pClientSocket);
+        size_t addSubscription(const std::string& subject, uint32_t subscriptionID, uint64_t clientSocketID, Socket* pClientSocket);
 
         // Removes a subscription.
         // Returns the number of clients registered for this subject.
-        size_t removeSubscription(const std::string& subject, int clientSocketID);
+        size_t removeSubscription(const std::string& subject, uint64_t clientSocketID);
 
         // Removes all subscriptions for the client specified.
-        void removeAllSubscriptions(int clientSocketID);
+        void removeAllSubscriptions(uint64_t clientSocketID);
 
         // Returns subscription-infos that match the subject provided.
         VecSubscriptionInfo getMatchingSubscriptionInfos(const std::string& subject);
@@ -133,7 +133,7 @@ namespace MessagingMesh
             Node* pNode_Wildcard_GreaterThan = nullptr;
 
             // Map of client socket ID to SubscriptionInfo.
-            std::unordered_map<int, SubscriptionInfoPtr> SubscriptionInfos;
+            std::unordered_map<uint64_t, SubscriptionInfoPtr> SubscriptionInfos;
         };
 
     // Private functions...
@@ -144,7 +144,7 @@ namespace MessagingMesh
 
         // Removes all subscriptions for the client specified from the node provided
         // and from all its child nodes recursively.
-        void removeAllSubscriptions(Node* pNode, int clientSocketID);
+        void removeAllSubscriptions(Node* pNode, uint64_t clientSocketID);
 
         // Checks the current node for matching subscriptions.
         void getMatchingSubscriptionInfos(Node* pNode, const VecToken& tokens, size_t tokenIndex, size_t lastTokenIndex, VecSubscriptionInfo& subscriptionInfos);

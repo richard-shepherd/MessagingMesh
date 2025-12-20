@@ -60,7 +60,7 @@ namespace MessagingMesh
         ~Socket();
 
         // Gets the socket's ID.
-        int getSocketID() const { return m_socketID; }
+        uint64_t getSocketID() const { return m_socketID; }
 
         // Gets the socket's name.
         const std::string& getName() const { return m_name; }
@@ -210,8 +210,8 @@ namespace MessagingMesh
 
         // Socket ID.
         // The atomic allows us to create a unique integer ID for each socket in the process.
-        static std::atomic<int> m_atomicSocketID;
-        int m_socketID;
+        inline static std::atomic<uint64_t> m_atomicSocketID = 0;
+        uint64_t m_socketID;
 
         // Unique event key for writing to this socket...
         std::string m_writeEventKey;

@@ -33,7 +33,7 @@ private:
     /// <summary>
     /// Called when we receive a message with a BLOB.
     /// </summary>
-    static int blobCount;
+    inline static int blobCount = 0;
     static void onMessage(MM::Connection& /*connection*/, const std::string& subject, const std::string& /*replySubject*/, MM::MessagePtr pMessage, void* /*tag*/)
     {
         try

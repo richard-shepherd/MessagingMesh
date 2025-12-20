@@ -120,7 +120,7 @@ void Gateway::onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatu
 }
 
 // Called when we receive a CONNECT message from a client.
-void Gateway::onConnect(int socketID, const NetworkMessageHeader& header)
+void Gateway::onConnect(uint64_t socketID, const NetworkMessageHeader& header)
 {
     // We log the connect request...
     auto& service = header.getSubject();

@@ -7,7 +7,7 @@ using namespace MessagingMesh;
 
 // Adds a subscription.
 // Returns the number of clients registered for this subject.
-size_t SubjectMatchingEngine::addSubscription(const std::string& subject, uint32_t subscriptionID, int clientSocketID, Socket* pClientSocket)
+size_t SubjectMatchingEngine::addSubscription(const std::string& subject, uint32_t subscriptionID, uint64_t clientSocketID, Socket* pClientSocket)
 {
     // We get the node for the subject...
     auto pNode = getOrCreateNode(subject);
@@ -27,7 +27,7 @@ size_t SubjectMatchingEngine::addSubscription(const std::string& subject, uint32
 
 // Removes a subscription.
 // Returns the number of clients registered for this subject.
-size_t SubjectMatchingEngine::removeSubscription(const std::string& subject, int clientSocketID)
+size_t SubjectMatchingEngine::removeSubscription(const std::string& subject, uint64_t clientSocketID)
 {
     // We get the node for the subject...
     auto pNode = getOrCreateNode(subject);
@@ -45,7 +45,7 @@ size_t SubjectMatchingEngine::removeSubscription(const std::string& subject, int
 }
 
 // Removes all subscriptions for the client specified.
-void SubjectMatchingEngine::removeAllSubscriptions(int clientSocketID)
+void SubjectMatchingEngine::removeAllSubscriptions(uint64_t clientSocketID)
 {
     removeAllSubscriptions(m_pRootNode, clientSocketID);
 
@@ -55,7 +55,7 @@ void SubjectMatchingEngine::removeAllSubscriptions(int clientSocketID)
 
 // Removes all subscriptions for the client specified from the node provided
 // and from all its child nodes recursively.
-void SubjectMatchingEngine::removeAllSubscriptions(Node* pNode, int clientSocketID)
+void SubjectMatchingEngine::removeAllSubscriptions(Node* pNode, uint64_t clientSocketID)
 {
     pNode->SubscriptionInfos.erase(clientSocketID);
     for (const auto& pair : pNode->Nodes)

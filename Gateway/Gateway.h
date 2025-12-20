@@ -91,7 +91,7 @@ namespace MessagingMesh
         void initialize();
 
         // Called when we receive a CONNECT message from a client.
-        void onConnect(int socketID, const NetworkMessageHeader& header);
+        void onConnect(uint64_t socketID, const NetworkMessageHeader& header);
 
     // Private data...
     private:
@@ -110,7 +110,7 @@ namespace MessagingMesh
         // Sockets for which we have not yet received a CONNECT message, keyed 
         // by socket ID. We need to hold onto these to avoid the Sockets going
         // out of scope and being destructed.
-        std::unordered_map<int, SocketPtr> m_pendingConnections;
+        std::unordered_map<uint64_t, SocketPtr> m_pendingConnections;
 
         // Service managers, keyed by service name...
         std::unordered_map<std::string, ServiceManager> m_serviceManagers;

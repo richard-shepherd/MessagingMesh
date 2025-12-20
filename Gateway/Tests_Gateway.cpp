@@ -19,12 +19,12 @@ void Tests_Gateway::runAll()
 void Tests_Gateway::subjectMatchingEngine(TestRun& testRun)
 {
     // Test socket IDs...
-    const int ClientA = 1;
-    const int ClientB = 2;
-    const int ClientC = 3;
-    const int ClientD = 4;
-    //const int ClientE = 5;
-    const int ClientF = 6;
+    const uint64_t ClientA = 1;
+    const uint64_t ClientB = 2;
+    const uint64_t ClientC = 3;
+    const uint64_t ClientD = 4;
+    //const uint64_t ClientE = 5;
+    const uint64_t ClientF = 6;
 
     TestUtils::log("No wildcards...");
     {

@@ -7,9 +7,6 @@
 #include "OSSocketHolder.h"
 using namespace MessagingMesh;
 
-// For creating socket IDs...
-std::atomic<int> Socket::m_atomicSocketID = 0;
-
 // Constructor.
 // NOTE: The constructor is private. Use Socket::create() to create an instance.
 Socket::Socket(UVLoopPtr pUVLoop) :

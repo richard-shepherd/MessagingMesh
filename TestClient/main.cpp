@@ -12,9 +12,6 @@
 #include "Ponger.h"
 namespace MM = MessagingMesh;
 
-// Static used in BLOBSubscriber.
-int BLOBSubscriber::blobCount;
-
 // Outputs messaging-mesh logs to the screen.
 void onMessageLogged(MM::Logger::LogLevel logLevel, const std::string& message)
 {
