@@ -1,6 +1,5 @@
 #include "MeshGatewayConnection.h"
 #include <Logger.h>
-#include <UVLoop.h>
 #include <NetworkMessage.h>
 #include "ServiceManager.h"
 using namespace MessagingMesh;
@@ -112,6 +111,7 @@ void MeshGatewayConnection::onConnectionSucceeded()
     auto& header = networkMessage.getHeader();
     header.setAction(NetworkMessageHeader::Action::CONNECT_MESH_PEER);
     header.setSubject(m_serviceManager.getServiceName());
+    // RSSTODO: Set ReplySubject (ie, ClientID) for mesh peers
     MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 }
 
