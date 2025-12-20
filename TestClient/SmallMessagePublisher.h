@@ -15,6 +15,7 @@ public:
         connectionParams.GatewayHost = "127.0.0.1";
         connectionParams.GatewayPort = 5050;
         connectionParams.Service = "VULCAN";
+        connectionParams.ClientID = "SmallMessagePublisher";
         MM::Connection connection(connectionParams);
 
         // We send updates...

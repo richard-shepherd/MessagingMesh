@@ -38,7 +38,7 @@ int main(int argc, char** argv)
         {
             SmallMessageSubscriber::start();
         }
-        if (argc >= 2 && strcmp("-pub-blob", argv[1]) == 0)
+        else if (argc >= 2 && strcmp("-pub-blob", argv[1]) == 0)
         {
             BLOBPublisher::start();
         }

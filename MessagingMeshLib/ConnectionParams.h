@@ -26,6 +26,9 @@ namespace MessagingMesh
         // The messaging-mesh service to join.
         std::string Service;
 
+        // The client ID.
+        std::string ClientID;
+
         // How subscribed messages are dispatched to client code.
         MessageDispatch MessageDispatch = MessageDispatch::PROCESS_MESSAGE_QUEUE;
     };

@@ -33,11 +33,19 @@ ConnectionImpl::ConnectionImpl(const ConnectionParams& connectionParams, Connect
         }
     );
 
+    // We find the client ID...
+    auto clientID = connectionParams.ClientID;
+    if (clientID.empty())
+    {
+        clientID = MMUtils::getDefaultClientID();
+    }
+
     // We send a CONNECT message...
     NetworkMessage networkMessage;
     auto& header = networkMessage.getHeader();
     header.setAction(NetworkMessageHeader::Action::CONNECT);
     header.setSubject(connectionParams.Service);
+    header.setReplySubject(clientID);
     MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 
     // We wait for the ACK to confirm that we have connected.
