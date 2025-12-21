@@ -50,3 +50,57 @@ How does the Gateway talk to the Coordinator?
     - For mesh management and for statistics
     - ie, You do no need to run it
 
+
+What data / stats do we report to the coordinator?
+--------------------------------------------------
+- Stats are reported by gateways
+
+- We do not want stats to be too intrusive into performance 
+  - At least in normal operation
+  - It could be that the UI and coordinator can request more detailed stats from a gateway when needed
+
+- How intrusive is it to publish more detailed stats all the time?
+  - We likely want a mechanism to do this anyway (even if only on demand)
+  - So we do want a "full stats" mode
+  - Even if we might report cut down stats normally
+
+- I wonder if even "full stats" should be cut down to some extent
+  - For example, say we have 1M subscriptions
+  - We would likely not want to report on all of them
+  - So if we report on subscriptions, it could be top 10 (for example)
+    - Or do I mean publications?
+
+- Basic stats (and metadata)
+  - Service name
+  - Gateway hostname
+  - Gateway port
+  - Total messages / second
+  - Total Mb/s
+
+- Enhanced status
+  - Basic stats
+  - Top ten msg/sec, Mb/s by subject
+
+- "By subject" means subject received by the gateway from local clients
+
+- Q: How do we do the top ten?
+  - What if the top messages/sec is for different subjects than the top Mb/s?
+  - ie, some small fast subjects vs some large slower subjects
+  - A: We do the top ten for both and merge the two collections
+
+- Q: Where / how do we collect the stats?
+  - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -9,6 +9,7 @@
 namespace MessagingMesh
 {
     // Forward declarations...
+    class Gateway;
     class NetworkMessageHeader;
     class MeshManager;
 
@@ -31,10 +32,13 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        ServiceManager(const std::string& serviceName, const MeshManager& meshManager);
+        ServiceManager(const std::string& serviceName, const Gateway& gateway, const MeshManager& meshManager);
 
         // Destructor.
         ~ServiceManager();
+
+        // Gets the 'parent' gateway.
+        const Gateway& getGateway() const { return m_gateway; }
 
         // Registers a client socket to be managed for this service.
         void registerSocket(SocketPtr pSocket, bool isMeshPeer);
@@ -85,6 +89,9 @@ namespace MessagingMesh
         // The service name...
         std::string m_serviceName;
 
+        // The 'parent' gateway...
+        const Gateway& m_gateway;
+            
         // Tells us about peer gateways in the mesh...
         const MeshManager& m_meshManager;
 

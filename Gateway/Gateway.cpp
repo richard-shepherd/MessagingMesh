@@ -32,7 +32,8 @@ void Gateway::initialize()
 {
     try
     {
-        // We find out IP address...
+        // Find our hostname and IP address...
+        m_hostname = MMUtils::getHostname();
         m_ipAddress = MMUtils::getIPAddress();
 
         // We create the socket to listen for client connections...
@@ -151,7 +152,6 @@ void Gateway::onConnect(uint64_t socketID, const NetworkMessageHeader& header)
     pSocket->setClientID(header.getReplySubject());
     Logger::info(std::format("Received {} request from {} for service {}", strAction, pSocket->getName(), service));
 
-
     // We get or create the ServiceManager for the service requested by the client...
     auto& serviceManager = getOrCreateServiceManager(service);
     
@@ -165,6 +165,6 @@ void Gateway::onConnect(uint64_t socketID, const NetworkMessageHeader& header)
 // Gets or creates a service-manager for the specified service.
 ServiceManager& Gateway::getOrCreateServiceManager(const std::string& service)
 {
-    auto [it, inserted] = m_serviceManagers.try_emplace(service, service, m_meshManager);
+    auto [it, inserted] = m_serviceManagers.try_emplace(service, service, *this, m_meshManager);
     return it->second;
 }

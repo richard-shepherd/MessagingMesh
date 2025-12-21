@@ -1,6 +1,7 @@
 #include "MeshGatewayConnection.h"
 #include <Logger.h>
 #include <NetworkMessage.h>
+#include "Gateway.h"
 #include "ServiceManager.h"
 using namespace MessagingMesh;
 
@@ -10,7 +11,16 @@ MeshGatewayConnection::MeshGatewayConnection(UVLoopPtr pUVLoop, ServiceManager& 
     m_serviceManager(serviceManager),
     m_gatewayInfo(gatewayInfo)
 {
-    m_peerName = std::format("{}:{}", gatewayInfo.Hostname, gatewayInfo.Port);
+    // We create a name for 'our' side of the mesh connection...
+    // We create a client ID for the mesh connection...
+    auto& serviceName = m_serviceManager.getServiceName();
+    auto& gateway = m_serviceManager.getGateway();
+    auto& hostname = gateway.getHostname();
+    auto port = gateway.getPort();
+    m_clientID = std::format("MESH-PEER:{}:({}:{})", serviceName, hostname, port);
+
+    // We create a name for the mesh peer we are connecting to...
+    m_peerName = std::format("MESH-PEER:{}:({}:{})", serviceName, gatewayInfo.Hostname, gatewayInfo.Port);
 
     // We create the socket to connect to the gateway...
     m_pSocket = Socket::create(m_pUVLoop);
@@ -111,7 +121,7 @@ void MeshGatewayConnection::onConnectionSucceeded()
     auto& header = networkMessage.getHeader();
     header.setAction(NetworkMessageHeader::Action::CONNECT_MESH_PEER);
     header.setSubject(m_serviceManager.getServiceName());
-    // RSSTODO: Set ReplySubject (ie, ClientID) for mesh peers
+    header.setReplySubject(m_clientID);
     MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 }
 

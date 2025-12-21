@@ -4,8 +4,8 @@
 #include <UVLoop.h>
 #include <Socket.h>
 #include <SharedAliases.h>
-#include "ServiceManager.h"
 #include "MeshManager.h"
+#include "ServiceManager.h"
 
 namespace MessagingMesh
 {
@@ -62,6 +62,9 @@ namespace MessagingMesh
         // NOTE: This can only be called after networking has been enabled.
         const std::string& getIPAddress() const { return m_ipAddress; }
 
+        // Gets the hostname where the gateway is running.
+        const std::string& getHostname() const { return m_hostname; }
+
         // Gets the port on which the gateway is listening for client connections.
         int getPort() const { return m_port; }
 
@@ -104,7 +107,8 @@ namespace MessagingMesh
         // Socket listening for incoming connections.
         SocketPtr m_listeningSocket;
 
-        // The gateway's IP address...
+        // The gateway's details...
+        std::string m_hostname;
         std::string m_ipAddress;
 
         // Sockets for which we have not yet received a CONNECT message, keyed 

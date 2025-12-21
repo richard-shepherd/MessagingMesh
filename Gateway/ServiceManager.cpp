@@ -6,13 +6,14 @@
 #include <Logger.h>
 #include <MMUtils.h>
 #include <NetworkMessage.h>
-#include "SubscriptionInfo.h"
 #include "MeshManager.h"
+#include "SubscriptionInfo.h"
 using namespace MessagingMesh;
 
 // Constructor.
-ServiceManager::ServiceManager(const std::string& serviceName, const MeshManager& meshManager) :
+ServiceManager::ServiceManager(const std::string& serviceName, const Gateway& gateway, const MeshManager& meshManager) :
     m_serviceName(serviceName),
+    m_gateway(gateway),
     m_meshManager(meshManager),
     m_pUVLoop(UVLoop::create(serviceName, UVLoop::Temperature::HOT))
 {

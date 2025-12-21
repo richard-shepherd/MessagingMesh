@@ -66,6 +66,9 @@ namespace MessagingMesh
         // Gateway info (hostname, port etc) for the peer gateway we connect to...
         GatewayInfo m_gatewayInfo;
 
+        // A client ID for 'our' side of the connection...
+        std::string m_clientID;
+
         // The name of the peer (hostname:port)...
         std::string m_peerName;
 
