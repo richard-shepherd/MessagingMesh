@@ -33,6 +33,7 @@ void Gateway::initialize()
     try
     {
         // Find our hostname and IP address...
+        m_gatewayName = std::format("GATEWAY {}:{}", MMUtils::getHostname(), m_port);
         m_hostname = MMUtils::getHostname();
         m_ipAddress = MMUtils::getIPAddress();
 

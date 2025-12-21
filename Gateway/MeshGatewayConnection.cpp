@@ -14,10 +14,8 @@ MeshGatewayConnection::MeshGatewayConnection(UVLoopPtr pUVLoop, ServiceManager& 
     // We create a name for 'our' side of the mesh connection...
     // We create a client ID for the mesh connection...
     auto& serviceName = m_serviceManager.getServiceName();
-    auto& gateway = m_serviceManager.getGateway();
-    auto& hostname = gateway.getHostname();
-    auto port = gateway.getPort();
-    m_clientID = std::format("MESH-PEER:{}:({}:{})", serviceName, hostname, port);
+    auto& gatewayName = m_serviceManager.getGateway().getGatewayName();
+    m_clientID = std::format("{}-{}", gatewayName, serviceName);
 
     // We create a name for the mesh peer we are connecting to...
     m_peerName = std::format("MESH-PEER:{}:({}:{})", serviceName, gatewayInfo.Hostname, gatewayInfo.Port);

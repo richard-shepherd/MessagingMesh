@@ -58,6 +58,9 @@ namespace MessagingMesh
         // Destructor.
         ~Gateway();
 
+        // Gets the gateway's name...
+        const std::string& getGatewayName() const { return m_gatewayName; }
+
         // Gets the gateway's IP address.
         // NOTE: This can only be called after networking has been enabled.
         const std::string& getIPAddress() const { return m_ipAddress; }
@@ -121,6 +124,9 @@ namespace MessagingMesh
 
         // The mesh manager...
         MeshManager m_meshManager;
+
+        // The gateway name, eg "GATEWAY-[hostname]:[port]"...
+        std::string m_gatewayName;
     };
 } // namespace
 
