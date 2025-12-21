@@ -82,6 +82,9 @@ void ServiceManager::initialize()
         auto key = peerGatewayInfo.makeKey();
         m_meshGatewayConnections_WeAreTheClient.try_emplace(key, m_pUVLoop, *this, peerGatewayInfo);
     }
+
+    // We run a timer to report stats...
+    UVUtils::runSingleShotTimer(m_pUVLoop, 2000, [&]() { onStatsTimer(); });
 }
 
 // Called when data has been received on the socket.
@@ -121,7 +124,6 @@ void ServiceManager::onDataReceived(Socket* pSocket, BufferPtr pBuffer)
         Logger::error(std::format("{}: {}", __func__, ex.what()));
     }
 }
-
 
 // Called when the connection status has changed.
 void ServiceManager::onConnectionStatusChanged(Socket* pSocket, Socket::ConnectionStatus connectionStatus, const std::string& /*message*/)
@@ -258,6 +260,12 @@ void ServiceManager::onMessage(const NetworkMessageHeader& header, Socket* pSock
         const auto& pTargetSocket = pSubscriptionInfo->getSocket();
         pTargetSocket->setAlreadyUpdated(false);
     }
+
+    // We add the message to the stats if came from a client (non-peer)...
+    if (pSocket->getIsMeshPeer() == false)
+    {
+        m_serviceStats.recordMessage(pBuffer->getBufferSize());
+    }
 }
 
 // Relays the message / update in the buffer to all mesh peers.
@@ -266,6 +274,20 @@ void ServiceManager::relayToMesh(BufferPtr pBuffer)
     for (const auto& [key, meshGatewayConnection] : m_meshGatewayConnections_WeAreTheClient)
     {
         meshGatewayConnection.relay(pBuffer);
+    }
+}
+
+// Called when the stats timer ticks.
+void ServiceManager::onStatsTimer()
+{
+    try
+    {
+        m_serviceStats.log();
+        UVUtils::runSingleShotTimer(m_pUVLoop, 2000, [&]() { onStatsTimer(); });
+    }
+    catch (const std::exception& ex)
+    {
+        Logger::error(std::format("{}: {}", __func__, ex.what()));
     }
 }
 

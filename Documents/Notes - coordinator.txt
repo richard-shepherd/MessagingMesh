@@ -89,7 +89,22 @@ What data / stats do we report to the coordinator?
   - A: We do the top ten for both and merge the two collections
 
 - Q: Where / how do we collect the stats?
-  - 
+  - We can collect stats about messages in ServiceManager::onMessage
+  - We should only note stats for messages from local clients (ie, not from mesh peers)
+
+- Q: Do we want to note stats for messages relayed from mesh peers as well?
+  - That could be useful to see
+  - In case (somehow) processing messages from mesh peers is overaloading the system
+  - So maybe it would be good to have top-level stats for peer traffic, ie msg/sec and Mb/s
+
+- IDEA: As an initial dev thing we could log the stats every interval (eg every 2 sec)
+  - Before doing the work to send them to the gateway
+
+- Stats format
+  - Time string (UTC)
+  - Messages/second
+  - Mb/second
+
 
 
 

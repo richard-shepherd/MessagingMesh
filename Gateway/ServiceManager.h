@@ -5,6 +5,7 @@
 #include <Socket.h>
 #include "SubjectMatchingEngine.h"
 #include "MeshGatewayConnection.h"
+#include "ServiceStats.h"
 
 namespace MessagingMesh
 {
@@ -84,6 +85,9 @@ namespace MessagingMesh
         // Relays the message / update in the buffer to all mesh peers.
         void relayToMesh(BufferPtr pBuffer);
 
+        // Called when the stats timer ticks.
+        void onStatsTimer();
+
     // Private data...
     private:
         // The service name...
@@ -111,6 +115,9 @@ namespace MessagingMesh
         // Sockets for peer gateways in the mesh, keyed by socket ID.
         // These are the connections where we act as the server to the peer gateway.
         std::unordered_map<uint64_t, SocketPtr> m_meshGatewayConnections_WeAreTheServer;
+
+        // Message stats...
+        ServiceStats m_serviceStats;
     };
 } // namespace
 

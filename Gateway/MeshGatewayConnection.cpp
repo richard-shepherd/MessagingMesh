@@ -129,7 +129,9 @@ void MeshGatewayConnection::onConnectionFailed(const std::string& message)
     Logger::info(std::format("Connection to mesh peer {} failed ({}). Retrying in 5 seconds.", m_peerName, message));
 
     // We retry after 30 seconds...
-    UVUtils::runSingleShotTimer(m_pUVLoop, 5000, [&]() { connect(); }); // RSSTODO: MAKE THIS 30 SECONDS (or configurable)
+    // RSSTODO: MAKE THIS 30 SECONDS (or configurable)
+    // RSSTODO: Handle case where 'this' may not exist in the callback
+    UVUtils::runSingleShotTimer(m_pUVLoop, 5000, [&]() { connect(); }); 
 }
 
 // Called when we receive the ACK from a gateway peer.
