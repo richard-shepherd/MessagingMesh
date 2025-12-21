@@ -1,0 +1,52 @@
+TODO
+----
+
+
+Central service for mesh management and monitoring (MessagingMeshCoordinator)
+-----------------------------------------------------------------------------
+- Gateways can register with this
+  - To note that they are managing a service
+  - To discover other Gateways managing the service
+  - ie, to discover the mesh rather than using config
+
+- Gateways can report statistics
+
+- What should this central service be called?
+  - MeshManager
+  - MeshMonitor
+  - MeshCoordinator
+  - As above but MessagingMeshCoordinator (etc)
+
+- I quite like MessagingMeshCoordinator
+
+
+How does the Gateway talk to the Coordinator?
+---------------------------------------------
+- The gateway talks to the coodinator to:
+  - Manage / discover the mesh
+  - Send statistics
+
+- The gateway may be runnning multiple services
+  - Each of these needs to manage its mesh
+  - Each of these needs to send statistics
+
+- Options
+  a. One connection to the coordinator per service
+  b. One connection to the coordinator shared by all the services
+
+- Option b seems better
+  - But we need to be careful to marshal events to the service's UV thread
+  - (Which should be fairly easy to do.)
+
+- IDEA: Let's say that the MeshManager connects to the Coordinator using the client-style Connection
+  - Set to call back on the connection's own thread (ie, PMQ not needed)
+
+
+  Gateway config to use the Coordinator
+  -------------------------------------
+  - You can optionally set meshes to be managed by the Coordinator
+
+  - The Coordinator should be optional
+    - For mesh management and for statistics
+    - ie, You do no need to run it
+
