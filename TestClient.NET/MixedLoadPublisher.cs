@@ -28,9 +28,9 @@ namespace TestClient.NET
             createMessageInfos(messageInfos, "TINY",           10, 0.00, 0.30);
             createMessageInfos(messageInfos, "SMALL",         100, 0.30, 0.60);
             createMessageInfos(messageInfos, "MEDIUM",       1000, 0.60, 0.80);
-            createMessageInfos(messageInfos, "LARGE",       10000, 0.80, 0.90);
-            createMessageInfos(messageInfos, "VERY-LARGE", 100000, 0.90, 0.95);
-            createMessageInfos(messageInfos, "HUGE",      1000000, 0.95, 1.00);
+            createMessageInfos(messageInfos, "LARGE",       10000, 0.80, 0.95);
+            createMessageInfos(messageInfos, "VERY-LARGE", 100000, 0.95, 0.99);
+            createMessageInfos(messageInfos, "HUGE",      1000000, 0.99, 1.00);
 
             // We send updates...
             var rnd = new Random();

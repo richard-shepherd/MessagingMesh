@@ -218,7 +218,8 @@ void ServiceManager::onUnsubscribe(Socket* pSocket, const NetworkMessageHeader& 
 void ServiceManager::onMessage(const NetworkMessageHeader& header, Socket* pSocket, BufferPtr pBuffer)
 {
     // We find the clients which have subscriptions to the message subject...
-    auto subscriptionInfos = m_subjectMatchingEngine.getMatchingSubscriptionInfos(header.getSubject());
+    auto& subject = header.getSubject();
+    auto subscriptionInfos = m_subjectMatchingEngine.getMatchingSubscriptionInfos(subject);
 
     // We send the update to each 'target' matching the subscription.
     // 1. We send to all non-mesh clients.
@@ -264,7 +265,7 @@ void ServiceManager::onMessage(const NetworkMessageHeader& header, Socket* pSock
     // We add the message to the stats if came from a client (non-peer)...
     if (pSocket->getIsMeshPeer() == false)
     {
-        m_serviceStats.recordMessage(pBuffer->getBufferSize());
+        m_serviceStats.add(subject, pBuffer->getBufferSize());
     }
 }
 

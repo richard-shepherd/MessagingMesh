@@ -18,6 +18,11 @@ TODO
   DONE - 8. No way to report the size of the queue.
   DONE - 9. try...catch in processGatewayMessage around client callbacks.
 
+- We should have some sort of "split multicast" thing for gateways which do not want to be part of a full mesh
+  - eg, RAMP connections where there may be hundreds (or thousands) of client gateways
+  - But where they do not all want to talk to each other
+  - They only want to talk to the central RAMP gateways
+
 - Is ConnectionImpl::QueuedMessage copying the Header? Can we do anything about that?
 
 - Rename Gateway -> MessagingMeshGateway

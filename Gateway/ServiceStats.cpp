@@ -1,4 +1,5 @@
 #include "ServiceStats.h"
+#include <algorithm>
 #include <Logger.h>
 using namespace MessagingMesh;
 
@@ -12,15 +13,21 @@ ServiceStats::ServiceStats()
 void ServiceStats::reset()
 {
     m_startTime = std::chrono::steady_clock::now();
-    m_messagesProcessed = 0;
-    m_bytesProcessed = 0;
+    m_total = InternalStats();
+    m_statsPerSubject.clear();
 }
 
 // Adds a message to the stats.
-void ServiceStats::recordMessage(size_t messageSizeBytes)
+void ServiceStats::add(const std::string& subject, size_t messageSizeBytes)
 {
-    ++m_messagesProcessed;
-    m_bytesProcessed += messageSizeBytes;
+    // We update the totals...
+    ++m_total.MessagesProcessed;
+    m_total.BytesProcessed += messageSizeBytes;
+
+    // We update the stats per subject...
+    auto& subjectStats = m_statsPerSubject[subject];
+    ++subjectStats.MessagesProcessed;
+    subjectStats.BytesProcessed += messageSizeBytes;
 }
 
 // Gets a stats snapshot (and resets the stats).
@@ -32,21 +39,71 @@ ServiceStats::StatsSnapshot ServiceStats::getSnapshot()
     auto elapsedSeconds = elapsed.count() / 1000000.0;
 
     // We calculate the snapshot...
-    auto messagesPerSecond = elapsedSeconds > 0.0 ? m_messagesProcessed / elapsedSeconds : 0.0;
-    auto bytesPerSeconds = elapsedSeconds > 0.0 ? m_bytesProcessed / elapsedSeconds : 0.0;
-    auto megaBitsPerSecond = bytesPerSeconds * 8 / (1024 * 1024);
-    auto snapshot = StatsSnapshot
-    {
-        m_messagesProcessed,
-        m_bytesProcessed,
+    StatsSnapshot snapshot;
+    snapshot.DurationSeconds = elapsedSeconds;
+
+    // Total...
+    snapshot.Total = toStats(m_total, elapsedSeconds, "");
+
+    // Top items by messages/second...
+    snapshot.TopSubjects_MessagesPerSecond = getTopItems(
         elapsedSeconds,
-        messagesPerSecond,
-        megaBitsPerSecond
-    };
+        10,
+        [](const auto& a, const auto& b) {return a.second.MessagesProcessed > b.second.MessagesProcessed;});
+
+    // Top items by Megabits/second...
+    snapshot.TopSubjects_MegaBitsPerSecond = getTopItems(
+        elapsedSeconds,
+        10,
+        [](const auto& a, const auto& b) {return a.second.BytesProcessed > b.second.BytesProcessed;});
 
     // We reset the counters and return the stats...
     reset();
     return snapshot;
+}
+
+// Gets the top N items from stats-per-subject sorted by the comparator provided.
+template<typename Comparator>
+std::vector<ServiceStats::Stats> ServiceStats::getTopItems(double elapsedSeconds, size_t n, Comparator comparator) const
+{
+    // We convert the stats per subject to a vector...
+    std::vector<std::pair<std::string, InternalStats>> vecStatsPerSubject(m_statsPerSubject.begin(), m_statsPerSubject.end());
+
+    // We find the number of items (in case 'n' is larger than the number of items we have)...
+    auto numItems = std::min(n, vecStatsPerSubject.size());
+
+    // We find the top items...
+    std::partial_sort(
+        vecStatsPerSubject.begin(),
+        vecStatsPerSubject.begin() + numItems,
+        vecStatsPerSubject.end(),
+        comparator);
+    vecStatsPerSubject.resize(numItems);
+
+    // We convert the internal stats to stats for logging / publication...
+    VecStats topStats;
+    topStats.reserve(numItems);
+    for (const auto& [subject, internalStats] : vecStatsPerSubject)
+    {
+        topStats.push_back(toStats(internalStats, elapsedSeconds, subject));
+    }
+    return topStats;
+}
+
+// Converts internal stats to stats for logging / publication.
+ServiceStats::Stats ServiceStats::toStats(const InternalStats& internalStats, double elapsedSeconds, const std::string& subject) const
+{
+    auto messagesPerSecond = elapsedSeconds > 0.0 ? internalStats.MessagesProcessed / elapsedSeconds : 0.0;
+    auto bytesPerSeconds = elapsedSeconds > 0.0 ? internalStats.BytesProcessed / elapsedSeconds : 0.0;
+    auto megaBitsPerSecond = bytesPerSeconds * 8 / (1024 * 1024);
+    return Stats
+    {
+        subject,
+        internalStats.MessagesProcessed,
+        internalStats.BytesProcessed,
+        messagesPerSecond,
+        megaBitsPerSecond
+    };
 }
 
 // Logs stats.
@@ -54,7 +111,27 @@ void ServiceStats::log()
 {
     // We get the stats snapshot and log it...
     auto snapshot = getSnapshot();
-    Logger::info(std::format("Stats: Msg/sec={:.2f}, Mb/s={:.2f}", snapshot.MessagesPerSecond, snapshot.MegaBitsPerSecond));
+
+    // Total...
+    Logger::info(std::format("Stats: Total msg/sec={:.2f}, Total Mb/s={:.2f}", snapshot.Total.MessagesPerSecond, snapshot.Total.MegaBitsPerSecond));
+
+    // Top stats...
+    if (!snapshot.TopSubjects_MessagesPerSecond.empty())
+    {
+        Logger::info("Top subjects (msg/sec)");
+        for (const auto& stats : snapshot.TopSubjects_MessagesPerSecond)
+        {
+            Logger::info(std::format("  {} msg/sec={:.2f}, Total Mb/s={:.2f}", stats.Subject, stats.MessagesPerSecond, stats.MegaBitsPerSecond));
+        }
+    }
+    if (!snapshot.TopSubjects_MegaBitsPerSecond.empty())
+    {
+        Logger::info("Top subjects (Mb/s):");
+        for (const auto& stats : snapshot.TopSubjects_MegaBitsPerSecond)
+        {
+            Logger::info(std::format("  {} msg/sec={:.2f}, Total Mb/s={:.2f}", stats.Subject, stats.MessagesPerSecond, stats.MegaBitsPerSecond));
+        }
+    }
 }
 
 
