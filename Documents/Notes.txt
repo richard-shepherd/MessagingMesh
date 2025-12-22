@@ -3,7 +3,7 @@ BUGS
 - onDataReceived: bad_weak_ptr
   - Start Gateway, TestClient.NET -sub-mixed, TestClient.NET -bub-mixed
   - Press Enter to stop the subscriber
-  - The Gateway logs the error repeatedly
+  - The Gateway logs the error repeatedly (which stops if the publisher is stopped)
 
 TODO
 ----
