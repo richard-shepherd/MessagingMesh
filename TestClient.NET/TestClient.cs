@@ -61,6 +61,14 @@ namespace TestClient.NET
                 {
                     Ponger.start();
                 }
+                else if (args.Length > 0 && args[0] == "-pub-mixed")
+                {
+                    MixedLoadPublisher.start();
+                }
+                else if (args.Length > 0 && args[0] == "-sub-mixed")
+                {
+                    MixedLoadSubscriber.start();
+                }
                 else
                 {
                     MM.Logger.error("Usage: TestClient.NET.exe -sub/-pub");

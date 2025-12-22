@@ -1,3 +1,10 @@
+BUGS
+----
+- onDataReceived: bad_weak_ptr
+  - Start Gateway, TestClient.NET -sub-mixed, TestClient.NET -bub-mixed
+  - Press Enter to stop the subscriber
+  - The Gateway logs the error repeatedly
+
 TODO
 ----
 - Maxim's points:
