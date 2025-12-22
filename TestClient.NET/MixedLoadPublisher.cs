@@ -23,7 +23,7 @@ namespace TestClient.NET
             };
             var connection = new MM.Connection(connectionParams);
 
-            // We create messages of various sizes and sore them in a 
+            // We create messages of various sizes...
             var messageInfos = new List<MessageInfo>();
             createMessageInfos(messageInfos, "TINY",           10, 0.00, 0.30);
             createMessageInfos(messageInfos, "SMALL",         100, 0.30, 0.60);
@@ -39,7 +39,7 @@ namespace TestClient.NET
             {
                 // We send a random number of messages...
                 var messagesToSend = rnd.Next(10, 100);
-                for(var i=0; i<messagesToSend; ++i)
+                for (var i = 0; i < messagesToSend; ++i)
                 {
                     // We get a message depending on the probabilities...
                     var r = rnd.NextDouble();
