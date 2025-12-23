@@ -84,6 +84,33 @@ namespace MessagingMesh
         // Stats per subject for the current time period...
         std::unordered_map<std::string, InternalStats> m_statsPerSubject;
     };
+
+    // Serialize Stats struct to JSON.
+    template<typename JSONType>
+    inline void to_json(JSONType& j, const ServiceStats::Stats& stats)
+    {
+        j = JSONType{
+            {"Subject", stats.Subject},
+            {"MessagesProcessed", stats.MessagesProcessed},
+            {"BytesProcessed", stats.BytesProcessed},
+            {"MessagesPerSecond", stats.MessagesPerSecond},
+            {"MegaBitsPerSecond", stats.MegaBitsPerSecond}
+        };
+    }
+
+    // Serialize StatsSnapshot struct to JSON.
+    template<typename JSONType>
+    inline void to_json(JSONType& j, const ServiceStats::StatsSnapshot& snapshot)
+    {
+        j = JSONType{
+            {"ServiceName", snapshot.ServiceName},
+            {"DurationSeconds", snapshot.DurationSeconds},
+            {"Total", snapshot.Total},
+            {"TopSubjects_MessagesPerSecond", snapshot.TopSubjects_MessagesPerSecond},
+            {"TopSubjects_MegaBitsPerSecond", snapshot.TopSubjects_MegaBitsPerSecond}
+        };
+    }
+
 } // namespace
 
 

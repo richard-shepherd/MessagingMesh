@@ -1,6 +1,7 @@
 #include "ServiceStats.h"
 #include <algorithm>
 #include <Logger.h>
+#include <nlohmann/json.hpp>
 using namespace MessagingMesh;
 
 // Constructor.
@@ -111,29 +112,12 @@ ServiceStats::Stats ServiceStats::toStats(const InternalStats& internalStats, do
 // Logs stats.
 void ServiceStats::log()
 {
-    // We get the stats snapshot and log it...
+    // We get the stats snapshot...
     auto snapshot = getSnapshot();
 
-    // Total...
-    Logger::info(std::format("Stats: Total msg/sec={:.2f}, Total Mb/s={:.2f}", snapshot.Total.MessagesPerSecond, snapshot.Total.MegaBitsPerSecond));
-
-    // Top stats...
-    if (!snapshot.TopSubjects_MessagesPerSecond.empty())
-    {
-        Logger::info("Top subjects (msg/sec)");
-        for (const auto& stats : snapshot.TopSubjects_MessagesPerSecond)
-        {
-            Logger::info(std::format("  {} msg/sec={:.2f}, Total Mb/s={:.2f}", stats.Subject, stats.MessagesPerSecond, stats.MegaBitsPerSecond));
-        }
-    }
-    if (!snapshot.TopSubjects_MegaBitsPerSecond.empty())
-    {
-        Logger::info("Top subjects (Mb/s):");
-        for (const auto& stats : snapshot.TopSubjects_MegaBitsPerSecond)
-        {
-            Logger::info(std::format("  {} msg/sec={:.2f}, Total Mb/s={:.2f}", stats.Subject, stats.MessagesPerSecond, stats.MegaBitsPerSecond));
-        }
-    }
+    // We convert it to JSON and log it...
+    nlohmann::ordered_json json = snapshot;
+    Logger::info(std::format("STATS: {}", json.dump(4)));
 }
 
 
