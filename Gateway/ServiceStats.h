@@ -28,6 +28,7 @@ namespace MessagingMesh
         // Snapshot calculated every N seconds.
         struct StatsSnapshot 
         {
+            std::string ServiceName;
             double DurationSeconds = 0.0;
             Stats Total;
             VecStats TopSubjects_MessagesPerSecond;
@@ -37,7 +38,7 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        ServiceStats();
+        ServiceStats(const std::string& serviceName);
 
         // Resets the stats.
         void reset();
@@ -71,6 +72,9 @@ namespace MessagingMesh
 
     // Private data...
     private:
+        // The name of the service for which we are collecting stats...
+        std::string m_serviceName;
+            
         // The time we started recording stats...
         std::chrono::steady_clock::time_point m_startTime;
 
