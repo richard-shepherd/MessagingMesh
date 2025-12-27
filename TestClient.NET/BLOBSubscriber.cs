@@ -41,7 +41,7 @@ namespace TestClient.NET
                 blobCount++;
                 if (blobCount % 100 == 0)
                 {
-                    MM.Logger.info(message.toMMListenString(subject));
+                    MM.Logger.info(message.toMMListenString(subject, compact: true));
                 }
             }
             catch (Exception ex)

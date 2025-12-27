@@ -70,24 +70,43 @@ namespace MessagingMeshLib.NET
         /// <summary>
         /// Returns a string rendering of the Message for example for use with the MMListen app.
         /// </summary>
-        public string toMMListenString(string heading, int indent = 0)
+        public string toMMListenString(string heading, bool compact = false, int indent = 0)
         {
             var sb = new StringBuilder();
-            var indent_field = new string(' ', indent * 2 + 2);
+            var indent_heading = compact ? "" : new string(' ', indent * 2);
+            var indent_field = compact ? "" : new string(' ', indent * 2 + 2);
+            var nameValueSeparator = compact ? ":" : ": ";
 
             // Heading...
-            sb.AppendLine($"{heading}:");
+            if(!String.IsNullOrEmpty(heading))
+            {
+                sb.Append($"{indent_heading}{heading}:");
+            }
+            if (!compact) 
+            { 
+                sb.Append(Environment.NewLine);
+            }
 
             // Fields...
+            sb.Append($"{indent_heading}{{");
+            if (!compact)
+            {
+                sb.Append(Environment.NewLine);
+            }
             for (var i = 0; i < m_fields.Count; ++i)
             {
                 var field = m_fields[i];
-                sb.Append($"{indent_field}{field.toMMListenString(indent)}");
-                if (i < m_fields.Count - 1)
+                sb.Append($"{indent_field}{field.getName()}{nameValueSeparator}{field.toMMListenString(compact, indent)}");
+                if (compact)
                 {
-                    sb.AppendLine("");
+                    sb.Append(";");
+                }
+                else
+                {
+                    sb.Append(Environment.NewLine);
                 }
             }
+            sb.Append($"{indent_heading}}}");
 
             return sb.ToString();
         }

@@ -149,7 +149,20 @@ namespace MessagingMeshLib.NET.Tests
             message.addString("TICKER", "AAPL");
             message.addDouble("PRICE", 275.12);
             var mmListen = message.toMMListenString("PRICE-TICK.AAPL");
-            Assert.AreEqual("PRICE-TICK.AAPL:\r\n  TICKER: AAPL\r\n  PRICE: 275.12", mmListen);
+            Assert.AreEqual("PRICE-TICK.AAPL:\r\n{\r\n  TICKER: AAPL\r\n  PRICE: 275.12\r\n}", mmListen);
+        }
+
+        /// <summary>
+        /// Tests rendering a Message as an MMListen string.
+        /// </summary>
+        [TestMethod]
+        public void toMMListenString_compact()
+        {
+            var message = new Message();
+            message.addString("TICKER", "AAPL");
+            message.addDouble("PRICE", 275.12);
+            var mmListen = message.toMMListenString("PRICE-TICK.AAPL", compact: true);
+            Assert.AreEqual("PRICE-TICK.AAPL:{TICKER:AAPL;PRICE:275.12;}", mmListen);
         }
 
         /// <summary>
@@ -161,7 +174,19 @@ namespace MessagingMeshLib.NET.Tests
             var message = new Message();
             message.addBLOB("ANALYTIC", new byte[1234]);
             var mmListen = message.toMMListenString("IRS10Y.ANALYTIC");
-            Assert.AreEqual("IRS10Y.ANALYTIC:\r\n  ANALYTIC: [1234 bytes]", mmListen);
+            Assert.AreEqual("IRS10Y.ANALYTIC:\r\n{\r\n  ANALYTIC: [1234 bytes]\r\n}", mmListen);
+        }
+
+        /// <summary>
+        /// Tests rendering a Message as an MMListen string.
+        /// </summary>
+        [TestMethod]
+        public void toMMListenString_compact_withBLOB()
+        {
+            var message = new Message();
+            message.addBLOB("ANALYTIC", new byte[1234]);
+            var mmListen = message.toMMListenString("IRS10Y.ANALYTIC", compact: true);
+            Assert.AreEqual("IRS10Y.ANALYTIC:{ANALYTIC:[1234 bytes];}", mmListen);
         }
 
         /// <summary>
@@ -188,7 +213,34 @@ namespace MessagingMeshLib.NET.Tests
             }
 
             var mmListen = message.toMMListenString("PRICE-TICK.AAPL");
-            Assert.AreEqual("PRICE-TICK.AAPL:\r\n  TICKER: AAPL\r\n  PRICE: 275.12\r\n  FILL:\r\n    PRICE: 276.05\r\n    LOTS: 1234\r\n  FILL:\r\n    PRICE: 276.15\r\n    LOTS: 2345", mmListen);
+            Assert.AreEqual("PRICE-TICK.AAPL:\r\n{\r\n  TICKER: AAPL\r\n  PRICE: 275.12\r\n  FILL: \r\n  {\r\n    PRICE: 276.05\r\n    LOTS: 1234\r\n  }\r\n  FILL: \r\n  {\r\n    PRICE: 276.15\r\n    LOTS: 2345\r\n  }\r\n}", mmListen);
+        }
+
+        /// <summary>
+        /// Tests rendering a Message as an MMListen string.
+        /// </summary>
+        [TestMethod]
+        public void toMMListenString_compact_withSubMessage()
+        {
+            var message = new Message();
+            message.addString("TICKER", "AAPL");
+            message.addDouble("PRICE", 275.12);
+
+            {
+                var fill = new Message();
+                fill.addDouble("PRICE", 276.05);
+                fill.addDouble("LOTS", 1234);
+                message.addMessage("FILL", fill);
+            }
+            {
+                var fill = new Message();
+                fill.addDouble("PRICE", 276.15);
+                fill.addDouble("LOTS", 2345);
+                message.addMessage("FILL", fill);
+            }
+
+            var mmListen = message.toMMListenString("PRICE-TICK.AAPL", compact: true);
+            Assert.AreEqual("PRICE-TICK.AAPL:{TICKER:AAPL;PRICE:275.12;FILL:{PRICE:276.05;LOTS:1234;};FILL:{PRICE:276.15;LOTS:2345;};}", mmListen);
         }
 
         #endregion

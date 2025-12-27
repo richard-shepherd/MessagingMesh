@@ -71,13 +71,13 @@
         /// <summary>
         /// Returns a string rendering of the Message for example for use with the MMListen app.
         /// </summary>
-        public string toMMListenString(int indent)
+        public string toMMListenString(bool compact, int indent)
         {
             return m_data switch
             {
-                Message msg  => msg.toMMListenString(m_name, indent + 1),
-                byte[] bytes => $"{m_name}: [{bytes.Length} bytes]",
-                _ => $"{m_name}: {m_data}"
+                Message msg  => msg.toMMListenString("", compact, indent + 1),
+                byte[] bytes => $"[{bytes.Length} bytes]",
+                _ => $"{m_data}"
             };
         }
 
