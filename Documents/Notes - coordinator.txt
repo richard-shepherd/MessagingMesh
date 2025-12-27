@@ -105,7 +105,22 @@ What data / stats do we report to the coordinator?
   - Messages/second
   - Mb/second
 
+What subject does the gateway use when publishing stats?
+--------------------------------------------------------
+- Should it be a 'reserved' subject?
+  - Starting with an underscore
+  - Let's say Yes
 
+- "_GATEWAY.STATS"
+
+- Should we publish all stats on the same subject?
+  - Maybe No
+  - We might want an MMListen app
+  - So with this it would be good to be able to listen to stats from a specific service and gateway
+
+- _GATEWAY.STATS.[gateway-name].[service-name]
+
+  
 
 
 

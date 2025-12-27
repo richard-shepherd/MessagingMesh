@@ -5,8 +5,9 @@
 using namespace MessagingMesh;
 
 // Constructor.
-ServiceStats::ServiceStats(const std::string& serviceName) :
-    m_serviceName(serviceName)
+ServiceStats::ServiceStats(const std::string& serviceName, const std::string& gatewayName) :
+    m_serviceName(serviceName),
+    m_gatewayName(gatewayName)
 {
     reset();
 }
@@ -43,6 +44,7 @@ ServiceStats::StatsSnapshot ServiceStats::getSnapshot()
     // We calculate the snapshot...
     StatsSnapshot snapshot;
     snapshot.ServiceName = m_serviceName;
+    snapshot.GatewayName = m_gatewayName;
     snapshot.DurationSeconds = elapsedSeconds;
 
     // Total...

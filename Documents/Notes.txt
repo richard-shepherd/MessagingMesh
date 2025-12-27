@@ -125,5 +125,13 @@ dbghelp.lib
 
 
 
+MMListen
+--------
+- App to listen to MM messages
+
+- MMListen --hostname=localhost --port=5050 --service=VULCAN --subject=A.B.>
+
+- Logs the message as JSON
+  - How do we do this?
 
 

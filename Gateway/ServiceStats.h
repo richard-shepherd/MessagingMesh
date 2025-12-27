@@ -29,6 +29,7 @@ namespace MessagingMesh
         struct StatsSnapshot 
         {
             std::string ServiceName;
+            std::string GatewayName;
             double DurationSeconds = 0.0;
             Stats Total;
             VecStats TopSubjects_MessagesPerSecond;
@@ -38,7 +39,7 @@ namespace MessagingMesh
     // Public methods...
     public:
         // Constructor.
-        ServiceStats(const std::string& serviceName);
+        ServiceStats(const std::string& serviceName, const std::string& gatewayName);
 
         // Resets the stats.
         void reset();
@@ -75,6 +76,9 @@ namespace MessagingMesh
         // The name of the service for which we are collecting stats...
         std::string m_serviceName;
             
+        // The name of the gateway hosting the service...
+        std::string m_gatewayName;
+            
         // The time we started recording stats...
         std::chrono::steady_clock::time_point m_startTime;
 
@@ -104,6 +108,7 @@ namespace MessagingMesh
     {
         j = JSONType{
             {"ServiceName", snapshot.ServiceName},
+            {"GatewayName", snapshot.GatewayName},
             {"DurationSeconds", snapshot.DurationSeconds},
             {"Total", snapshot.Total},
             {"TopSubjects_MessagesPerSecond", snapshot.TopSubjects_MessagesPerSecond},

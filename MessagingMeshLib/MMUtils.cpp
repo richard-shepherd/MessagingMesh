@@ -101,14 +101,23 @@ std::string MMUtils::createGUID()
 }
 
 // Gets the hostname of the current process.
-std::string MMUtils::getHostname()
+// NOTE: Replaces any '.' in the hostname with '-' by default.
+std::string MMUtils::getHostname(bool replaceDotWithDash)
 {
+    // We get the hostname...
     std::string hostname;
     char szHostname[256];
     if (gethostname(szHostname, sizeof(szHostname)) == 0) 
     {
         hostname = szHostname;
     }
+
+    // We replace dots with dashes...
+    if (replaceDotWithDash)
+    {
+        std::ranges::replace(hostname, '.', '-');
+    }
+
     return hostname;
 }
 

@@ -6,6 +6,7 @@
 #include <Logger.h>
 #include <MMUtils.h>
 #include <NetworkMessage.h>
+#include "Gateway.h"
 #include "MeshManager.h"
 #include "SubscriptionInfo.h"
 using namespace MessagingMesh;
@@ -16,7 +17,7 @@ ServiceManager::ServiceManager(const std::string& serviceName, const Gateway& ga
     m_gateway(gateway),
     m_meshManager(meshManager),
     m_pUVLoop(UVLoop::create(serviceName, UVLoop::Temperature::HOT)),
-    m_serviceStats(serviceName)
+    m_serviceStats(serviceName, gateway.getGatewayName())
 {
     // We initialize the service manager in the context of the UV loop...
     m_pUVLoop->marshallEvent(

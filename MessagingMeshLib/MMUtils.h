@@ -39,7 +39,8 @@ namespace MessagingMesh
         static std::string createGUID();
 
         // Gets the hostname of the current process.
-        static std::string getHostname();
+        // NOTE: Replaces any '.' in the hostname with '-' by default.
+        static std::string getHostname(bool replaceDotWithDash = true);
 
         // Gets the IPV4 address for the hostname specified.
         // If the hostname is empty we return the IP address of the running process.
