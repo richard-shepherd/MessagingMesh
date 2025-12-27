@@ -41,9 +41,7 @@ namespace TestClient.NET
                 blobCount++;
                 if (blobCount % 100 == 0)
                 {
-                    var blob = message.getBLOB("#");
-                    var a = message.getSignedInt32("A");
-                    MM.Logger.info($"Update to {subject}: A={a}, BLOB-size={blob.Length}, tag:{tag}");
+                    MM.Logger.info(message.toMMListenString(subject));
                 }
             }
             catch (Exception ex)

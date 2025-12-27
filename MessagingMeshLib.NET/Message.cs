@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace MessagingMeshLib.NET
 {
@@ -64,6 +65,31 @@ namespace MessagingMeshLib.NET
         public List<Field> getAllFields()
         {
             return new List<Field>(m_fields);
+        }
+
+        /// <summary>
+        /// Returns a string rendering of the Message for example for use with the MMListen app.
+        /// </summary>
+        public string toMMListenString(string heading, int indent = 0)
+        {
+            var sb = new StringBuilder();
+            var indent_field = new string(' ', indent * 2 + 2);
+
+            // Heading...
+            sb.AppendLine($"{heading}:");
+
+            // Fields...
+            for (var i = 0; i < m_fields.Count; ++i)
+            {
+                var field = m_fields[i];
+                sb.Append($"{indent_field}{field.toMMListenString(indent)}");
+                if (i < m_fields.Count - 1)
+                {
+                    sb.AppendLine("");
+                }
+            }
+
+            return sb.ToString();
         }
 
         #endregion

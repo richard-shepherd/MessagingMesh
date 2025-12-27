@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MessagingMeshLib.NET
+﻿namespace MessagingMeshLib.NET
 {
     /// <summary>
     /// Holds one field in a message.
@@ -68,6 +66,19 @@ namespace MessagingMeshLib.NET
         public DataType getFieldType()
         {
             return m_dataType;
+        }
+
+        /// <summary>
+        /// Returns a string rendering of the Message for example for use with the MMListen app.
+        /// </summary>
+        public string toMMListenString(int indent)
+        {
+            return m_data switch
+            {
+                Message msg  => msg.toMMListenString(m_name, indent + 1),
+                byte[] bytes => $"{m_name}: [{bytes.Length} bytes]",
+                _ => $"{m_name}: {m_data}"
+            };
         }
 
         #endregion

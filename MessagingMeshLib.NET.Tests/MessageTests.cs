@@ -139,6 +139,58 @@ namespace MessagingMeshLib.NET.Tests
             Assert.AreEqual(234.567, message.getDouble("A"));
         }
 
+        /// <summary>
+        /// Tests rendering a Message as an MMListen string.
+        /// </summary>
+        [TestMethod]
+        public void toMMListenString()
+        {
+            var message = new Message();
+            message.addString("TICKER", "AAPL");
+            message.addDouble("PRICE", 275.12);
+            var mmListen = message.toMMListenString("PRICE-TICK.AAPL");
+            Assert.AreEqual("PRICE-TICK.AAPL:\r\n  TICKER: AAPL\r\n  PRICE: 275.12", mmListen);
+        }
+
+        /// <summary>
+        /// Tests rendering a Message as an MMListen string.
+        /// </summary>
+        [TestMethod]
+        public void toMMListenString_withBLOB()
+        {
+            var message = new Message();
+            message.addBLOB("ANALYTIC", new byte[1234]);
+            var mmListen = message.toMMListenString("IRS10Y.ANALYTIC");
+            Assert.AreEqual("IRS10Y.ANALYTIC:\r\n  ANALYTIC: [1234 bytes]", mmListen);
+        }
+
+        /// <summary>
+        /// Tests rendering a Message as an MMListen string.
+        /// </summary>
+        [TestMethod]
+        public void toMMListenString_withSubMessage()
+        {
+            var message = new Message();
+            message.addString("TICKER", "AAPL");
+            message.addDouble("PRICE", 275.12);
+
+            {
+                var fill = new Message();
+                fill.addDouble("PRICE", 276.05);
+                fill.addDouble("LOTS", 1234);
+                message.addMessage("FILL", fill);
+            }
+            {
+                var fill = new Message();
+                fill.addDouble("PRICE", 276.15);
+                fill.addDouble("LOTS", 2345);
+                message.addMessage("FILL", fill);
+            }
+
+            var mmListen = message.toMMListenString("PRICE-TICK.AAPL");
+            Assert.AreEqual("PRICE-TICK.AAPL:\r\n  TICKER: AAPL\r\n  PRICE: 275.12\r\n  FILL:\r\n    PRICE: 276.05\r\n    LOTS: 1234\r\n  FILL:\r\n    PRICE: 276.15\r\n    LOTS: 2345", mmListen);
+        }
+
         #endregion
 
         #region Private functions
