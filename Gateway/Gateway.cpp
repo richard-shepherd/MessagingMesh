@@ -4,6 +4,7 @@
 #include <Logger.h>
 #include <NetworkMessage.h>
 #include <Exception.h>
+#include <UVLoop.h>
 #include "MeshManager.h"
 using namespace MessagingMesh;
 

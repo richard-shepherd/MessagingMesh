@@ -1,7 +1,5 @@
 #pragma once
-#include <memory>
 #include <unordered_map>
-#include <UVLoop.h>
 #include <Socket.h>
 #include <SharedAliases.h>
 #include "MeshManager.h"
@@ -11,7 +9,6 @@ namespace MessagingMesh
 {
     // Forward declarations...
     class NetworkMessageHeader;
-    class MeshManager;
 
     /// <summary>
     /// Manages a messaging-mesh gateway.
