@@ -26,7 +26,7 @@ namespace MMListen
                 // We show help if requested...
                 if (commandLine.hasKey("help"))
                 {
-                    Console.WriteLine("Usage: MMListen.exe -hostname=[gateway-hostname] -port=[gateway-port] -service=[mm-service-name] -compact=[true/false] -subject=[subject]");
+                    Console.WriteLine("Usage: MMListen.exe -hostname=[gateway-hostname] -port=[gateway-port] -service=[mm-service-name] -compact=[true/false] -subject=\"[subject]\"");
                     return;
                 }
 
@@ -45,6 +45,7 @@ namespace MMListen
                 var connection = new MM.Connection(connectionParams);
 
                 // We subscribe to the subject...
+                MM.Logger.info($"Subscribing to '{subject}'");
                 var subscription = connection.subscribe(subject, onMessage);
 
                 // We process incoming messages until Enter is pressed...

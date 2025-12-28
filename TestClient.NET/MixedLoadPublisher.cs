@@ -67,7 +67,7 @@ namespace TestClient.NET
             var probabilityStep = probabilityInterval / MESSAGES_TO_CREATE;
             for (var i = 0; i < MESSAGES_TO_CREATE; ++i)
             {
-                var subject = $"{baseSubject}-{i}";
+                var subject = $"{baseSubject}.{i}";
                 var size = baseSize + baseSize * i / MESSAGES_TO_CREATE;
                 var lowerBound = probabilityLowerBound + i * probabilityStep;
                 var upperBound = lowerBound + probabilityStep;
