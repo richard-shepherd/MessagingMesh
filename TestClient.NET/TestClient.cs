@@ -6,7 +6,6 @@ namespace TestClient.NET
 {
     internal class TestClient
     {
-
         /// <summary>
         /// Called when a message is logged by the messaging-mesh.
         /// </summary>

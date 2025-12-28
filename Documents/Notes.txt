@@ -1,7 +1,22 @@
 BUGS
 ----
 - onDataReceived: bad_weak_ptr
-  - Start Gateway, TestClient.NET -sub-mixed, TestClient.NET -bub-mixed
+
+- 1:
+  - Start Gateway, MMListen (subject=>), TestClient.NET -pub-mixed
+  - Stop the publisher with Ctrl+C
+  - Stop the listener with Enter
+  - Start the publisher again
+    - We get bad weak_ptr error
+
+- 2:
+  - Start Gateway, MMListen (subject=>), TestClient.NET -pub-mixed
+  - Stop the listener with Enter
+  - Restart the listener
+    - We get bad weak_ptr error (and/or the Gateway crashes)
+  
+- 3:
+  - Start Gateway, TestClient.NET -sub-mixed, TestClient.NET -pub-mixed
   - Press Enter to stop the subscriber
   - The Gateway logs the error repeatedly (which stops if the publisher is stopped)
 
