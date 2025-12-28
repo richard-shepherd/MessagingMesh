@@ -4,6 +4,21 @@ using MM = MessagingMeshLib.NET;
 
 namespace MMListen
 {
+    /// <summary>
+    /// MMListen
+    /// --------
+    /// Command line tool which connects to a Messaging Mesh service and
+    /// subscribes to a subject. Messages are rendered as text and logged
+    /// to the console.
+    /// 
+    /// Usage - command-line parameters
+    /// -------------------------------
+    /// -hostname=[gateway-hostname]  (optional, defaults to localhost)
+    /// -port=[gateway-port]          (optional, defaults to 5050)
+    /// -service=[mm-service-name]    (required)
+    /// -compact=[true/false]         (optional, defaults to false; false gives a multi-line rendering of messages; true gives a more compact single line rendering)
+    /// -subject="[subject]"          (required; note that the subject should be surrounded by quotes)
+    /// </summary>
     internal class Program
     {
         /// <summary>
