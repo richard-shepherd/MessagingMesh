@@ -49,6 +49,7 @@ namespace MMListen
 
                 // We process incoming messages until Enter is pressed...
                 processMessages(connection);
+                subscription.Dispose();
                 connection.Dispose();
             }
             catch (Exception ex)
