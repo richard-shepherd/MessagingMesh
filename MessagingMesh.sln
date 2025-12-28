@@ -40,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient.NET", "TestClien
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingMeshCoordinator", "MessagingMeshCoordinator\MessagingMeshCoordinator.csproj", "{46510F97-D7B2-0888-4B7B-3ACFE792F2D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMListen", "MMListen\MMListen.csproj", "{E6EB092E-4948-43B9-8676-9645B07B67D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MessagingMesh = Debug|MessagingMesh
@@ -74,6 +76,10 @@ Global
 		{46510F97-D7B2-0888-4B7B-3ACFE792F2D8}.Debug|MessagingMesh.Build.0 = Debug|x64
 		{46510F97-D7B2-0888-4B7B-3ACFE792F2D8}.Release|MessagingMesh.ActiveCfg = Release|x64
 		{46510F97-D7B2-0888-4B7B-3ACFE792F2D8}.Release|MessagingMesh.Build.0 = Release|x64
+		{E6EB092E-4948-43B9-8676-9645B07B67D6}.Debug|MessagingMesh.ActiveCfg = Debug|x64
+		{E6EB092E-4948-43B9-8676-9645B07B67D6}.Debug|MessagingMesh.Build.0 = Debug|x64
+		{E6EB092E-4948-43B9-8676-9645B07B67D6}.Release|MessagingMesh.ActiveCfg = Release|x64
+		{E6EB092E-4948-43B9-8676-9645B07B67D6}.Release|MessagingMesh.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
