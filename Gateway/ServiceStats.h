@@ -50,6 +50,9 @@ namespace MessagingMesh
         // Gets a stats snapshot (and resets the stats).
         StatsSnapshot getSnapshot();
 
+        // Gets a stats snapshot as JSON (and resets the stats).
+        std::string getSnapshotAsJSON(bool indented);
+
         // Logs stats.
         void log();
 

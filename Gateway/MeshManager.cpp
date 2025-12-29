@@ -1,6 +1,8 @@
 #include "MeshManager.h"
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <Connection.h>
+#include <ConnectionParams.h>
 #include <MMUtils.h>
 #include <Logger.h>
 #include "Gateway.h"
@@ -17,6 +19,8 @@ MeshManager::MeshManager(Gateway& gateway) :
 // Destructor.
 MeshManager::~MeshManager()
 {
+    // RSSTODO: PUT THIS BACK! (AND MAKE SURE THE SHUTODWN WORKS CORRECTLY.)
+    //delete m_pCoordinatorConnection;
 }
 
 // Initializes the mesh-manager.
@@ -26,6 +30,9 @@ void MeshManager::initialize()
 {
     // We parse and enrich the mesh config...
     m_gatewayConfig.parse("gateway-config.json");
+
+    // We create the connection to the Coordinator (if it was specified in the config)...
+    createCoordinatorConnection();
 
     // We pre-create service managers for meshes to which we belong...
     createServiceManagers();
@@ -57,6 +64,52 @@ VecGatewayInfo MeshManager::getPeerGatewayInfos(const std::string& serviceName) 
         }
     }
     return result;
+}
+
+// Sends a message to the coordinator.
+void MeshManager::sendMessageToCoordinator(const MessagePtr& pMessage, const std::string& subject) const
+{
+    if (m_coordinatorConnected)
+    {
+        m_pCoordinatorConnection->sendMessage(pMessage, subject);
+    }
+}
+
+// Creates the connection to the Coordinator.
+void MeshManager::createCoordinatorConnection()
+{
+    // We check if the Coordinator was specified in the config...
+    auto& config = m_gatewayConfig.getConfig();
+    auto& gatewayInfo = config.CoordinatorGateway;
+    if (gatewayInfo.Hostname.empty())
+    {
+        return;
+    }
+
+    // The Coordinator gateway was specified, so we connect to it...
+    ConnectionParams connectionParams;
+    connectionParams.GatewayHost = gatewayInfo.Hostname;
+    connectionParams.GatewayPort = gatewayInfo.Port;
+    connectionParams.Service = "_COORDINATOR";
+    connectionParams.MessageDispatch = ConnectionParams::MessageDispatch::CALLBACK_ON_MESSAGING_MESH_THREAD;
+    connectionParams.ConnectAsynchronously = true;
+    connectionParams.NotificationCallback = [this](Connection& connection, NotificationType notificationType, const std::string& info) 
+        {
+            onCoordinatorConnectionNotification(connection, notificationType, info);
+        };
+    m_pCoordinatorConnection = new Connection(connectionParams);
+}
+
+// Called when we get a notification from the Coordinator connection.
+void MeshManager::onCoordinatorConnectionNotification(Connection& /*connection*/, NotificationType notificationType, const std::string& /*info*/)
+{
+    switch (notificationType)
+    {
+    case NotificationType::CONNECTED:
+        m_coordinatorConnected = true;
+        Logger::info("Coordinator connected");
+        break;
+    }
 }
 
 // Creates service-managers for meshes to which we belong.

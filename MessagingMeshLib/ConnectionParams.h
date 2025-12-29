@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "Callbacks.h"
 
 namespace MessagingMesh
 {
@@ -31,6 +32,13 @@ namespace MessagingMesh
 
         // How subscribed messages are dispatched to client code.
         MessageDispatch MessageDispatch = MessageDispatch::PROCESS_MESSAGE_QUEUE;
+
+        // Callback for notifications.
+        NotificationCallback NotificationCallback = nullptr;
+
+        // If true constructing a Connection will return before the connection is complete.
+        // You can use the notification callback to see when the connection is ready.
+        bool ConnectAsynchronously = false;
     };
 } // namespace
 

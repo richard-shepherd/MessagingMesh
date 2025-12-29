@@ -26,10 +26,10 @@ ConnectionImpl::ConnectionImpl(const ConnectionParams& connectionParams, Connect
 
     // We connect to the gateway...
     m_pUVLoop->marshallEvent(
-        [&connectionParams, this](uv_loop_t* /*pLoop*/)
+        [this](uv_loop_t* /*pLoop*/)
         {
             // We connect to the socket...
-            m_pSocket->connect(connectionParams.GatewayHost, connectionParams.GatewayPort);
+            m_pSocket->connect(m_connectionParams.GatewayHost, m_connectionParams.GatewayPort);
         }
     );
 
@@ -48,16 +48,19 @@ ConnectionImpl::ConnectionImpl(const ConnectionParams& connectionParams, Connect
     header.setReplySubject(clientID);
     MMUtils::sendNetworkMessage(networkMessage, m_pSocket);
 
-    // We wait for the ACK to confirm that we have connected.
-    //
-    // This is done in the constructor as we do not want client code to send messages
-    // until the Gateway has fully set up the socket at its end and assigned it to
-    // the correct thread for the requested service. When the ACK signal has been sent
-    // we know that this has been completed.
-    auto waitResult = m_ackSignal.waitOne(30000);
-    if (!waitResult)
+    if (!connectionParams.ConnectAsynchronously)
     {
-        throw Exception("Timed out without receive ACK from the Messaging Mesh Gateway");
+        // We wait for the ACK to confirm that we have connected.
+        //
+        // This is done in the constructor as we do not want client code to send messages
+        // until the Gateway has fully set up the socket at its end and assigned it to
+        // the correct thread for the requested service. When the ACK signal has been sent
+        // we know that this has been completed.
+        auto waitResult = m_ackSignal.waitOne(30000);
+        if (!waitResult)
+        {
+            throw Exception("Timed out without receive ACK from the Messaging Mesh Gateway");
+        }
     }
 }
 
@@ -410,6 +413,12 @@ void ConnectionImpl::onAck()
     {
         // We signal that the ACK has been received...
         m_ackSignal.set();
+
+        // We notify that the connection is fully set up...
+        if (m_connectionParams.NotificationCallback)
+        {
+            m_connectionParams.NotificationCallback(m_connection, NotificationType::CONNECTED, "");
+        }
     }
     catch (const std::exception& ex)
     {

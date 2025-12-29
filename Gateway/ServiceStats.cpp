@@ -67,6 +67,17 @@ ServiceStats::StatsSnapshot ServiceStats::getSnapshot()
     return snapshot;
 }
 
+// Gets a stats snapshot as JSON (and resets the stats).
+std::string ServiceStats::getSnapshotAsJSON(bool indented)
+{
+    // We get the stats snapshot...
+    auto snapshot = getSnapshot();
+
+    // We convert it to JSON and log it...
+    nlohmann::ordered_json json = snapshot;
+    return indented ? json.dump(4) : json.dump();
+}
+
 // Gets the top N items from stats-per-subject sorted by the comparator provided.
 template<typename Comparator>
 std::vector<ServiceStats::Stats> ServiceStats::getTopItems(double elapsedSeconds, size_t n, Comparator comparator) const
@@ -114,12 +125,7 @@ ServiceStats::Stats ServiceStats::toStats(const InternalStats& internalStats, do
 // Logs stats.
 void ServiceStats::log()
 {
-    // We get the stats snapshot...
-    auto snapshot = getSnapshot();
-
-    // We convert it to JSON and log it...
-    nlohmann::ordered_json json = snapshot;
-    Logger::info(std::format("STATS: {}", json.dump(4)));
+    Logger::info(std::format("STATS: {}", getSnapshotAsJSON(true)));
 }
 
 

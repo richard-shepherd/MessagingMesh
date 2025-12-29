@@ -17,14 +17,14 @@ namespace MessagingMesh
         };
 
         // Gateway hostname.
-        std::string Hostname;
+        std::string Hostname = "";
 
         // Gateway port.
-        int Port;
+        int Port = -1;
 
         // Gateway IP address.
         // NOTE: This is not part of the config. This is looked up from the Hostname.
-        std::string IPAddress;
+        std::string IPAddress = "";
 
         // Whether the gateway is a peer or 'self' (ie, the active gateway).
         PeerType PeerType = PeerType::WAITING;

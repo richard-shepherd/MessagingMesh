@@ -22,6 +22,8 @@ BUGS
 
 TODO
 ----
+- Do the TODOs!
+
 - Maxim's points:
   DONE - 1. No Version.
   - 2. No event on disconnect (or other errors) to raise an advisory. C++, C#

@@ -4,6 +4,7 @@
 #include <UVLoop.h>
 #include <Socket.h>
 #include <Logger.h>
+#include <Message.h>
 #include <MMUtils.h>
 #include <NetworkMessage.h>
 #include "Gateway.h"
@@ -285,7 +286,12 @@ void ServiceManager::onStatsTimer()
 {
     try
     {
-        m_serviceStats.log();
+        // We publish service stats to the Coordinator...
+        auto pMessage = Message::create();
+        pMessage->addString("SERVICE_STATS", m_serviceStats.getSnapshotAsJSON(false));
+        auto subject = std::format("GATEWAY.STATS.{}.{}", m_gateway.getGatewayName(), m_serviceName);
+        m_meshManager.sendMessageToCoordinator(pMessage, subject);
+
         UVUtils::runSingleShotTimer(m_pUVLoop, 2000, [&]() { onStatsTimer(); });
     }
     catch (const std::exception& ex)
