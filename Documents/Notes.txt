@@ -142,13 +142,56 @@ dbghelp.lib
 
 
 
-MMListen
---------
-- App to listen to MM messages
+Callbacks and object lifetimes
+------------------------------
+- In particular, the Socket
+  - Though not just this
 
-- MMListen --hostname=localhost --port=5050 --service=VULCAN --subject=A.B.>
+- We have operations happening asynchronously, in particular UV actions
+  - uv_listen
+  - uv_tcp_connect
+  - uv_get_addrinfo_t
+  - uv_read_start
+  - uv_write
+  - All calls using marshallEvent and marshallUniqueEvent
 
-- Logs the message as JSON
-  - How do we do this?
+- The thought was that using UV would make the code single threaded and therefore simpler
+  - It is (mostly) single threaded
+  - In the Gateway at least - once a socket has been moved to the ServiceManager
 
+- But it is asynchronous
+  - So events (Socket events) can be queued in the UV loop of the ServiceManager
+  - ie a UV loop which has a longer lifetime than the Socket itself
+  - (as it manages all the sockets for the service)
+  - SO: sometimes events are run when the Socket is no longer there or is in a bad state
 
+- The UV callbacks are C-style callbacks
+  - So they do not have the Socket 'this' via a lambda capture
+  - But they do have it by setting the 'data' field on the UV object
+
+- We get the this/self object (eg, a Socket) from the UV object and call a function on it
+  - BUT: The object (Socket) may no longer exist
+
+- IDEA: I wonder if we can use UV status *before* trying to call our own this/self functions?
+  - eg, if uv_close has been called this should call back with status UV_ECANCELLED
+  - We could check this *before* trying to call our own functions
+
+- IDEA: I think we need to do more in the UV callbacks themselves
+
+- IDEA: I wonder if the callbacks would be better / cleaner as static methods?
+  - It would reduce the lambda-ish-ness
+  - It would make it less tempting to just defer everything to a member function
+  - ie, we would be happier to do more work in the callbacks themselves
+    - And only call into member functions when really needed and safe
+
+- THOUGHT: There's too much of "trying to make it work" in the Socket class
+  - As opposed to making it *right*
+
+- uv_read_stop
+  - We should probably call this!
+  - QUESTION: Should we do this in Socket::moveToLoop_onSocketClosed?
+    - Or is this just what we should not do???
+    - We do already call uv_close
+
+- THOUGHT: Is it a mistake to wrap the UV socket code in a class?
+  - Because of lifetime problems?
