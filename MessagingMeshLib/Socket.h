@@ -187,7 +187,25 @@ namespace MessagingMesh
     // Private static functions (UV callbacks)...
     private:
         // (Static) callback from uv_close.
-        static void on_uv_close_callback(uv_handle_t* pHandle);
+        static void on_uv_close_callback(uv_handle_t* handle);
+
+        // (Static) callback from uv_read_start.
+        static void on_uv_read_start_callback(uv_stream_t* stream, ssize_t n, const uv_buf_t* buffer);
+
+        // (Static) callback from uv_listen.
+        static void on_uv_listen_callback(uv_stream_t* stream, int status);
+
+        // (Static) callback from uv_tcp_connect.
+        static void on_uv_tcp_connect_callback(uv_connect_t* request, int status);
+
+        // (Static) callback from uv_getaddrinfo.
+        static void on_uv_getaddrinfo_callback(uv_getaddrinfo_t* request, int status, struct addrinfo* address_info);
+
+        // (Static) callback from uv_close (when used to move a socket to a new loop).
+        static void on_uv_close_move_socket_callback(uv_handle_t* handle);
+
+        // (Static) callback from uv_write.
+        static void on_uv_write_callback(uv_write_t* r, int s);
 
     // Private data...
     private:

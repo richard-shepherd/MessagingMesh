@@ -50,10 +50,10 @@ Socket::~Socket()
 }
 
 // (Static) callback from uv_close.
-void Socket::on_uv_close_callback(uv_handle_t* pHandle)
+void Socket::on_uv_close_callback(uv_handle_t* handle)
 {
     // We delete the UV socket handle...
-    auto pSocket = (uv_tcp_t*)pHandle;
+    auto pSocket = (uv_tcp_t*)handle;
     delete pSocket;
 }
 
@@ -96,15 +96,15 @@ void Socket::onSocketConnected()
     processQueuedWrites();
 
     // We start reading data from the socket...
-    uv_read_start(
-        (uv_stream_t*)m_pSocket,
-        UVUtils::allocateBufferMemory,
-        [](uv_stream_t* s, ssize_t n, const uv_buf_t* b)
-        {
-            auto self = (Socket*)s->data;
-            self->onDataReceived(s, n, b);
-        }
-    );
+    uv_read_start((uv_stream_t*)m_pSocket, UVUtils::allocateBufferMemory, on_uv_read_start_callback);
+}
+
+// (Static) callback from uv_read_start.
+void Socket::on_uv_read_start_callback(uv_stream_t* stream, ssize_t n, const uv_buf_t* buffer)
+{
+    // TODO-SOCKET: Use of this / self
+    auto self = (Socket*)stream->data;
+    self->onDataReceived(stream, n, buffer);
 }
 
 // Connects a server socket to listen on the specified port.
@@ -126,19 +126,19 @@ void Socket::listen(int port)
     uv_tcp_nodelay(m_pSocket, 1);
 
     // We listen for connections, calling onNewConnection() when a connection is received...
-    int listenResult = uv_listen(
-        (uv_stream_t*)m_pSocket,
-        MAX_INCOMING_CONNECTION_BACKLOG,
-        [](uv_stream_t* p, int s)
-        {
-            auto self = (Socket*)p->data;
-            self->onNewConnection(p, s);
-        }
-    );
+    int listenResult = uv_listen((uv_stream_t*)m_pSocket, MAX_INCOMING_CONNECTION_BACKLOG, on_uv_listen_callback);
     if (listenResult)
     {
         Logger::error(std::format("uv_listen error: {}", uv_strerror(listenResult)));
     }
+}
+
+// (Static) callback from uv_listen.
+void Socket::on_uv_listen_callback(uv_stream_t* stream, int status)
+{
+    // TODO-SOCKET: Use of this / self
+    auto self = (Socket*)stream->data;
+    self->onNewConnection(stream, status);
 }
 
 // Connects the socket by accepting a listen request received by the server.
@@ -189,16 +189,15 @@ void Socket::connectIP(const std::string& ipAddress, int port)
     uv_ip4_addr(ipAddress.c_str(), port, &destination);
     auto pConnect = new uv_connect_t;
     pConnect->data = this;
-    uv_tcp_connect(
-        pConnect, 
-        m_pSocket,
-        (const struct sockaddr*)&destination, 
-        [](uv_connect_t* r, int s)
-        {
-            auto self = (Socket*)r->data;
-            self->onConnectCompleted(r, s);
-        }
-    );
+    uv_tcp_connect(pConnect, m_pSocket, (const struct sockaddr*)&destination, on_uv_tcp_connect_callback);
+}
+
+// (Static) callback from uv_tcp_connect.
+void Socket::on_uv_tcp_connect_callback(uv_connect_t* request, int status)
+{
+    // TODO-SOCKET: Use of this / self
+    auto self = (Socket*)request->data;
+    self->onConnectCompleted(request, status);
 }
 
 // Connects a client socket to the hostname and port specified.
@@ -223,17 +222,7 @@ void Socket::connect(const std::string& hostname, int port)
         hints.ai_family = AF_INET;        // IPv4
         hints.ai_socktype = SOCK_STREAM;  // TCP
 
-        auto status = uv_getaddrinfo(
-            m_pUVLoop->getUVLoop(),
-            pRequest,
-            [](uv_getaddrinfo_t* r, int s, struct addrinfo* a)
-            {
-                auto pContext = (connect_hostname_t*)r->data;
-                pContext->self->onDNSResolution(r, s, a);
-            },
-            hostname.c_str(),
-            NULL,
-            &hints);
+        auto status = uv_getaddrinfo(m_pUVLoop->getUVLoop(), pRequest, on_uv_getaddrinfo_callback, hostname.c_str(), NULL, &hints);
         if (status)
         {
             // An error has occurred...
@@ -247,6 +236,14 @@ void Socket::connect(const std::string& hostname, int port)
     {
         Logger::error(std::format("{}: {}", __func__, ex.what()));
     }
+}
+
+// (Static) callback from uv_getaddrinfo.
+void Socket::on_uv_getaddrinfo_callback(uv_getaddrinfo_t* request, int status, struct addrinfo* address_info)
+{
+    // TODO-SOCKET: Use of this / self
+    auto pContext = (connect_hostname_t*)request->data;
+    pContext->self->onDNSResolution(request, status, address_info);
 }
 
 // Called when DNS resolution has completed for a hostname.
@@ -340,15 +337,16 @@ void Socket::moveToLoop(UVLoopPtr pLoop)
     pMoveInfo->pNewOSSocket = pNewOSSocket;
     pMoveInfo->pNewUVLoop = pLoop;
     m_pSocket->data = pMoveInfo;
-    uv_close(
-        (uv_handle_t*)m_pSocket,
-        [](uv_handle_t* pHandle)
-        {
-            // The move continues in moveToLoop_onSocketClosed()...
-            auto pMoveInfo = (move_socket_t*)pHandle->data;
-            pMoveInfo->self->moveToLoop_onSocketClosed(pMoveInfo);
-        }
-    );
+    uv_close((uv_handle_t*)m_pSocket, on_uv_close_move_socket_callback);
+}
+
+// (Static) callback from uv_close (when used to move a socket to a new loop).
+void Socket::on_uv_close_move_socket_callback(uv_handle_t* handle)
+{
+    // TODO-SOCKET: Use of this / self
+    // The move continues in moveToLoop_onSocketClosed()...
+    auto pMoveInfo = (move_socket_t*)handle->data;
+    pMoveInfo->self->moveToLoop_onSocketClosed(pMoveInfo);
 }
 
 // Called after the original socket is closed as part of moving the socket to another UV loop.
@@ -470,17 +468,14 @@ void Socket::processQueuedWrites()
 // Sends data to the socket.
 void Socket::send(UVUtils::WriteRequest* pWriteRequest)
 {
-    uv_write(
-        &pWriteRequest->write_request,
-        (uv_stream_t*)m_pSocket,
-        &pWriteRequest->buffer,
-        1,
-        [](uv_write_t* r, int s)
-        {
-            auto pWriteRequest = (UVUtils::WriteRequest*)r;
-            pWriteRequest->pSocket->onWriteCompleted(r, s);
-        }
-    );
+    uv_write(&pWriteRequest->write_request, (uv_stream_t*)m_pSocket, &pWriteRequest->buffer, 1, on_uv_write_callback);
+}
+
+// (Static) callback from uv_write.
+void Socket::on_uv_write_callback(uv_write_t* request, int status)
+{
+    auto pWriteRequest = (UVUtils::WriteRequest*)request;
+    pWriteRequest->pSocket->onWriteCompleted(request, status);
 }
 
 // Calls back with UV write requests to send for the queued data.

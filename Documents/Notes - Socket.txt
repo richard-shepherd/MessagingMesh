@@ -1,3 +1,10 @@
+TODO
+----
+- Check TODO-SOCKET
+
+- Check all marshallEvent, marshallUniqueEvent
+
+
 Managing the lifetime of the Socket class
 -----------------------------------------
 - I wonder if managing the Socket as a shared_ptr is a bit of a cop-out

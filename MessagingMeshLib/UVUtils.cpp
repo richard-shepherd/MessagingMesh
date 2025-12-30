@@ -58,8 +58,7 @@ void UVUtils::releaseBufferMemory(const uv_buf_t* pBuffer)
 // Allocates a write request.
 UVUtils::WriteRequest* UVUtils::allocateWriteRequest(size_t bufferSize, SocketPtr pSocket)
 {
-    auto pWriteRequest = new WriteRequest(bufferSize, pSocket);
-    return pWriteRequest;
+    return new WriteRequest(bufferSize, pSocket);
 }
 
 // Releases a write request.
