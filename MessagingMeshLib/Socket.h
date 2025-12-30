@@ -106,24 +106,29 @@ namespace MessagingMesh
     // Private types...
     private:
 
+        // Passed to UV calls in the data field.
+        // Holds a reference to the Socket that can be passed to UV callbacks allowing safe
+        // access to the Socket, with the ability to check that it still exists (or not).
+        struct CallbackContext
+        {
+            const std::weak_ptr<Socket> WeakSocket;
+            int Port = 0;
+
+            CallbackContext(std::weak_ptr<Socket> weakSocket) :
+                WeakSocket(std::move(weakSocket))
+            {
+            }
+        };
+
         // Context information used when moving a socket from one
         // UVLoop to another.
         struct move_socket_t
         {
-            Socket* self = nullptr;
+            SocketPtr self = nullptr;
             OSSocketHolderPtr pNewOSSocket;
             UVLoopPtr pNewUVLoop;
         };
 
-        // Context information used when connecting to a socket using (hostname, port).
-        struct connect_hostname_t
-        {
-            Socket* self = nullptr;
-            int port = 0;
-        };
-
-    // Private types...
-    private:
         // Data queued for writing.
         struct BufferInfo
         {
@@ -147,13 +152,13 @@ namespace MessagingMesh
         void connectIP(const std::string& ipAddress, int port);
 
         // Called when DNS resolution has completed for a hostname.
-        void onDNSResolution(uv_getaddrinfo_t* pRequest, int status, struct addrinfo* pAddressInfo);
+        void onDNSResolution(int status, struct addrinfo* pAddressInfo, int port);
 
         // Called when a socket is connected to set up reading and writing.
         void onSocketConnected();
 
         // Called at the client side when a client connect request has completed.
-        void onConnectCompleted(uv_connect_t* pRequest, int status);
+        void onConnectCompleted(int status);
 
         // Called at the server side when a new client connection has been received
         // on a listening socket.

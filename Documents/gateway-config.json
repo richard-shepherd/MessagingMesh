@@ -5,7 +5,7 @@
     // - Managing / discovering meshes
     // - Reporting statistics
     // Set this field to an empty string if you are not using the coordinator.
-    "CoordinatorGateway": "RSS-XPS17:5050",
+    "CoordinatorGateway": "",
 
     // Meshes which the gateway will connect to at startup.
     "StartupMeshes": [

@@ -52,9 +52,12 @@ Socket::~Socket()
 // (Static) callback from uv_close.
 void Socket::on_uv_close_callback(uv_handle_t* handle)
 {
+    // We clean up the CallbackContext...
+    auto* pCallbackContext = static_cast<CallbackContext*>(handle->data);
+    delete pCallbackContext;
+
     // We delete the UV socket handle...
-    auto pSocket = (uv_tcp_t*)handle;
-    delete pSocket;
+    delete (uv_tcp_t*)handle;
 }
 
 // Sets the client ID (used as part of the socket name).
@@ -72,7 +75,7 @@ void Socket::createSocket()
     // We create the socket and associate it with the loop.
     // We set its data to point to 'this' so that callbacks can invoke class methods.
     m_pSocket = new uv_tcp_t;
-    m_pSocket->data = this;
+    m_pSocket->data = new CallbackContext(weak_from_this());
     uv_tcp_init(
         m_pUVLoop->getUVLoop(),
         m_pSocket
@@ -102,9 +105,18 @@ void Socket::onSocketConnected()
 // (Static) callback from uv_read_start.
 void Socket::on_uv_read_start_callback(uv_stream_t* stream, ssize_t n, const uv_buf_t* buffer)
 {
-    // TODO-SOCKET: Use of this / self
-    auto self = (Socket*)stream->data;
-    self->onDataReceived(stream, n, buffer);
+    // We check that the 'parent' Socket still exists...
+    auto* pCallbackContext = static_cast<CallbackContext*>(stream->data);
+    if (auto self = pCallbackContext->WeakSocket.lock())
+    {
+        // The Socket exists...
+        self->onDataReceived(stream, n, buffer);
+    }
+    else
+    {
+        // The Socket no longer exists, so we just clean up the buffer...
+        UVUtils::releaseBufferMemory(buffer);
+    }
 }
 
 // Connects a server socket to listen on the specified port.
@@ -136,9 +148,12 @@ void Socket::listen(int port)
 // (Static) callback from uv_listen.
 void Socket::on_uv_listen_callback(uv_stream_t* stream, int status)
 {
-    // TODO-SOCKET: Use of this / self
-    auto self = (Socket*)stream->data;
-    self->onNewConnection(stream, status);
+    // We check that the 'parent' Socket still exists...
+    auto* pCallbackContext = static_cast<CallbackContext*>(stream->data);
+    if (auto self = pCallbackContext->WeakSocket.lock())
+    {
+        self->onNewConnection(stream, status);
+    }
 }
 
 // Connects the socket by accepting a listen request received by the server.
@@ -188,16 +203,24 @@ void Socket::connectIP(const std::string& ipAddress, int port)
     struct sockaddr_in destination;
     uv_ip4_addr(ipAddress.c_str(), port, &destination);
     auto pConnect = new uv_connect_t;
-    pConnect->data = this;
+    pConnect->data = new CallbackContext(weak_from_this());
     uv_tcp_connect(pConnect, m_pSocket, (const struct sockaddr*)&destination, on_uv_tcp_connect_callback);
 }
 
 // (Static) callback from uv_tcp_connect.
 void Socket::on_uv_tcp_connect_callback(uv_connect_t* request, int status)
 {
-    // TODO-SOCKET: Use of this / self
-    auto self = (Socket*)request->data;
-    self->onConnectCompleted(request, status);
+    // We check that the 'parent' Socket still exists...
+    auto* pCallbackContext = static_cast<CallbackContext*>(request->data);
+    if (auto self = pCallbackContext->WeakSocket.lock())
+    {
+        // The Socket exists...
+        self->onConnectCompleted(status);
+    }
+
+    // We clean up the request and the context...
+    delete pCallbackContext;
+    delete request;
 }
 
 // Connects a client socket to the hostname and port specified.
@@ -209,9 +232,8 @@ void Socket::connect(const std::string& hostname, int port)
         Logger::info(std::format("Connecting to: {}", m_name));
 
         // We create a context to use in callbacks...
-        auto pContext = new connect_hostname_t;
-        pContext->self = this;
-        pContext->port = port;
+        auto pContext = new CallbackContext(weak_from_this());
+        pContext->Port = port;
 
         // We create a DNS resolution request...
         auto pRequest = new uv_getaddrinfo_t;
@@ -241,27 +263,30 @@ void Socket::connect(const std::string& hostname, int port)
 // (Static) callback from uv_getaddrinfo.
 void Socket::on_uv_getaddrinfo_callback(uv_getaddrinfo_t* request, int status, struct addrinfo* address_info)
 {
-    // TODO-SOCKET: Use of this / self
-    auto pContext = (connect_hostname_t*)request->data;
-    pContext->self->onDNSResolution(request, status, address_info);
+    // We check that the 'parent' Socket still exists...
+    auto* pCallbackContext = static_cast<CallbackContext*>(request->data);
+    if (auto self = pCallbackContext->WeakSocket.lock())
+    {
+        self->onDNSResolution(status, address_info, pCallbackContext->Port);
+    }
+
+    // We clean up...
+    uv_freeaddrinfo(address_info);
+    delete pCallbackContext;
+    delete request;
 }
 
 // Called when DNS resolution has completed for a hostname.
-void Socket::onDNSResolution(uv_getaddrinfo_t* pRequest, int status, struct addrinfo* pAddressInfo)
+void Socket::onDNSResolution(int status, struct addrinfo* pAddressInfo, int port)
 {
     try
     {
-        auto pContext = (connect_hostname_t*)pRequest->data;
-        auto port = pContext->port;
-
         // We check if the resolution was successful...
         if (status < 0) 
         {
             // An error occurred...
             auto error = uv_strerror(status);
             Logger::error(std::format("Hostname resolution error: {}", error));
-            delete pContext;
-            delete pRequest;
             return;
         }
 
@@ -270,9 +295,6 @@ void Socket::onDNSResolution(uv_getaddrinfo_t* pRequest, int status, struct addr
         uv_ip4_name((struct sockaddr_in*)pAddressInfo->ai_addr, ipAddress, 16);
         auto strIPAddress = std::string(ipAddress);
         connectIP(strIPAddress, port);
-
-        // We free the address info...
-        uv_freeaddrinfo(pAddressInfo);
     }
     catch (const std::exception& ex)
     {
@@ -281,11 +303,10 @@ void Socket::onDNSResolution(uv_getaddrinfo_t* pRequest, int status, struct addr
 }
 
 // Called at the client side when a client has connected to a server.
-void Socket::onConnectCompleted(uv_connect_t* pRequest, int status)
+void Socket::onConnectCompleted(int status)
 {
     try
     {
-        delete pRequest;
         if (status < 0)
         {
             if (m_pCallback)
@@ -333,7 +354,7 @@ void Socket::moveToLoop(UVLoopPtr pLoop)
 
     // We close the socket...
     auto pMoveInfo = new move_socket_t;
-    pMoveInfo->self = this;
+    pMoveInfo->self = shared_from_this();
     pMoveInfo->pNewOSSocket = pNewOSSocket;
     pMoveInfo->pNewUVLoop = pLoop;
     m_pSocket->data = pMoveInfo;
@@ -343,8 +364,6 @@ void Socket::moveToLoop(UVLoopPtr pLoop)
 // (Static) callback from uv_close (when used to move a socket to a new loop).
 void Socket::on_uv_close_move_socket_callback(uv_handle_t* handle)
 {
-    // TODO-SOCKET: Use of this / self
-    // The move continues in moveToLoop_onSocketClosed()...
     auto pMoveInfo = (move_socket_t*)handle->data;
     pMoveInfo->self->moveToLoop_onSocketClosed(pMoveInfo);
 }
