@@ -184,6 +184,11 @@ namespace MessagingMesh
         // Called when the socket has disconnected, to reset the connection and notify observers.
         void handleSocketDisconnected(const std::string& error);
 
+    // Private static functions (UV callbacks)...
+    private:
+        // (Static) callback from uv_close.
+        static void on_uv_close_callback(uv_handle_t* pHandle);
+
     // Private data...
     private:
         // The socket's name (made from its connection info).

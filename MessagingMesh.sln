@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		Documents\gateway-config.json - no mesh, no coordinator = Documents\gateway-config.json - no mesh, no coordinator
 		Documents\Notes - coordinator.txt = Documents\Notes - coordinator.txt
 		Documents\Notes - mesh.txt = Documents\Notes - mesh.txt
+		Documents\Notes - Socket.txt = Documents\Notes - Socket.txt
 		Documents\Notes.txt = Documents\Notes.txt
 		Documents\Project overview.txt = Documents\Project overview.txt
 		Documents\Snippets.txt = Documents\Snippets.txt

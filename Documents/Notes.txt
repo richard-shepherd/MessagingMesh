@@ -195,3 +195,8 @@ Callbacks and object lifetimes
 
 - THOUGHT: Is it a mistake to wrap the UV socket code in a class?
   - Because of lifetime problems?
+
+- IDEA: Close the socket when we get the disconnection
+  - ie, do not wait for the Socket destructor
+  - Use uv_is_closing to check whether the socket is already closed / being closed in the destructor
+    - And also check whetehr it is already closed before trying to call uv_close

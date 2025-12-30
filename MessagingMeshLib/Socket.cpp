@@ -31,24 +31,30 @@ Socket::~Socket()
     m_connected = false;
     m_queuedWrites.clear();
 
-    // The destructor could be called from a different thread than the
-    // one running the UV loop, so we marshall the socket close event
-    // to the socket's UV loop.
-    auto pSocket = m_pSocket;
-    m_pUVLoop->marshallEvent(
-        [pSocket](uv_loop_t* /*pLoop*/)
-        {
-            if (!pSocket) return;
-            uv_close(
-                (uv_handle_t*)pSocket,
-                [](uv_handle_t* pHandle)
+    // The destructor could be called from a different thread than the one running the UV loop, so we marshall 
+    // the socket close event to the socket's UV loop. (Provided that the socket has not already been closed.)
+    if (m_pSocket)
+    {
+        auto pSocket = (uv_handle_t*)m_pSocket;
+        m_pUVLoop->marshallEvent(
+            [pSocket](uv_loop_t* /*pLoop*/)
+            {
+                // We close the socket (if it is not already being closed)...
+                if (!uv_is_closing(pSocket))
                 {
-                    auto pSocket = (uv_tcp_t*)pHandle;
-                    delete pSocket;
+                    uv_close(pSocket, on_uv_close_callback);
                 }
-            );
-        }
-    );
+            }
+        );
+    }
+}
+
+// (Static) callback from uv_close.
+void Socket::on_uv_close_callback(uv_handle_t* pHandle)
+{
+    // We delete the UV socket handle...
+    auto pSocket = (uv_tcp_t*)pHandle;
+    delete pSocket;
 }
 
 // Sets the client ID (used as part of the socket name).

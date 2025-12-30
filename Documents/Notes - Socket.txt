@@ -1,0 +1,119 @@
+Managing the lifetime of the Socket class
+-----------------------------------------
+- I wonder if managing the Socket as a shared_ptr is a bit of a cop-out
+  - Trying to manage the lifetime, without really managing the lifetime
+
+- It is never used by client code, so (unlike Message etc) I think there is less 
+  need for it to be a shared_ptr
+
+- We just need to be clear about its lifetime
+
+
+Where is the Socket used?
+-------------------------
+
+SocketPtr
+---------
+- Socket::ICallback::onNewConnection passes a SocketPtr
+  - With the aim of keeping the Socket alive (as it was created as a shared_ptr)
+  - But: If it we create it as a raw pointer, this could be changed
+
+- Held in Gateway::m_pendingConnections
+  - Managed on the GATEWAY UV loop
+  - Lifetime: Held until the Socket moves to a ServiceManager (and then moves to the Service's UV loop)
+
+- Gateway has m_listeningSocket
+  - Managed on the GATEWAY UV loop
+  - Lifetime: The lifetime of the Gateway
+
+- MeshGatewayConnection
+  - Managed on the Service's UV loop
+  - Socket for connection to a peer gateway
+  - Lifetime: Lifetime of the Service
+    - (Though we will need to think about how to reconnect to a peer gateway if it goes down and comes back)
+
+- ServiceManager
+  - Holds three collections of Sockets (all managed on the Service's UV loop (moved from the GATEWAY UV loop))
+    - A: Client sockets
+      - Lifetime: Lifetime of the client connection (for clients)
+    - B: Mesh peer connections: We are the client (ie, we made the connection)
+      - Lifetime: Lifetime of the ServiceManager
+    - C: Mesh peer connections: We are the server (ie, a peer connected to us)
+      - Lifetime: Lifetime of the connection
+
+- ConnectionImpl
+  - Managed on the ConnectionImpl's UV loop
+  - Lifetime: The lifetime of the Connection / ConnectionImpl, ie controlled by client code
+
+- UVUtils::WriteRequest
+  - Holds a SocketPtr to ensure that the Socket remains alive until the uv_write has completed
+
+Socket&
+-------
+- Not used
+
+Socket*
+-------
+- Socket::ICallback
+  - Most methods on this interface pass a Socket*
+
+- ServiceManager
+  - onSubscribe, onUnsubscribe, onMessage
+  - These all use the SubjectMatchingEngine which maps subjects to the client Sockets which subscribed to them
+
+- SubjectMatchingEngine
+  - Sockets held in the interest-graph
+  - Lifetime: Until unsubscribe is called
+  
+- QUESTION: Is it possible that the interest-graph (IG) can hold a pointer to a Socket after the Socket object no longer exists?
+  - The IG holds the pointer until removeSubscription() or removeAllSubscriptions() is called
+    - removeAllSubscriptions is called by ServiceManager::onDisconnected(), called from:
+      - Receiving an explicit DISCONNECT message from a client
+      - Handling onConnectionStatusChanged with ConnectionStatus::DISCONNECTED, called from:
+        - Socket::handleSocketDisconnected
+
+
+Where are Sockets created? (ie, where is Socket::create() called?)
+------------------------------------------------------------------
+- Gateway:                 For the listening socket
+- MeshGatewayConnection:   For a connection to a peer gateway
+- ConnectionImpl:          For a client socket
+- Socket::onNewConnection: In the Gateway when we receive a client connection via uv_listen
+
+
+IDEA: Only use raw pointers for Socket
+--------------------------------------
+- If we do this, the Socket can only be destructed when all use of it has completed
+
+- This means:
+  - All writes completed (or cancelled, and handled)
+  - All pending reads completed (or cancelled)
+  - All references removed from the IG
+
+
+
+
+IDEA: Socket holds a shared_ptr to itself!
+------------------------------------------
+- At the moment Socket holds m_pSocket which is the UV socket structure (uv_tcp_t)
+  - This holds a raw pointer to the 'parent' Socket in its data field
+  - What if we held a shared_ptr here instead?
+
+- Or better that we hold a more complex structure here, along the lines of move_socket_t used in Socket::moveToLoop()
+  - This structure would inlcude the shared_ptr
+
+- So the lifetime of the Socket would be tied to the lifetime of the uv_tcp_t
+
+
+
+
+
+
+
+
+
+
+
+
+
+
