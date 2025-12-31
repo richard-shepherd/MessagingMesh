@@ -268,8 +268,6 @@ namespace MessagingMeshLib.NET
         {
             if (IsDisposed) return;
 
-            // RSSTODO: RELEASE ALL SUBSCRIPTIONS...
-
             // We send a DISCONNECT message...
             var networkMessage = new NetworkMessage();
             networkMessage.Header.Action = NetworkMessageHeader.ActionEnum.DISCONNECT;

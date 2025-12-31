@@ -81,6 +81,14 @@ namespace MessagingMeshLib.NET
         }
 
         /// <summary>
+        /// Logs an exception including the stack trace.
+        /// </summary>
+        public static void log(Exception ex)
+        {
+            log(LogLevel.ERROR, ex.ToString());
+        }
+
+        /// <summary>
         /// Logs a message at DEBUG level.
         /// </summary>
         public static void debug(string message)
