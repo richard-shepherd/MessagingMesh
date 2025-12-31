@@ -94,12 +94,102 @@ void Tests_Gateway::subjectMatchingEngine(TestRun& testRun)
         assertEqual(testRun, matchesABCD[0]->getSubscriptionID(), (uint32_t)567);
     }
 
+    TestUtils::log("Remove subscriptions (with * wildcard)...");
+    {
+        SubjectMatchingEngine sme;
+
+        // We add subscriptions...
+        sme.addSubscription("A.B.C", 123, ClientA, nullptr);
+        sme.addSubscription("A.*.C", 234, ClientB, nullptr);
+        sme.addSubscription("A.B.C", 345, ClientC, nullptr);
+
+        // We remove subscriptions...
+        sme.removeSubscription("A.*.C", ClientB);
+
+        // We check for matches...
+        auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");
+        assertEqual(testRun, matchesABC.size(), (size_t)2);
+        assertEqual(testRun, matchesABC[0]->getSubscriptionID(), (uint32_t)123);
+        assertEqual(testRun, matchesABC[1]->getSubscriptionID(), (uint32_t)345);
+    }
+
+    TestUtils::log("Remove subscriptions (with > wildcard)...");
+    {
+        SubjectMatchingEngine sme;
+
+        // We add subscriptions...
+        sme.addSubscription("A.B.C", 123, ClientA, nullptr);
+        sme.addSubscription("A.>", 234, ClientB, nullptr);
+        sme.addSubscription("A.B.C", 345, ClientC, nullptr);
+
+        // We remove subscriptions...
+        sme.removeSubscription("A.>", ClientB);
+
+        // We check for matches...
+        auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");
+        assertEqual(testRun, matchesABC.size(), (size_t)2);
+        assertEqual(testRun, matchesABC[0]->getSubscriptionID(), (uint32_t)123);
+        assertEqual(testRun, matchesABC[1]->getSubscriptionID(), (uint32_t)345);
+    }
+
     TestUtils::log("Remove all subscriptions...");
     {
         SubjectMatchingEngine sme;
 
         // We add subscriptions...
         sme.addSubscription("A.B.C", 123, ClientA, nullptr);
+        sme.addSubscription("A.B.C", 234, ClientB, nullptr);
+        sme.addSubscription("A.B.C", 345, ClientC, nullptr);
+        sme.addSubscription("A.B.C.D", 456, ClientA, nullptr);
+        sme.addSubscription("A.B.C.D", 567, ClientB, nullptr);
+
+        // We remove subscriptions...
+        sme.removeAllSubscriptions(ClientA);
+
+        // We check for matches...
+        auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");
+        assertEqual(testRun, matchesABC.size(), (size_t)2);
+        assertEqual(testRun, matchesABC[0]->getSubscriptionID(), (uint32_t)234);
+        assertEqual(testRun, matchesABC[1]->getSubscriptionID(), (uint32_t)345);
+
+        // We check for matches...
+        auto matchesABCD = sme.getMatchingSubscriptionInfos("A.B.C.D");
+        assertEqual(testRun, matchesABCD.size(), (size_t)1);
+        assertEqual(testRun, matchesABCD[0]->getSubscriptionID(), (uint32_t)567);
+    }
+
+    TestUtils::log("Remove all subscriptions (with * wildcard)...");
+    {
+        SubjectMatchingEngine sme;
+
+        // We add subscriptions...
+        sme.addSubscription("A.*.B", 123, ClientA, nullptr);
+        sme.addSubscription("A.B.C", 234, ClientB, nullptr);
+        sme.addSubscription("A.B.C", 345, ClientC, nullptr);
+        sme.addSubscription("A.B.C.D", 456, ClientA, nullptr);
+        sme.addSubscription("A.B.C.D", 567, ClientB, nullptr);
+
+        // We remove subscriptions...
+        sme.removeAllSubscriptions(ClientA);
+
+        // We check for matches...
+        auto matchesABC = sme.getMatchingSubscriptionInfos("A.B.C");
+        assertEqual(testRun, matchesABC.size(), (size_t)2);
+        assertEqual(testRun, matchesABC[0]->getSubscriptionID(), (uint32_t)234);
+        assertEqual(testRun, matchesABC[1]->getSubscriptionID(), (uint32_t)345);
+
+        // We check for matches...
+        auto matchesABCD = sme.getMatchingSubscriptionInfos("A.B.C.D");
+        assertEqual(testRun, matchesABCD.size(), (size_t)1);
+        assertEqual(testRun, matchesABCD[0]->getSubscriptionID(), (uint32_t)567);
+    }
+
+    TestUtils::log("Remove all subscriptions (with > wildcard)...");
+    {
+        SubjectMatchingEngine sme;
+
+        // We add subscriptions...
+        sme.addSubscription("A.>", 123, ClientA, nullptr);
         sme.addSubscription("A.B.C", 234, ClientB, nullptr);
         sme.addSubscription("A.B.C", 345, ClientC, nullptr);
         sme.addSubscription("A.B.C.D", 456, ClientA, nullptr);

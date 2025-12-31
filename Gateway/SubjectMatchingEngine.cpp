@@ -57,10 +57,23 @@ void SubjectMatchingEngine::removeAllSubscriptions(uint64_t clientSocketID)
 // and from all its child nodes recursively.
 void SubjectMatchingEngine::removeAllSubscriptions(Node* pNode, uint64_t clientSocketID)
 {
+    // We remove subscriptions from this node...
     pNode->SubscriptionInfos.erase(clientSocketID);
+
+    // We remove subscriptions (recursively) from child nodes for non-wildcard tokens...
     for (const auto& pair : pNode->Nodes)
     {
         removeAllSubscriptions(pair.second, clientSocketID);
+    }
+
+    // We remove subscriptions (recursively) from wildcard tokens...
+    if (pNode->pNode_Wildcard_Star)
+    {
+        removeAllSubscriptions(pNode->pNode_Wildcard_Star, clientSocketID);
+    }
+    if (pNode->pNode_Wildcard_GreaterThan)
+    {
+        removeAllSubscriptions(pNode->pNode_Wildcard_GreaterThan, clientSocketID);
     }
 }
 
