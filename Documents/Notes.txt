@@ -2,24 +2,6 @@ BUGS
 ----
 - onDataReceived: bad_weak_ptr
 
-- 1:
-  - Start Gateway, MMListen (subject=>), TestClient.NET -pub-mixed
-  - Stop the publisher with Ctrl+C
-  - Stop the listener with Enter
-  - Start the publisher again
-    - We get bad weak_ptr error
-
-- 2:
-  - Start Gateway, MMListen (subject=>), TestClient.NET -pub-mixed
-  - Stop the listener with Enter
-  - Restart the listener
-    - We get bad weak_ptr error (and/or the Gateway crashes)
-  
-- 3:
-  - Start Gateway, TestClient.NET -sub-mixed, TestClient.NET -pub-mixed
-  - Press Enter to stop the subscriber
-  - The Gateway logs the error repeatedly (which stops if the publisher is stopped)
-
 TODO
 ----
 - Do the TODOs!
@@ -82,10 +64,6 @@ TODO
           ie, it can be used in client-side code but not in the gateway
           (at least, not for sending messages back to clients)
 
-- C++ -pub with C# -sub works weirdly
-  - Buffers lots of memory in the publisher
-  - Doesn't work properly if the publisher or subscriber are restarted (with the same gateway)
-
 - Is Connection thread safe?
   - Is the socket sending thread safe? eg, will sends from different threads get 'mixed up'? (Though they are queued to one thread?)
   - Can you subscribe from multiple threads? (C#, C++)
@@ -95,11 +73,6 @@ TODO
 - Do the client side subscription cache thing for C#
 
 - Maybe have a pool of inboxes on the client side?
-
-- Think about pimpl vs C++20 modules
-
-- Better disconnection handling
-  - Not all cases of gateway and/or clients dying are handled well
 
 - Clean up removed subscriptions from the interest-graph
 
