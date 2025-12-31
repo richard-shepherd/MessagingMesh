@@ -41,7 +41,7 @@ namespace MMListen
                 // We show help if requested...
                 if (commandLine.hasKey("help"))
                 {
-                    Console.WriteLine("Usage: MMListen.exe -hostname=[gateway-hostname] -port=[gateway-port] -service=[mm-service-name] -compact=[true/false] -subject=\"[subject]\"");
+                    commandLine.showUsage();
                     return;
                 }
 

@@ -44,6 +44,19 @@ namespace MMListen
         }
 
         /// <summary>
+        /// Shows the command-line usage.
+        /// </summary>
+        public void showUsage()
+        {
+            Console.WriteLine("MMListen.exe");
+            Console.WriteLine("  -hostname=[gateway-hostname]  (optional, default=localhost)");
+            Console.WriteLine("  -port=[gateway-port]          (optional, default=5050)");
+            Console.WriteLine("  -service=[mm-service-name]    (mandatory)");
+            Console.WriteLine("  -subject=\"[subject]\"          (mandatory, subject should be in quotes)");
+            Console.WriteLine("  -compact=[true/false]         (optional, default=false)");
+        }
+
+        /// <summary>
         /// Returns true if the parsed args includes the key specified.
         /// </summary>
         public bool hasKey(string key)
