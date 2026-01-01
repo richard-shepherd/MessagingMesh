@@ -38,7 +38,7 @@ namespace MessagingMeshCoordinator
                 var serviceOverviews = new List<Stats_ServiceOverview>();
 
                 // We find the list of services and find the total stats for each of them...
-                var serviceNames = m_statsSnapshots.Values.Select(x => x.ServiceName).OrderBy(x => x);
+                var serviceNames = m_statsSnapshots.Values.Select(x => x.ServiceName).Distinct().OrderBy(x => x);
                 foreach (var serviceName in serviceNames)
                 {
                     var serviceOverview = new Stats_ServiceOverview
