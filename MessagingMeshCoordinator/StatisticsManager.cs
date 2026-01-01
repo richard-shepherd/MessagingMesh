@@ -1,5 +1,7 @@
 ﻿using MessagingMeshLib.NET;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using MM = MessagingMeshLib.NET;
 
 namespace MessagingMeshCoordinator
@@ -52,7 +54,22 @@ namespace MessagingMeshCoordinator
         {
             try
             {
-                MM.Logger.info($"Got stats for: {subject}");
+                // The stats subject looks like: GATEWAY.STATS.[gateway-name].[service-name]
+                if(!subject.StartsWith(STATS_MESSAGE_PREFIX))
+                {
+                    throw new Exception($"Unexpected subject: {subject}. Expected to start with '{STATS_MESSAGE_PREFIX}'.");
+                }
+
+                // The stats are sent as JSON in the SERVICE_STATS field. We parse this...
+                var statsSnapshotJSON = message.getString("SERVICE_STATS");
+                var statsSnapshot = JsonConvert.DeserializeObject<StatsSnapshot>(statsSnapshotJSON);
+
+                // The stats subject looks like: GATEWAY.STATS.[gateway-name].[service-name]
+                // We store the stats keyed by gateway and service.
+                var key = subject.Substring(STATS_MESSAGE_PREFIX.Length);
+                m_statsSnapshots[key] = statsSnapshot;
+
+                MM.Logger.info($"Got stats for: {subject}. Total msg/sec={statsSnapshot.Total.MessagesPerSecond:0.0}");
             }
             catch (Exception ex)
             {
@@ -69,6 +86,12 @@ namespace MessagingMeshCoordinator
 
         // The stats subscription...
         private readonly IDisposable m_statsSubscription;
+
+        // Stats snapshots keyed by (gateway-name, service-name)...
+        private readonly Dictionary<string, StatsSnapshot> m_statsSnapshots = new();
+
+        // The prefix for stats messages...
+        private const string STATS_MESSAGE_PREFIX = "GATEWAY.STATS.";
 
         #endregion
     }
