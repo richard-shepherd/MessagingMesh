@@ -62,7 +62,7 @@ namespace MessagingMeshCoordinator
 
                 // The stats are sent as JSON in the SERVICE_STATS field. We parse this...
                 var statsSnapshotJSON = message.getString("SERVICE_STATS");
-                var statsSnapshot = JsonConvert.DeserializeObject<StatsSnapshot>(statsSnapshotJSON);
+                var statsSnapshot = JsonConvert.DeserializeObject<Stats_Snapshot>(statsSnapshotJSON);
 
                 // The stats subject looks like: GATEWAY.STATS.[gateway-name].[service-name]
                 // We store the stats keyed by gateway and service.
@@ -88,7 +88,7 @@ namespace MessagingMeshCoordinator
         private readonly IDisposable m_statsSubscription;
 
         // Stats snapshots keyed by (gateway-name, service-name)...
-        private readonly Dictionary<string, StatsSnapshot> m_statsSnapshots = new();
+        private readonly Dictionary<string, Stats_Snapshot> m_statsSnapshots = new();
 
         // The prefix for stats messages...
         private const string STATS_MESSAGE_PREFIX = "GATEWAY.STATS.";
