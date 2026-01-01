@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MM = MessagingMeshLib.NET;
 
 namespace MessagingMeshCoordinator
@@ -12,7 +13,7 @@ namespace MessagingMeshCoordinator
     /// - Stores statistics in the database.
     /// - Makes statistics available for the web UI.
     /// </summary>
-    internal class StatisticsManager : IDisposable
+    public class StatisticsManager : IDisposable
     {
         #region Public methods
 
@@ -25,6 +26,31 @@ namespace MessagingMeshCoordinator
 
             // We subscribe the gateway stats...
             m_statsSubscription = m_connection.subscribe("GATEWAY.STATS.>", onStatsMessage);
+        }
+
+        /// <summary>
+        /// Returns a summary of stats per service.
+        /// </summary>
+        public List<Stats_ServiceOverview> getServiceOverviews()
+        {
+            lock(m_statsSnapshotsLocker)
+            {
+                var serviceOverviews = new List<Stats_ServiceOverview>();
+
+                // We find the list of services and find the total stats for each of them...
+                var serviceNames = m_statsSnapshots.Values.Select(x => x.ServiceName).OrderBy(x => x);
+                foreach (var serviceName in serviceNames)
+                {
+                    var serviceOverview = new Stats_ServiceOverview
+                    {
+                        ServiceName = serviceName,
+                        MessagesPerSecond = m_statsSnapshots.Values.Where(x => x.ServiceName == serviceName).Sum(x => x.Total.MessagesPerSecond),
+                        MegaBitsPerSecond = m_statsSnapshots.Values.Where(x => x.ServiceName == serviceName).Sum(x => x.Total.MegaBitsPerSecond)
+                    };
+                    serviceOverviews.Add(serviceOverview);
+                }
+                return serviceOverviews;
+            }
         }
 
         #endregion
@@ -67,9 +93,10 @@ namespace MessagingMeshCoordinator
                 // The stats subject looks like: GATEWAY.STATS.[gateway-name].[service-name]
                 // We store the stats keyed by gateway and service.
                 var key = subject.Substring(STATS_MESSAGE_PREFIX.Length);
-                m_statsSnapshots[key] = statsSnapshot;
-
-                MM.Logger.info($"Got stats for: {subject}. Total msg/sec={statsSnapshot.Total.MessagesPerSecond:0.0}");
+                lock(m_statsSnapshotsLocker)
+                {
+                    m_statsSnapshots[key] = statsSnapshot;
+                }
             }
             catch (Exception ex)
             {
@@ -87,8 +114,9 @@ namespace MessagingMeshCoordinator
         // The stats subscription...
         private readonly IDisposable m_statsSubscription;
 
-        // Stats snapshots keyed by (gateway-name, service-name)...
+        // Stats snapshots keyed by (gateway-name, service-name), and a locker for it...
         private readonly Dictionary<string, Stats_Snapshot> m_statsSnapshots = new();
+        private readonly object m_statsSnapshotsLocker = new();
 
         // The prefix for stats messages...
         private const string STATS_MESSAGE_PREFIX = "GATEWAY.STATS.";

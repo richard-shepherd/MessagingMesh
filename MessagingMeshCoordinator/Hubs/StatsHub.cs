@@ -4,8 +4,23 @@ using System.Threading.Tasks;
 
 namespace MessagingMeshCoordinator.Hubs
 {
+    /// <summary>
+    /// SignalR hub to provide stats to the web UI.
+    /// </summary>
     public class StatsHub : Hub
     {
+        #region Public methods
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public StatsHub(StatisticsManager statisticsManager)
+        {
+            m_statisticsManager = statisticsManager;
+        }
+
+        #endregion
+
         #region Hub implementation
 
         /// <summary>
@@ -14,7 +29,10 @@ namespace MessagingMeshCoordinator.Hubs
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
-            // Optionally send initial snapshot of current stats
+
+            // We send an inital snapshot of service overviews to the newly connected client...
+            var serviceOverviews = m_statisticsManager.getServiceOverviews();
+            await Clients.Caller.SendAsync("ServiceOverviewsUpdate", serviceOverviews);
         }
 
         /// <summary>
@@ -24,6 +42,13 @@ namespace MessagingMeshCoordinator.Hubs
         {
             await base.OnDisconnectedAsync(exception);
         }
+
+        #endregion
+
+        #region Private data
+
+        // The statistics manager...
+        private readonly StatisticsManager m_statisticsManager;
 
         #endregion
     }

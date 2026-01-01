@@ -21,36 +21,14 @@ namespace MessagingMeshCoordinator
     /// Statistics are logged to a database and the web UI allows you to retrieve and view historic 
     /// data.
     /// </summary>
-    internal class Coordinator : IDisposable
+    public class Coordinator : IDisposable
     {
-        #region Main
+        #region Properties
 
         /// <summary>
-        /// Main.
+        /// Gets the statistics manager.
         /// </summary>
-        static void Main(string[] args)
-        {
-            // We name the thread...
-            Thread.CurrentThread.Name = "MAIN";
-
-            // We connect to the logger...
-            MM.Logger.registerCallback(onMessagingMeshLogMessage);
-            MM.Logger.info($"MM client version={MM.Connection.Version}");
-
-            try
-            {
-                // We create the coordinator and run its message loop...
-                var coordinator = new Coordinator();
-                coordinator.processMessages();
-
-                // The message loop has been terminated so we clean up...
-                coordinator.Dispose();
-            }
-            catch (Exception ex)
-            {
-                MM.Logger.log(ex);
-            }
-        }
+        public StatisticsManager StatisticsManager => m_statisticsManager;
 
         #endregion
 
@@ -81,19 +59,18 @@ namespace MessagingMeshCoordinator
         /// <summary>
         /// Processes messages until Enter is pressed.
         /// </summary>
-        public void processMessages(int millisecondsTimeout = 100)
+        public void processMessages(CancellationToken cancellationToken)
         {
-            MM.Logger.info("Press Enter to exit");
-            for (; ; )
+            while (!cancellationToken.IsCancellationRequested)
             {
-                // We process messages...
-                var info = m_connection.processMessageQueue(millisecondsTimeout);
-
-                // We check for Enter...
-                if (Console.KeyAvailable)
+                try
                 {
-                    var key = Console.ReadKey(intercept: true);
-                    if (key.Key == ConsoleKey.Enter) break;
+                    // Process messages with a timeout so we can check cancellation
+                    m_connection.processMessageQueue(millisecondsTimeout: 100);
+                }
+                catch (Exception ex)
+                {
+                    MM.Logger.error($"Error processing messages: {ex.Message}");
                 }
             }
         }
@@ -116,18 +93,6 @@ namespace MessagingMeshCoordinator
         }
 
         protected bool IsDisposed { get; private set; }
-
-        #endregion
-
-        #region Private functions
-
-        /// <summary>
-        /// Called when a message is logged by the messaging-mesh.
-        /// </summary>
-        private static void onMessagingMeshLogMessage(MM.Logger.LogLevel logLevel, string message)
-        {
-            Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss.fff} ({logLevel}): {message}");
-        }
 
         #endregion
 
