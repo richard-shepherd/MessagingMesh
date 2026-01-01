@@ -111,11 +111,11 @@ namespace MessagingMesh
         // access to the Socket, with the ability to check that it still exists (or not).
         struct CallbackContext
         {
-            const std::weak_ptr<Socket> WeakSocket;
+            const SocketWeakPtr wpSocket;
             int Port = 0;
 
-            CallbackContext(std::weak_ptr<Socket> weakSocket) :
-                WeakSocket(std::move(weakSocket))
+            CallbackContext(SocketWeakPtr socketWeakPtr) :
+                wpSocket(std::move(socketWeakPtr))
             {
             }
         };

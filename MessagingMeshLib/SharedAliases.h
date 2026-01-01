@@ -23,6 +23,7 @@ namespace MessagingMesh
     // Shared pointer to a Socket.
     class Socket;
     using SocketPtr = std::shared_ptr<Socket>;
+    using SocketWeakPtr = std::weak_ptr<Socket>;
 
     // Shared pointer to an OSSocketHolder.
     class OSSocketHolder;

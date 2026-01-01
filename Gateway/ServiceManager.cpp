@@ -17,7 +17,7 @@ ServiceManager::ServiceManager(const std::string& serviceName, const Gateway& ga
     m_serviceName(serviceName),
     m_gateway(gateway),
     m_meshManager(meshManager),
-    m_pUVLoop(UVLoop::create(serviceName, UVLoop::Temperature::HOT)),
+    m_pUVLoop(UVLoop::create(serviceName, UVLoop::Temperature::COLD)),
     m_serviceStats(serviceName, gateway.getGatewayName())
 {
     // We initialize the service manager in the context of the UV loop...

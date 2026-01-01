@@ -107,7 +107,7 @@ void Socket::on_uv_read_start_callback(uv_stream_t* stream, ssize_t n, const uv_
 {
     // We check that the 'parent' Socket still exists...
     auto* pCallbackContext = static_cast<CallbackContext*>(stream->data);
-    if (auto self = pCallbackContext->WeakSocket.lock())
+    if (auto self = pCallbackContext->wpSocket.lock())
     {
         // The Socket exists...
         self->onDataReceived(stream, n, buffer);
@@ -150,7 +150,7 @@ void Socket::on_uv_listen_callback(uv_stream_t* stream, int status)
 {
     // We check that the 'parent' Socket still exists...
     auto* pCallbackContext = static_cast<CallbackContext*>(stream->data);
-    if (auto self = pCallbackContext->WeakSocket.lock())
+    if (auto self = pCallbackContext->wpSocket.lock())
     {
         self->onNewConnection(stream, status);
     }
@@ -212,7 +212,7 @@ void Socket::on_uv_tcp_connect_callback(uv_connect_t* request, int status)
 {
     // We check that the 'parent' Socket still exists...
     auto* pCallbackContext = static_cast<CallbackContext*>(request->data);
-    if (auto self = pCallbackContext->WeakSocket.lock())
+    if (auto self = pCallbackContext->wpSocket.lock())
     {
         // The Socket exists...
         self->onConnectCompleted(status);
@@ -265,7 +265,7 @@ void Socket::on_uv_getaddrinfo_callback(uv_getaddrinfo_t* request, int status, s
 {
     // We check that the 'parent' Socket still exists...
     auto* pCallbackContext = static_cast<CallbackContext*>(request->data);
-    if (auto self = pCallbackContext->WeakSocket.lock())
+    if (auto self = pCallbackContext->wpSocket.lock())
     {
         self->onDNSResolution(status, address_info, pCallbackContext->Port);
     }
