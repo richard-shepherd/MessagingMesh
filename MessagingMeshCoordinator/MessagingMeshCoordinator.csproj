@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     </ItemGroup>
 
     <ItemGroup>
@@ -21,9 +21,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="config.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="config.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
         <None Update="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
@@ -36,12 +36,13 @@
         <Exec Command="npm run build" WorkingDirectory="$(SpaRoot)" />
     </Target>
 
-    <!-- Copy wwwroot to output directory -->
-    <ItemGroup>
-        <Content Include="wwwroot\**\*.*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <Link>wwwroot\%(RecursiveDir)%(Filename)%(Extension)</Link>
-        </Content>
-    </ItemGroup>
+    <!-- Copy wwwroot to output directory AFTER it's been built -->
+    <Target Name="CopyWwwroot" AfterTargets="BuildClientApp" Condition="'$(Configuration)' == 'Release'">
+        <ItemGroup>
+            <WwwrootFiles Include="wwwroot\**\*.*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(WwwrootFiles)" DestinationFolder="$(OutputPath)wwwroot\%(RecursiveDir)" SkipUnchangedFiles="true" />
+        <Message Text="Copied wwwroot files to $(OutputPath)wwwroot\" Importance="high" />
+    </Target>
 
 </Project>
