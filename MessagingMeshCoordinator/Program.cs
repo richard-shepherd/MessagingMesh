@@ -2,7 +2,9 @@
 using MessagingMeshCoordinator.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using System;
+using System.IO;
 using MM = MessagingMeshLib.NET;
 
 namespace MessagingMeshCoordinator
@@ -51,11 +53,35 @@ namespace MessagingMeshCoordinator
             builder.Services.AddHostedService<CoordinatorHostedService>();
             builder.Services.AddHostedService<StatsBroadcasterService>();
 
-            // We set up the app and run it...
+            // We set up the app and run it, including serving static files from wwwroot...
             var app = builder.Build();
+
+            // We enable CORS...
             app.UseCors();
+
+            // We serve static files from wwwroot (production React build)...
+            var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            if (Directory.Exists(wwwrootPath))
+            {
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(wwwrootPath),
+                    RequestPath = ""
+                });
+            }
+
+            // We enable routing...
             app.UseRouting();
+
+            // We map the SignalR hub...
             app.MapHub<StatsHub>("/hubs/stats");
+
+            // We set up the SPA fallback, to serve index.html for any unmatched routes (for React Router)...
+            app.MapFallbackToFile("index.html", new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(wwwrootPath)
+            });
+
             app.Run();
         }
     }
