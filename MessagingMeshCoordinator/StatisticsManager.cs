@@ -41,15 +41,55 @@ namespace MessagingMeshCoordinator
                 var serviceNames = m_statsSnapshots.Values.Select(x => x.ServiceName).Distinct().OrderBy(x => x);
                 foreach (var serviceName in serviceNames)
                 {
+                    var snapshots = m_statsSnapshots.Values.Where(x => x.ServiceName == serviceName);
                     var serviceOverview = new Stats_ServiceOverview
                     {
                         ServiceName = serviceName,
-                        MessagesPerSecond = m_statsSnapshots.Values.Where(x => x.ServiceName == serviceName).Sum(x => x.Total.MessagesPerSecond),
-                        MegaBitsPerSecond = m_statsSnapshots.Values.Where(x => x.ServiceName == serviceName).Sum(x => x.Total.MegaBitsPerSecond)
+                        MessagesPerSecond = snapshots.Sum(x => x.Total.MessagesPerSecond),
+                        MegaBitsPerSecond = snapshots.Sum(x => x.Total.MegaBitsPerSecond)
                     };
                     serviceOverviews.Add(serviceOverview);
                 }
                 return serviceOverviews;
+            }
+        }
+
+        /// <summary>
+        /// Gets aggregated service details for the service name specified.
+        /// </summary>
+        public Stats_ServiceDetails getServiceDetails(string serviceName)
+        {
+            lock (m_statsSnapshotsLocker)
+            {
+                var serviceDetails = new Stats_ServiceDetails();
+                serviceDetails.ServiceName = serviceName;
+
+                // We find the snapshots forthe service...
+                var snapshots = m_statsSnapshots.Values.Where(x => x.ServiceName == serviceName);
+
+                // We aggregate the stats...
+                var dict_TopSubjects_MessagesPerSecond = new Dictionary<string, Stats_PerSubject>();
+                var dict_TopSubjects_MegabitsPerSecond = new Dictionary<string, Stats_PerSubject>();
+                foreach(var snapshot in snapshots)
+                {
+                    mergeTopSubjects(snapshot.TopSubjects_MessagesPerSecond, dict_TopSubjects_MessagesPerSecond);
+                    mergeTopSubjects(snapshot.TopSubjects_MegaBitsPerSecond, dict_TopSubjects_MegabitsPerSecond);
+                }
+
+                // We have a list of the top subjects (from all gateways). We convert these to lists
+                // and take the top ten items...
+                serviceDetails.TopSubjects_MessagesPerSecond = dict_TopSubjects_MessagesPerSecond.Values
+                    .OrderBy(x => x.MessagesPerSecond)
+                    .Take(10)
+                    .ToList();
+                serviceDetails.TopSubjects_MegaBitsPerSecond = dict_TopSubjects_MegabitsPerSecond.Values
+                    .OrderBy(x => x.MegaBitsPerSecond)
+                    .Take(10)
+                    .ToList();
+
+                // RSSTODO: Do the OTHER part
+
+                return serviceDetails;
             }
         }
 
@@ -72,6 +112,26 @@ namespace MessagingMeshCoordinator
         #endregion
 
         #region Private functions
+
+        /// <summary>
+        /// Merges the list of top-subjects into the dictionary.
+        /// </summary>
+        private void mergeTopSubjects(List<Stats_PerSubject> list, Dictionary<string, Stats_PerSubject> dict)
+        {
+            foreach(var listItem in list)
+            {
+                if(!dict.TryGetValue(listItem.Subject, out var dictItem))
+                {
+                    dictItem = new();
+                    dictItem.Subject = listItem.Subject;
+                    dict.Add(listItem.Subject, dictItem);
+                }
+                dictItem.MessagesProcessed += listItem.MessagesProcessed;
+                dictItem.BytesProcessed += listItem.BytesProcessed;
+                dictItem.MessagesPerSecond += listItem.MessagesPerSecond;
+                dictItem.MegaBitsPerSecond += listItem.MegaBitsPerSecond;
+            }
+        }
 
         /// <summary>
         /// Called when we receive a stats update from a gateway.
