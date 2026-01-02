@@ -43,6 +43,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagingMeshCoordinator", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMListen", "MMListen\MMListen.csproj", "{E6EB092E-4948-43B9-8676-9645B07B67D6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{1D4B2EFD-5F02-4EC3-87D5-F769126D3599}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\run_multiple_services.bat = Scripts\run_multiple_services.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MessagingMesh = Debug|MessagingMesh
