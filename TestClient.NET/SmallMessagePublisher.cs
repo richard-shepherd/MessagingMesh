@@ -7,14 +7,14 @@ namespace TestClient.NET
         /// <summary>
         /// Publishes small messages.
         /// </summary>
-        public static void start()
+        public static void start(MM.CommandLine commandLine)
         {
             // We connect to the gateway...
             var connectionParams = new MM.ConnectionParams
             {
-                GatewayHost = "127.0.0.1",
-                GatewayPort = 5050,
-                Service = "VULCAN",
+                GatewayHost = commandLine.get<string>("gateway-hostname"),
+                GatewayPort = commandLine.get<int>("gateway-port"),
+                Service = commandLine.get<string>("service"),
                 ClientID = "SmallMessagePublisher"
             };
             var connection = new MM.Connection(connectionParams);

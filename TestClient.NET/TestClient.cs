@@ -28,49 +28,54 @@ namespace TestClient.NET
 
             try
             {
-                if (args.Length > 0 && args[0] == "-sub")
+                var commandLine = new MM.CommandLine(args);
+                commandLine.addDefault("gateway-hostname", "127.0.0.1");
+                commandLine.addDefault("gateway-port", "5050");
+                commandLine.addDefault("service", "VULCAN");
+
+                if (commandLine.hasKey("sub"))
                 {
-                    SmallMessageSubscriber.start();
+                    SmallMessageSubscriber.start(commandLine);
                 }
-                else if (args.Length > 0 && args[0] == "-pub")
+                else if (commandLine.hasKey("pub"))
                 {
-                    SmallMessagePublisher.start();
+                    SmallMessagePublisher.start(commandLine);
                 }
-                else if (args.Length > 0 && args[0] == "-sub-blob")
+                else if (commandLine.hasKey("sub-blob"))
                 {
-                    BLOBSubscriber.start();
+                    BLOBSubscriber.start(commandLine);
                 }
-                else if (args.Length > 0 && args[0] == "-pub-blob")
+                else if (commandLine.hasKey("pub-blob"))
                 {
-                    BLOBPublisher.start();
+                    BLOBPublisher.start(commandLine);
                 }
-                else if (args.Length > 0 && args[0] == "-client")
+                else if (commandLine.hasKey("client"))
                 {
-                    Client.start();
+                    Client.start(commandLine);
                 }
-                else if (args.Length > 0 && args[0] == "-server")
+                else if (commandLine.hasKey("server"))
                 {
-                    Server.start();
+                    Server.start(commandLine);
                 }
-                else if (args.Length > 0 && args[0] == "-ping")
+                else if (commandLine.hasKey("ping"))
                 {
-                    Pinger.start();
+                    Pinger.start(commandLine);
                 }
-                else if (args.Length > 0 && args[0] == "-pong")
+                else if (commandLine.hasKey("pong"))
                 {
-                    Ponger.start();
+                    Ponger.start(commandLine);
                 }
-                else if (args.Length > 0 && args[0] == "-pub-mixed")
+                else if (commandLine.hasKey("pub-mixed"))
                 {
-                    MixedLoadPublisher.start();
+                    MixedLoadPublisher.start(commandLine);
                 }
-                else if (args.Length > 0 && args[0] == "-sub-mixed")
+                else if (commandLine.hasKey("sub-mixed"))
                 {
-                    MixedLoadSubscriber.start();
+                    MixedLoadSubscriber.start(commandLine);
                 }
                 else
                 {
-                    MM.Logger.error("Usage: TestClient.NET.exe -sub/-pub");
+                    MM.Logger.error("Usage: TestClient.NET.exe -sub/-pub, -sub-blob/-pub-blob, -sub-mixed/-pub-mixed, -client/-server, -ping/-pong");
                 }
             }
             catch (Exception ex)

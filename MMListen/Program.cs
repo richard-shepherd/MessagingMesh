@@ -36,12 +36,15 @@ namespace MMListen
             try
             {
                 // We parse the command line...
-                var commandLine = new CommandLine(args);
+                var commandLine = new MM.CommandLine(args);
+                commandLine.addDefault("hostname", "localhost");
+                commandLine.addDefault("port", "5050");
+                commandLine.addDefault("compact", "false");
 
                 // We show help if requested...
                 if (commandLine.hasKey("help"))
                 {
-                    commandLine.showUsage();
+                    showUsage();
                     return;
                 }
 
@@ -116,6 +119,19 @@ namespace MMListen
                     if (key.Key == ConsoleKey.Enter) break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Shows the command-line usage.
+        /// </summary>
+        private static void showUsage()
+        {
+            Console.WriteLine("MMListen.exe");
+            Console.WriteLine("  -hostname=[gateway-hostname]  (optional, default=localhost)");
+            Console.WriteLine("  -port=[gateway-port]          (optional, default=5050)");
+            Console.WriteLine("  -service=[mm-service-name]    (mandatory)");
+            Console.WriteLine("  -subject=\"[subject]\"          (mandatory, subject should be in quotes)");
+            Console.WriteLine("  -compact=[true/false]         (optional, default=false)");
         }
 
         // Whether we want to log compact messages...

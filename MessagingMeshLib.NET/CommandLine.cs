@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MMListen
+namespace MessagingMeshLib.NET
 {
     /// <summary>
     /// Holds a parsed version of the command line.
     /// </summary>
-    internal class CommandLine
+    public class CommandLine
     {
         #region Public methods
 
@@ -15,11 +15,6 @@ namespace MMListen
         /// </summary>
         public CommandLine(string[] args)
         {
-            // We add defaults...
-            m_parsedArgs["hostname"] = "localhost";
-            m_parsedArgs["port"] = "5050";
-            m_parsedArgs["compact"] = "false";
-
             // We parse the command line...
             foreach (var arg in args)
             {
@@ -35,42 +30,51 @@ namespace MMListen
                     m_parsedArgs["help"] = "true";
                 }
 
-                // If we have a value, we add it to the dictionary of parsed args...
                 if(tokens.Length == 2)
                 {
+                    // We have an argument like key=value...
                     m_parsedArgs[key] = tokens[1];
+                }
+                else
+                {
+                    // We have a key with no value...
+                    m_parsedArgs[key] = "";
                 }
             }
         }
 
         /// <summary>
-        /// Shows the command-line usage.
+        /// Adds a default to be used if the key is not present on the command-line.
+        /// The key should be specified without leading dashes, eg "hostname" instead of "-hostname".
         /// </summary>
-        public void showUsage()
+        public void addDefault(string key, string value)
         {
-            Console.WriteLine("MMListen.exe");
-            Console.WriteLine("  -hostname=[gateway-hostname]  (optional, default=localhost)");
-            Console.WriteLine("  -port=[gateway-port]          (optional, default=5050)");
-            Console.WriteLine("  -service=[mm-service-name]    (mandatory)");
-            Console.WriteLine("  -subject=\"[subject]\"          (mandatory, subject should be in quotes)");
-            Console.WriteLine("  -compact=[true/false]         (optional, default=false)");
+            key = key.ToLower();
+            if (!hasKey(key))
+            {
+                m_parsedArgs[key] = value;
+            }
         }
 
         /// <summary>
         /// Returns true if the parsed args includes the key specified.
+        /// The key should be specified without leading dashes, eg "hostname" instead of "-hostname".
         /// </summary>
         public bool hasKey(string key)
         {
+            key = key.ToLower();
             return m_parsedArgs.ContainsKey(key);
         }
 
         /// <summary>
         /// Returns the value for the key specified, converted to type T.
+        /// The key should be specified without leading dashes, eg "hostname" instead of "-hostname".
         /// Throws an exception if the key was not specified.
         /// </summary>
         public T get<T>(string key)
         {
-            if(m_parsedArgs.TryGetValue(key, out var value))
+            key = key.ToLower();
+            if (m_parsedArgs.TryGetValue(key, out var value))
             {
                 return (T)Convert.ChangeType(value, typeof(T));
             }
