@@ -1,11 +1,13 @@
 import * as signalR from '@microsoft/signalr';
-import { ServiceOverview } from '../types/stats';
+import { ServiceOverview, ServiceDetails } from '../types/stats';
 
 export type ServiceOverviewsUpdateCallback = (data: ServiceOverview[]) => void;
+export type ServiceDetailsUpdateCallback = (data: ServiceDetails) => void;
 
 class SignalRService {
   private connection: signalR.HubConnection | null = null;
-  private callbacks: ServiceOverviewsUpdateCallback[] = [];
+  private overviewCallbacks: ServiceOverviewsUpdateCallback[] = [];
+  private detailsCallbacks: Map<string, ServiceDetailsUpdateCallback[]> = new Map();
 
   async start(): Promise<void> {
     if (this.connection) {
@@ -21,7 +23,15 @@ class SignalRService {
 
     // Register the handler for service overview updates
     this.connection.on('ServiceOverviewsUpdate', (data: ServiceOverview[]) => {
-      this.callbacks.forEach(callback => callback(data));
+      this.overviewCallbacks.forEach(callback => callback(data));
+    });
+
+    // Register the handler for service detail updates
+    this.connection.on('ServiceDetailsUpdate', (data: ServiceDetails) => {
+      const callbacks = this.detailsCallbacks.get(data.serviceName);
+      if (callbacks) {
+        callbacks.forEach(callback => callback(data));
+      }
     });
 
     // Handle reconnection
@@ -54,13 +64,49 @@ class SignalRService {
   }
 
   onServiceOverviewsUpdate(callback: ServiceOverviewsUpdateCallback): () => void {
-    this.callbacks.push(callback);
+    this.overviewCallbacks.push(callback);
     
     // Return unsubscribe function
     return () => {
-      const index = this.callbacks.indexOf(callback);
+      const index = this.overviewCallbacks.indexOf(callback);
       if (index > -1) {
-        this.callbacks.splice(index, 1);
+        this.overviewCallbacks.splice(index, 1);
+      }
+    };
+  }
+
+  async subscribeToServiceDetails(serviceName: string): Promise<void> {
+    if (!this.connection) {
+      throw new Error('SignalR connection not established');
+    }
+    await this.connection.invoke('SubscribeToServiceDetails', serviceName);
+  }
+
+  async unsubscribeFromServiceDetails(serviceName: string): Promise<void> {
+    if (!this.connection) {
+      return;
+    }
+    await this.connection.invoke('UnsubscribeFromServiceDetails', serviceName);
+  }
+
+  onServiceDetailsUpdate(serviceName: string, callback: ServiceDetailsUpdateCallback): () => void {
+    if (!this.detailsCallbacks.has(serviceName)) {
+      this.detailsCallbacks.set(serviceName, []);
+    }
+    this.detailsCallbacks.get(serviceName)!.push(callback);
+    
+    // Return unsubscribe function
+    return () => {
+      const callbacks = this.detailsCallbacks.get(serviceName);
+      if (callbacks) {
+        const index = callbacks.indexOf(callback);
+        if (index > -1) {
+          callbacks.splice(index, 1);
+        }
+        // Clean up empty arrays
+        if (callbacks.length === 0) {
+          this.detailsCallbacks.delete(serviceName);
+        }
       }
     };
   }

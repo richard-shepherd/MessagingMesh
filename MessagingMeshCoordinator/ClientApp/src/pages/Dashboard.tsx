@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Network } from 'lucide-react';
 import { ServiceCard } from '../components/ServiceCard';
 import { ConnectionStatus } from '../components/ConnectionStatus';
@@ -7,6 +8,7 @@ import { ServiceOverview } from '../types/stats';
 import { HubConnectionState } from '@microsoft/signalr';
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const [services, setServices] = useState<ServiceOverview[]>([]);
   const [connectionState, setConnectionState] = useState<HubConnectionState | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
@@ -32,14 +34,11 @@ export function Dashboard() {
     return () => {
       unsubscribe();
       clearInterval(stateInterval);
-      signalRService.stop();
     };
   }, []);
 
   const handleServiceClick = (serviceName: string) => {
-    console.log('Clicked service:', serviceName);
-    // TODO: Navigate to service detail page
-    // navigate(`/service/${serviceName}`);
+    navigate(`/service/${encodeURIComponent(serviceName)}`);
   };
 
   return (
