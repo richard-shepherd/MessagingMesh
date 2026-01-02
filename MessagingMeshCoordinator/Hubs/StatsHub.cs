@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using MessagingMeshCoordinator.Services;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
 
@@ -14,9 +15,10 @@ namespace MessagingMeshCoordinator.Hubs
         /// <summary>
         /// Constructor.
         /// </summary>
-        public StatsHub(StatisticsManager statisticsManager)
+        public StatsHub(StatisticsManager statisticsManager, StatsBroadcasterService broadcasterService)
         {
             m_statisticsManager = statisticsManager;
+            m_broadcasterService = broadcasterService;
         }
 
         #endregion
@@ -45,11 +47,39 @@ namespace MessagingMeshCoordinator.Hubs
 
         #endregion
 
+        #region Subscriptions
+
+        /// <summary>
+        /// Subscribes to details for the specific service.
+        /// </summary>
+        public async Task SubscribeToServiceDetails(string serviceName)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"ServiceDetails_{serviceName}");
+            m_broadcasterService.registerForServiceDetails(serviceName);
+
+            // We send an initial snapshot immediately so the client doesn't wait for the next broadcast...
+            var serviceDetails = m_statisticsManager.getServiceDetails(serviceName);
+            await Clients.Caller.SendAsync("ServiceDetailsUpdate", serviceDetails);
+        }
+
+        /// <summary>
+        /// Unsubscribes from details for the specific service.
+        /// </summary>
+        public async Task UnsubscribeFromServiceDetails(string serviceName)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"ServiceDetails_{serviceName}");
+            m_broadcasterService.unregisterFromServiceDetails(serviceName);
+        }
+
+        #endregion
+
         #region Private data
 
         // The statistics manager...
         private readonly StatisticsManager m_statisticsManager;
 
+        // The stats broadcaster service...
+        private readonly StatsBroadcasterService m_broadcasterService;
         #endregion
     }
 }

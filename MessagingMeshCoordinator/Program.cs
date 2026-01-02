@@ -48,10 +48,11 @@ namespace MessagingMeshCoordinator
                 var coordinator = provider.GetRequiredService<Coordinator>();
                 return coordinator.StatisticsManager;
             });
+            builder.Services.AddSingleton<StatsBroadcasterService>();
 
             // We register hosted services...
             builder.Services.AddHostedService<CoordinatorHostedService>();
-            builder.Services.AddHostedService<StatsBroadcasterService>();
+            builder.Services.AddHostedService<StatsBroadcasterService>(provider => provider.GetRequiredService<StatsBroadcasterService>());
 
             // We set up the app and run it, including serving static files from wwwroot...
             var app = builder.Build();

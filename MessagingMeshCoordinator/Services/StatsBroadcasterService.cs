@@ -24,6 +24,24 @@ namespace MessagingMeshCoordinator.Services
             m_statisticsManager = statisticsManager;
         }
 
+        /// <summary>
+        /// Registers a service for ServiceDetails updates.
+        /// Called when the first client registers interest for this service.
+        /// </summary>
+        public void registerForServiceDetails(string serviceName)
+        {
+            m_serviceDetailsSubscriptions.Add(serviceName);
+        }
+
+        /// <summary>
+        /// Unregisters a service when it has no more subscribers.
+        /// Called when the last client unsubscribes from a service's details.
+        /// </summary>
+        public void unregisterFromServiceDetails(string serviceName)
+        {
+            m_serviceDetailsSubscriptions.Remove(serviceName);
+        }
+
         #endregion
 
         #region IHostedService implementation
@@ -65,11 +83,18 @@ namespace MessagingMeshCoordinator.Services
         {
             try
             {
-                // We get the current stats and broadcast them.
+                // We get the current overview stats and broadcast them.
                 // Note: This does not use await partly as we do not need to await, and also because the timer 
                 //       callback makes this hard anyway.
                 var serviceOverviews = m_statisticsManager.getServiceOverviews();
                 _ = m_hubContext.Clients.All.SendAsync("ServiceOverviewsUpdate", serviceOverviews);
+
+                // We broadcast service details to subscribers registered for them...
+                foreach (var serviceName in m_serviceDetailsSubscriptions.Items)
+                {
+                    var serviceDetails = m_statisticsManager.getServiceDetails(serviceName);
+                    _ = m_hubContext.Clients.Group($"ServiceDetails_{serviceName}").SendAsync("ServiceDetailsUpdate", serviceDetails);
+                }
             }
             catch (Exception ex)
             {
@@ -89,7 +114,10 @@ namespace MessagingMeshCoordinator.Services
 
         // Timer for broadcasting stats...
         private Timer m_broadcastTimer;
-        
+
+        // A set of service names registered for ServiceDetails updates...
+        private readonly ConcurrentHashSet<string> m_serviceDetailsSubscriptions = new();
+
         #endregion
     }
 }
