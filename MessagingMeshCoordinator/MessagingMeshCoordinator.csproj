@@ -5,9 +5,7 @@
         <OutputType>Exe</OutputType>
         <Platforms>x64</Platforms>
         <PlatformTarget>x64</PlatformTarget>
-        <BaseOutputPath>$(SolutionDir)\build-output\Executables</BaseOutputPath>
-        <AppendPlatformToOutputPath>false</AppendPlatformToOutputPath>
-        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+        <OutputPath>$(SolutionDir)\build-output\Executables\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
         <SpaRoot>ClientApp\</SpaRoot>
         <EnableDefaultContentItems>false</EnableDefaultContentItems>
     </PropertyGroup>
