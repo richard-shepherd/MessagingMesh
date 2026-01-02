@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Network } from 'lucide-react';
 import { ServiceCard } from '../components/ServiceCard';
 import { ConnectionStatus } from '../components/ConnectionStatus';
 import { signalRService } from '../services/signalRService';
@@ -45,7 +46,10 @@ export function Dashboard() {
     <div className="dashboard">
       <header className="dashboard-header">
         <div className="header-content">
-          <h1>MessagingMesh Coordinator</h1>
+          <div className="dashboard-title">
+            <Network size={32} className="title-icon" />
+            <h1>Messaging Mesh</h1>
+          </div>
           <div className="header-info">
             <ConnectionStatus state={connectionState} />
             {lastUpdate && (

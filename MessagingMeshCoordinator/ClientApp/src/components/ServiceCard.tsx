@@ -1,4 +1,6 @@
+import { Server } from 'lucide-react';
 import { ServiceOverview } from '../types/stats';
+import { generatePastelGradient } from '../utils/colorUtils';
 
 interface ServiceCardProps {
   service: ServiceOverview;
@@ -15,14 +17,23 @@ export function ServiceCard({ service, onClick }: ServiceCardProps) {
     return num.toFixed(2);
   };
 
+  // Generate deterministic gradient based on service name
+  const headerGradient = generatePastelGradient(service.serviceName);
+
   return (
     <div 
       className="service-card"
       onClick={onClick}
       style={{ cursor: onClick ? 'pointer' : 'default' }}
     >
-      <div className="service-header">
-        <h3 className="service-name">{service.serviceName}</h3>
+      <div 
+        className="service-header"
+        style={{ background: headerGradient }}
+      >
+        <div className="service-name-container">
+          <Server size={24} className="service-icon" />
+          <h3 className="service-name">{service.serviceName}</h3>
+        </div>
       </div>
       
       <div className="service-stats">
