@@ -286,6 +286,7 @@ export function ServiceDetail() {
                           dataKey="value"
                           label={renderCustomLabel}
                           labelLine={<CustomLabelLine />}
+                          isAnimationActive={false}
                         >
                           {messagesChartData.chartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
@@ -330,6 +331,7 @@ export function ServiceDetail() {
                           dataKey="value"
                           label={renderCustomLabel}
                           labelLine={<CustomLabelLine />}
+                          isAnimationActive={false}
                         >
                           {megabitsChartData.chartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
