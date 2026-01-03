@@ -2,7 +2,7 @@ REM We start the gateway...
 pushd ..\build-output\Executables\Release
 start Gateway.exe --port 5050
 
-TIMEOUT 5
+TIMEOUT 3
 
 REM We start publishing to various services...
 popd

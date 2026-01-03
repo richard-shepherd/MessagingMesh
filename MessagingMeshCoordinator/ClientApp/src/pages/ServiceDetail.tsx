@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, Pause, PieChart as PieChartIcon } from 'lucide-react';
+import { ArrowLeft, Play, Pause, Server } from 'lucide-react';
 import { signalRService } from '../services/signalRService';
 import { ServiceDetails } from '../types/stats';
 import { PieChart } from '../components/PieChart';
@@ -90,7 +90,7 @@ export function ServiceDetail() {
               <span>Back to Services</span>
             </button>
             <div className="service-title-section">
-              <PieChartIcon size={28} className="detail-icon" />
+              <Server size={28} className="detail-icon" />
               <h1 className="service-title">{serviceName}</h1>
             </div>
           </div>
