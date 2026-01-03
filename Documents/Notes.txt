@@ -6,6 +6,8 @@ TODO
 ----
 - Do the TODOs!
 
+- For the UI is it best to specify sizes in px or in some relative unit?
+
 - Maxim's points:
   DONE - 1. No Version.
   - 2. No event on disconnect (or other errors) to raise an advisory. C++, C#

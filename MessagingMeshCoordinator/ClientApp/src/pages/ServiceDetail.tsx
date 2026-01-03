@@ -256,7 +256,7 @@ export function ServiceDetail() {
         </div>
       </header>
 
-      <main className="detail-main">
+      <main className={`detail-main ${isPaused && serviceDetails ? 'with-banner' : ''}`}>
         {!serviceDetails ? (
           <div className="loading-state">
             <div className="loading-spinner"></div>
