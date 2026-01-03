@@ -12,6 +12,9 @@ export function Dashboard() {
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
 
   useEffect(() => {
+    // Set the page title
+    document.title = 'Messaging Mesh';
+
     // Start the SignalR connection
     signalRService.start().catch(err => {
       console.error('Failed to start SignalR connection:', err);

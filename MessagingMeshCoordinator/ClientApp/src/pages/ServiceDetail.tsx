@@ -21,6 +21,9 @@ export function ServiceDetail() {
       return;
     }
 
+    // Set the page title
+    document.title = `Messaging Mesh: ${serviceName}`;
+
     let isSubscribed = false;
 
     const setupSubscription = async () => {
