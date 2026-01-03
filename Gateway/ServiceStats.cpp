@@ -53,13 +53,13 @@ ServiceStats::StatsSnapshot ServiceStats::getSnapshot()
     // Top items by messages/second...
     snapshot.TopSubjects_MessagesPerSecond = getTopItems(
         elapsedSeconds,
-        10,
+        15,
         [](const auto& a, const auto& b) {return a.second.MessagesProcessed > b.second.MessagesProcessed;});
 
     // Top items by Megabits/second...
     snapshot.TopSubjects_MegaBitsPerSecond = getTopItems(
         elapsedSeconds,
-        10,
+        15,
         [](const auto& a, const auto& b) {return a.second.BytesProcessed > b.second.BytesProcessed;});
 
     // We reset the counters and return the stats...

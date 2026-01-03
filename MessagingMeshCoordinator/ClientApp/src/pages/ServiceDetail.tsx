@@ -168,11 +168,11 @@ export function ServiceDetail() {
   const renderCustomLabel = (props: any) => {
     const { cx, cy, midAngle, outerRadius, percent, subject } = props;
     
-    // Only show label if percentage is large enough (3%)
-    if (percent < 0.03) return null;
+    // Only show label if percentage is large enough (2%)
+    if (percent < 0.02) return null;
 
     const RADIAN = Math.PI / 180;
-    const radius = outerRadius + 30;
+    const radius = outerRadius + 40;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
@@ -195,8 +195,8 @@ export function ServiceDetail() {
   const CustomLabelLine = (props: any) => {
     const { cx, cy, midAngle, outerRadius, percent } = props;
     
-    // Only show connector if percentage is large enough (3%)
-    if (percent < 0.03) return null;
+    // Only show connector if percentage is large enough (2%)
+    if (percent < 0.02) return null;
 
     const RADIAN = Math.PI / 180;
     const innerRadius = outerRadius + 5;
@@ -276,13 +276,13 @@ export function ServiceDetail() {
               {messagesChartData && messagesChartData.chartData.length > 0 ? (
                 <>
                   <div className="chart-container-large">
-                    <ResponsiveContainer width="100%" height={400}>
+                    <ResponsiveContainer width="100%" height={600}>
                       <PieChart>
                         <Pie
                           data={messagesChartData.chartData}
                           cx="50%"
                           cy="50%"
-                          outerRadius={120}
+                          outerRadius={180}
                           dataKey="value"
                           label={renderCustomLabel}
                           labelLine={<CustomLabelLine />}
@@ -321,13 +321,13 @@ export function ServiceDetail() {
               {megabitsChartData && megabitsChartData.chartData.length > 0 ? (
                 <>
                   <div className="chart-container-large">
-                    <ResponsiveContainer width="100%" height={400}>
+                    <ResponsiveContainer width="100%" height={600}>
                       <PieChart>
                         <Pie
                           data={megabitsChartData.chartData}
                           cx="50%"
                           cy="50%"
-                          outerRadius={120}
+                          outerRadius={180}
                           dataKey="value"
                           label={renderCustomLabel}
                           labelLine={<CustomLabelLine />}

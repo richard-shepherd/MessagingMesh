@@ -78,11 +78,9 @@ namespace MessagingMeshCoordinator
                 // and take the top ten items...
                 serviceDetails.TopSubjects_MessagesPerSecond = dict_TopSubjects_MessagesPerSecond.Values
                     .OrderBy(x => x.MessagesPerSecond)
-                    .Take(10)
                     .ToList();
                 serviceDetails.TopSubjects_MegaBitsPerSecond = dict_TopSubjects_MegabitsPerSecond.Values
                     .OrderBy(x => x.MegaBitsPerSecond)
-                    .Take(10)
                     .ToList();
 
                 return serviceDetails;
