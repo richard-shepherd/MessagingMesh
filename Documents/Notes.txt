@@ -1,6 +1,6 @@
 BUGS
 ----
-- onDataReceived: bad_weak_ptr
+
 
 TODO
 ----
