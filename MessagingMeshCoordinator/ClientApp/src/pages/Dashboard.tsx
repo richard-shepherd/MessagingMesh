@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Network } from 'lucide-react';
 import { ServiceCard } from '../components/ServiceCard';
 import { ConnectionStatus } from '../components/ConnectionStatus';
@@ -8,7 +7,6 @@ import { ServiceOverview } from '../types/stats';
 import { HubConnectionState } from '@microsoft/signalr';
 
 export function Dashboard() {
-  const navigate = useNavigate();
   const [services, setServices] = useState<ServiceOverview[]>([]);
   const [connectionState, setConnectionState] = useState<HubConnectionState | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
@@ -36,10 +34,6 @@ export function Dashboard() {
       clearInterval(stateInterval);
     };
   }, []);
-
-  const handleServiceClick = (serviceName: string) => {
-    navigate(`/service/${encodeURIComponent(serviceName)}`);
-  };
 
   return (
     <div className="dashboard">
@@ -81,7 +75,6 @@ export function Dashboard() {
               <ServiceCard
                 key={service.serviceName}
                 service={service}
-                onClick={() => handleServiceClick(service.serviceName)}
               />
             ))}
           </div>

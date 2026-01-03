@@ -1,13 +1,13 @@
+import { Link } from 'react-router-dom';
 import { Server } from 'lucide-react';
 import { ServiceOverview } from '../types/stats';
 import { generatePastelGradient } from '../utils/colorUtils';
 
 interface ServiceCardProps {
   service: ServiceOverview;
-  onClick?: () => void;
 }
 
-export function ServiceCard({ service, onClick }: ServiceCardProps) {
+export function ServiceCard({ service }: ServiceCardProps) {
   const formatNumber = (num: number): string => {
     if (num >= 1000000) {
       return (num / 1000000).toFixed(2) + 'M';
@@ -21,10 +21,9 @@ export function ServiceCard({ service, onClick }: ServiceCardProps) {
   const headerGradient = generatePastelGradient(service.serviceName);
 
   return (
-    <div 
+    <Link 
+      to={`/service/${encodeURIComponent(service.serviceName)}`}
       className="service-card"
-      onClick={onClick}
-      style={{ cursor: onClick ? 'pointer' : 'default' }}
     >
       <div 
         className="service-header"
@@ -49,6 +48,6 @@ export function ServiceCard({ service, onClick }: ServiceCardProps) {
           <div className="stat-value">{formatNumber(service.megaBitsPerSecond)}</div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

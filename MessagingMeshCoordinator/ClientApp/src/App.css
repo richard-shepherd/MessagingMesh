@@ -158,19 +158,22 @@ body {
 }
 
 .service-card {
-  background: var(--surface);
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px var(--shadow);
-  animation: fadeIn 0.3s ease;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px var(--shadow);
+    animation: fadeIn 0.3s ease;
+    text-decoration: none; /* Remove underline from link */
+    color: inherit; /* Inherit text color instead of link color */
+    display: block; /* Make the link behave like a block element */
 }
 
 .service-card:hover {
-  border-color: var(--primary);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px var(--shadow-hover);
+    border-color: var(--primary);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px var(--shadow-hover);
 }
 
 .service-header {
