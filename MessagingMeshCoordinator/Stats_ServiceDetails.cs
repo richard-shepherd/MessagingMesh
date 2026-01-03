@@ -13,6 +13,16 @@ namespace MessagingMeshCoordinator
         public string ServiceName { get; set; } = "";
 
         /// <summary>
+        /// Gets or sets the total messages per second for the service.
+        /// </summary>
+        public double TotalMessagesPerSecond { get; set; } = 0.0;
+
+        /// <summary>
+        /// Gets or sets the total Mb/sec per second for the service.
+        /// </summary>
+        public double TotalMegaBitsPerSecond { get; set; } = 0.0;
+
+        /// <summary>
         /// Gets or sets stats for the top subjects by msg/sec processed in the reporting interval.
         /// </summary>
         public List<Stats_PerSubject> TopSubjects_MessagesPerSecond { get; set; } = new();

@@ -41,14 +41,7 @@ namespace MessagingMeshCoordinator
                 var serviceNames = m_statsSnapshots.Values.Select(x => x.ServiceName).Distinct().OrderBy(x => x);
                 foreach (var serviceName in serviceNames)
                 {
-                    var snapshots = m_statsSnapshots.Values.Where(x => x.ServiceName == serviceName);
-                    var serviceOverview = new Stats_ServiceOverview
-                    {
-                        ServiceName = serviceName,
-                        MessagesPerSecond = snapshots.Sum(x => x.Total.MessagesPerSecond),
-                        MegaBitsPerSecond = snapshots.Sum(x => x.Total.MegaBitsPerSecond)
-                    };
-                    serviceOverviews.Add(serviceOverview);
+                    serviceOverviews.Add(getServiceOverview(serviceName));
                 }
                 return serviceOverviews;
             }
@@ -64,7 +57,12 @@ namespace MessagingMeshCoordinator
                 var serviceDetails = new Stats_ServiceDetails();
                 serviceDetails.ServiceName = serviceName;
 
-                // We find the snapshots forthe service...
+                // We fill in the totals...
+                var serviceOverview = getServiceOverview(serviceName);
+                serviceDetails.TotalMessagesPerSecond = serviceOverview.MessagesPerSecond;
+                serviceDetails.TotalMegaBitsPerSecond = serviceOverview.MegaBitsPerSecond;
+
+                // We find the snapshots for the service...
                 var snapshots = m_statsSnapshots.Values.Where(x => x.ServiceName == serviceName);
 
                 // We aggregate the stats...
@@ -86,8 +84,6 @@ namespace MessagingMeshCoordinator
                     .OrderBy(x => x.MegaBitsPerSecond)
                     .Take(10)
                     .ToList();
-
-                // RSSTODO: Do the OTHER part
 
                 return serviceDetails;
             }
@@ -112,6 +108,20 @@ namespace MessagingMeshCoordinator
         #endregion
 
         #region Private functions
+
+        /// <summary>
+        /// Returns the service overview for the service name specified.
+        /// </summary>
+        private Stats_ServiceOverview getServiceOverview(string serviceName)
+        {
+            var snapshots = m_statsSnapshots.Values.Where(x => x.ServiceName == serviceName);
+            return new Stats_ServiceOverview
+            {
+                ServiceName = serviceName,
+                MessagesPerSecond = snapshots.Sum(x => x.Total.MessagesPerSecond),
+                MegaBitsPerSecond = snapshots.Sum(x => x.Total.MegaBitsPerSecond)
+            };
+        }
 
         /// <summary>
         /// Merges the list of top-subjects into the dictionary.
