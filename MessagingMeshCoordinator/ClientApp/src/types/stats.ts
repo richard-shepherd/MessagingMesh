@@ -25,6 +25,8 @@ export interface StatsSnapshot {
 
 export interface ServiceDetails {
   serviceName: string;
+  totalMessagesPerSecond: number;
+  totalMegaBitsPerSecond: number;
   topSubjects_MessagesPerSecond: StatsPerSubject[];
   topSubjects_MegaBitsPerSecond: StatsPerSubject[];
 }

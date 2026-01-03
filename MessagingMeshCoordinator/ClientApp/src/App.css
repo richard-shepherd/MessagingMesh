@@ -158,22 +158,22 @@ body {
 }
 
 .service-card {
-    background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 3px var(--shadow);
-    animation: fadeIn 0.3s ease;
-    text-decoration: none; /* Remove underline from link */
-    color: inherit; /* Inherit text color instead of link color */
-    display: block; /* Make the link behave like a block element */
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px var(--shadow);
+  animation: fadeIn 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 .service-card:hover {
-    border-color: var(--primary);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px var(--shadow-hover);
+  border-color: var(--primary);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px var(--shadow-hover);
 }
 
 .service-header {
@@ -430,13 +430,34 @@ body {
 
 .chart-header {
   margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .chart-header h2 {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
+}
+
+.chart-total {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.total-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-left: 0.25rem;
 }
 
 .chart-subtitle {
@@ -448,6 +469,20 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.chart-container-large {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.no-data {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
 }
 
 .paused-banner {
@@ -476,7 +511,96 @@ body {
   }
 }
 
-/* ========== PIE CHART STYLES ========== */
+/* ========== TABLE SECTION STYLES ========== */
+
+.table-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--border);
+}
+
+.table-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.stats-table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.stats-table thead {
+  background: var(--background);
+  border-bottom: 2px solid var(--border);
+}
+
+.stats-table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stats-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.stats-table th.sortable:hover {
+  background: var(--surface-hover);
+}
+
+.stats-table th .header-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stats-table th .sort-indicator {
+  color: var(--primary);
+  font-size: 0.75rem;
+}
+
+.stats-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s ease;
+}
+
+.stats-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.stats-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.stats-table td {
+  padding: 0.875rem 1rem;
+  color: var(--text-primary);
+}
+
+.stats-table td:first-child {
+  font-weight: 500;
+}
+
+.stats-table td:not(:first-child) {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ========== PIE CHART STYLES (Legacy - for old PieChart component) ========== */
 
 .pie-chart {
   display: flex;
@@ -645,6 +769,37 @@ body {
     padding: 1.5rem;
   }
 
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chart-total {
+    font-size: 0.875rem;
+  }
+
+  .total-value {
+    font-size: 1.125rem;
+  }
+
+  .chart-container-large {
+    margin-bottom: 1.5rem;
+  }
+
+  .table-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .stats-table {
+    font-size: 0.8125rem;
+  }
+
+  .stats-table th,
+  .stats-table td {
+    padding: 0.625rem 0.75rem;
+  }
+
   .pie-chart {
     flex-direction: column;
     align-items: center;
@@ -715,6 +870,22 @@ body {
 
   .chart-header h2 {
     font-size: 1.125rem;
+  }
+
+  .chart-total {
+    font-size: 0.8125rem;
+  }
+
+  .total-value {
+    font-size: 1rem;
+  }
+
+  .stats-table th {
+    font-size: 0.75rem;
+  }
+
+  .stats-table {
+    font-size: 0.75rem;
   }
 
   .pie-chart-svg {
