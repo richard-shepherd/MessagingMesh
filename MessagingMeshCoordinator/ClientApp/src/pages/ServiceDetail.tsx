@@ -267,7 +267,7 @@ export function ServiceDetail() {
             {/* Messages per Second Chart */}
             <div className="chart-card">
               <div className="chart-header">
-                <h2>Top Subjects by Messages/sec</h2>
+                <h2>Top Subjects: Messages/sec</h2>
                 <div className="chart-total">
                   Total: <span className="total-value">{formatNumber(serviceDetails.totalMessagesPerSecond)}</span> msg/sec
                 </div>
@@ -311,7 +311,7 @@ export function ServiceDetail() {
             {/* Megabits per Second Chart */}
             <div className="chart-card">
               <div className="chart-header">
-                <h2>Top Subjects by Megabits/sec</h2>
+                <h2>Top Subjects: Megabits/sec</h2>
                 <div className="chart-total">
                   Total: <span className="total-value">{formatNumber(serviceDetails.totalMegaBitsPerSecond)}</span> Mb/sec
                 </div>

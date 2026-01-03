@@ -54,11 +54,11 @@ export function SubjectStatsTable({ data, dataKey }: SubjectStatsTableProps) {
       ),
     }),
     columnHelper.accessor('messagesPerSecond', {
-      header: 'Messages/sec',
+      header: 'Msg/sec',
       cell: (info) => formatNumber(info.getValue()),
     }),
     columnHelper.accessor('megaBitsPerSecond', {
-      header: 'Megabits/sec',
+      header: 'Mbits/sec',
       cell: (info) => formatNumber(info.getValue()),
     }),
     columnHelper.accessor('percentage', {
